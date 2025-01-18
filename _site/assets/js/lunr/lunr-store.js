@@ -40,4 +40,22 @@ var store = [{
         "tags": ["Jekyll","update"],
         "url": "/blog/welcome-to-jekyll/",
         "teaser": null
+      },{
+        "title": "Stability Monitor Loki",
+        "excerpt":"Install Loki To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide. Step 1: Download...","categories": ["Blog"],
+        "tags": ["monitor","stability"],
+        "url": "/blog/stability-monitor-loki/",
+        "teaser": null
+      },{
+        "title": "Stability Monitor Prometheus",
+        "excerpt":"Background A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters,...","categories": ["Blog"],
+        "tags": ["monitor","stability"],
+        "url": "/blog/stability-monitor-prometheus/",
+        "teaser": null
+      },{
+        "title": "Install Promtail",
+        "excerpt":"Install Promtail First you can down load the Promtail zip file from github,https://github.com/grafana/loki/releases. For example you download the 3.1.2 version wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip Second you unzip file, and move it the suit place. unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail Grant the promtail execute privilage chmod +x /usr/local/bin/promtail Create the Promtail config file...","categories": ["monitoring"],
+        "tags": ["monitoring"],
+        "url": "/monitoring/stability-monitor-promtail/",
+        "teaser": null
       }]

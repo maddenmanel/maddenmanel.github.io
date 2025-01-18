@@ -1,0 +1,95 @@
+<h2 id="install-promtail">Install Promtail</h2>
+
+<p>First you can down load the Promtail zip file from github,https://github.com/grafana/loki/releases.</p>
+
+<p>For example you download the 3.1.2 version</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip
+</code></pre></div></div>
+
+<p>Second you unzip file, and move it the suit place.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip promtail-linux-amd64.zip
+<span class="nb">mv </span>promtail-linux-amd64 /usr/local/bin/promtail
+</code></pre></div></div>
+
+<p>Grant the promtail execute privilage</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/promtail
+</code></pre></div></div>
+
+<p>Create the Promtail config file</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/promtail
+vim /etc/promtail/promtail-config.yaml
+</code></pre></div></div>
+
+<p>this file config is my use;</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://192.168.18.58:3100/loki/api/v1/push
+    batchsize: 1048576  <span class="c"># 批量大小，单位字节（1MB）</span>
+    batchwait: 2s  <span class="c"># 批量发送间隔</span>
+
+scrape_configs:
+  - job_name: dl-underwriting-rule-db
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: dl-underwriting-rule-db
+          __path__: /var/log/dl-underwriting-rule-db/<span class="k">*</span>log
+
+  - job_name: dl-underwriting-rule
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: dl-underwriting-rule
+          __path__: /var/log/dl-underwriting-rule/<span class="k">*</span>log
+
+  - job_name: dl-underwriting-rule-hh
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: dl-underwriting-rule-hh
+          __path__: /var/log/dl-underwriting-rule-hh/<span class="k">*</span>log
+</code></pre></div></div>
+
+<p>Create Promtail service file</p>
+
+<p>In order to Promtail can start as the system start, we need create a systemd service file.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/promtail.service
+
+<span class="o">[</span>Unit]
+<span class="nv">Description</span><span class="o">=</span>Promtail - A log collection agent <span class="k">for </span>Loki
+<span class="nv">Documentation</span><span class="o">=</span>https://grafana.com/docs/loki/latest/clients/promtail/
+<span class="nv">After</span><span class="o">=</span>network.target
+
+<span class="o">[</span>Service]
+<span class="nv">ExecStart</span><span class="o">=</span>/usr/local/bin/promtail <span class="nt">-config</span>.file<span class="o">=</span>/etc/promtail/promtail-config.yaml
+<span class="nv">Restart</span><span class="o">=</span>on-failure
+<span class="nv">User</span><span class="o">=</span>delian
+<span class="nv">Group</span><span class="o">=</span>delian
+
+<span class="o">[</span>Install]
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+</code></pre></div></div>
+
+<p>Start the Promtail service</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
+systemctl start promtail
+systemctl <span class="nb">enable </span>promtail 
+systemctl status promtail
+
+</code></pre></div></div>
