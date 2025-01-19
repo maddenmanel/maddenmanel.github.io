@@ -152,21 +152,21 @@ JVM monitoring can track the following metrics:
 
 <div class="mermaid">
 mindmap
-  root((Java进程占用内存))
-    JVM内存
-      堆内存
-        年轻代
-        老年代
-      堆外内存
-        元空间
-        压缩类空间
-        虚拟机线程栈
-        本地线程栈
-        代码缓冲区
-        直接缓冲
-    非JVM内存
-      本地运行库
-      JNI本地代码 
+  root((Java Process Memory Usage))
+    JVM Memory
+      Heap Memory
+        Young Generation
+        Old Generation
+      Non-Heap Memory
+        Metaspace
+        Compressed Class Space
+        Virtual Machine Thread Stack
+        Native Thread Stack
+        Code Cache
+        Direct Buffers
+    Non-JVM Memory
+      Native Runtime Libraries
+      JNI Native Code
 </div>
 
 #### Host Monitoring

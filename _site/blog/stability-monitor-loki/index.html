@@ -11,7 +11,7 @@
     <meta charset="utf-8">
 
 <!-- begin _includes/seo.html --><title>Stability Monitor Loki - Madden’s Blog</title>
-<meta name="description" content="Install Loki  To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.  Step 1: Download the Loki Binary  Go to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary:   wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip   Once downloaded, extract the .zip file:   unzip loki-linux-amd64.zip   This will create a folder containing the Loki binary (loki-linux-amd64).  Step 2: Move Loki to a System Directory  Move the extracted binary to a directory in your PATH (e.g., /usr/local/bin):  mv loki-linux-amd64 /usr/local/bin/loki   Ensure the binary is executable:  chmod +x /usr/local/bin/loki   Step 3: Create a Configuration File (Optional)  mkdir -p /etc/loki vim /etc/loki/local-config.yaml   local-config.yaml content  auth_enabled: false  server:   http_listen_port: 3100   grpc_listen_port: 9095  common:   path_prefix: /loki/data  # 设置 Loki 数据的路径前缀，确保所有的路径都在这个目录下  storage_config:   boltdb_shipper:     active_index_directory: /loki/index     cache_location: /loki/cache     resync_interval: 10m   filesystem:     directory: /loki/chunks  limits_config:   retention_period: 90d  # 日志保留时间   allow_structured_metadata: false  # 禁用结构化元数据  schema_config:   configs:     - from: 2020-10-21       store: boltdb-shipper       object_store: filesystem       schema: v13       index:         prefix: index_         period: 24h  # 设置索引周期为 24 小时  compactor:   working_directory: /loki/compactor  # compactor 存储路径  table_manager:   retention_deletes_enabled: true   retention_period: 90d  ingester:   lifecycler:     ring:       kvstore:         store: memberlist       replication_factor: 1   chunk_target_size: 1048576  # 每个 chunk 的目标大小   max_chunk_age: 1h  # chunk 最大生命周期  memberlist:   join_members: []  # 单节点配置为空列表，不需要加入集群   Config the category you want loki logfile save  mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor chown -R loki:loki /var/loki vim /etc/systemd/system/loki.service   [Unit] Description=Loki Documentation=https://grafana.com/docs/loki/latest/ After=network.target  [Service] ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml Restart=on-failure User=delian Group=delian  [Install] WantedBy=multi-user.target   mkdir -p /loki/index mkdir -p /loki/cache mkdir -p /loki/chunks mkdir -p /loki/compactor chown -R loki:loki/loki/ chown -R delian:delian /loki/ chown delian:delian /usr/local/bin/loki vim /etc/systemd/system/loki.service systemctl daemon-reload systemctl enable loki systemctl start loki systemctl status loki journalctl -u loki -f loki --version journalctl -u loki -f">
+<meta name="description" content="Install Loki  To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.  Step 1: Download the Loki Binary  Go to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary:  wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip   Once downloaded, extract the .zip file:  unzip loki-linux-amd64.zip   This will create a folder containing the Loki binary (loki-linux-amd64).  Step 2: Move Loki to a System Directory  Move the extracted binary to a directory in your PATH (e.g., /usr/local/bin):  mv loki-linux-amd64 /usr/local/bin/loki   Ensure the binary is executable:  chmod +x /usr/local/bin/loki   Step 3: Create a Configuration File (Optional)  Create a directory for Loki configuration and add the local-config.yaml file:  mkdir -p /etc/loki vim /etc/loki/local-config.yaml   The content for local-config.yaml:  auth_enabled: false  server:   http_listen_port: 3100   grpc_listen_port: 9095  common:   path_prefix: /loki/data    storage_config:   boltdb_shipper:     active_index_directory: /loki/index     cache_location: /loki/cache     resync_interval: 10m   filesystem:     directory: /loki/chunks  limits_config:   retention_period: 90d   allow_structured_metadata: false   schema_config:   configs:     - from: 2020-10-21       store: boltdb-shipper       object_store: filesystem       schema: v13       index:         prefix: index_         period: 24h    compactor:   working_directory: /loki/compactor   table_manager:   retention_deletes_enabled: true   retention_period: 90d  ingester:   lifecycler:     ring:       kvstore:         store: memberlist       replication_factor: 1   chunk_target_size: 1048576     max_chunk_age: 1h   memberlist:   join_members: []    Step 4: Configure Log File Storage  Define storage directories for Loki logs:  mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor chown -R loki:loki /var/loki   Create the Loki systemd service file:  vim /etc/systemd/system/loki.service   Add the following content:  [Unit] Description=Loki Documentation=https://grafana.com/docs/loki/latest/ After=network.target  [Service] ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml Restart=on-failure User=delian Group=delian  [Install] WantedBy=multi-user.target   Step 5: Start Loki Service  Reload systemd, enable and start the Loki service:  systemctl daemon-reload systemctl enable loki systemctl start loki systemctl status loki   To monitor logs:  journalctl -u loki -f   Verify the Loki version:  loki --version   Conclusion  By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.">
 
 
   <meta name="author" content="Madden Zhang">
@@ -27,7 +27,7 @@
 <meta property="og:url" content="http://localhost:4000/blog/stability-monitor-loki/">
 
 
-  <meta property="og:description" content="Install Loki  To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.  Step 1: Download the Loki Binary  Go to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary:   wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip   Once downloaded, extract the .zip file:   unzip loki-linux-amd64.zip   This will create a folder containing the Loki binary (loki-linux-amd64).  Step 2: Move Loki to a System Directory  Move the extracted binary to a directory in your PATH (e.g., /usr/local/bin):  mv loki-linux-amd64 /usr/local/bin/loki   Ensure the binary is executable:  chmod +x /usr/local/bin/loki   Step 3: Create a Configuration File (Optional)  mkdir -p /etc/loki vim /etc/loki/local-config.yaml   local-config.yaml content  auth_enabled: false  server:   http_listen_port: 3100   grpc_listen_port: 9095  common:   path_prefix: /loki/data  # 设置 Loki 数据的路径前缀，确保所有的路径都在这个目录下  storage_config:   boltdb_shipper:     active_index_directory: /loki/index     cache_location: /loki/cache     resync_interval: 10m   filesystem:     directory: /loki/chunks  limits_config:   retention_period: 90d  # 日志保留时间   allow_structured_metadata: false  # 禁用结构化元数据  schema_config:   configs:     - from: 2020-10-21       store: boltdb-shipper       object_store: filesystem       schema: v13       index:         prefix: index_         period: 24h  # 设置索引周期为 24 小时  compactor:   working_directory: /loki/compactor  # compactor 存储路径  table_manager:   retention_deletes_enabled: true   retention_period: 90d  ingester:   lifecycler:     ring:       kvstore:         store: memberlist       replication_factor: 1   chunk_target_size: 1048576  # 每个 chunk 的目标大小   max_chunk_age: 1h  # chunk 最大生命周期  memberlist:   join_members: []  # 单节点配置为空列表，不需要加入集群   Config the category you want loki logfile save  mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor chown -R loki:loki /var/loki vim /etc/systemd/system/loki.service   [Unit] Description=Loki Documentation=https://grafana.com/docs/loki/latest/ After=network.target  [Service] ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml Restart=on-failure User=delian Group=delian  [Install] WantedBy=multi-user.target   mkdir -p /loki/index mkdir -p /loki/cache mkdir -p /loki/chunks mkdir -p /loki/compactor chown -R loki:loki/loki/ chown -R delian:delian /loki/ chown delian:delian /usr/local/bin/loki vim /etc/systemd/system/loki.service systemctl daemon-reload systemctl enable loki systemctl start loki systemctl status loki journalctl -u loki -f loki --version journalctl -u loki -f">
+  <meta property="og:description" content="Install Loki  To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.  Step 1: Download the Loki Binary  Go to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary:  wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip   Once downloaded, extract the .zip file:  unzip loki-linux-amd64.zip   This will create a folder containing the Loki binary (loki-linux-amd64).  Step 2: Move Loki to a System Directory  Move the extracted binary to a directory in your PATH (e.g., /usr/local/bin):  mv loki-linux-amd64 /usr/local/bin/loki   Ensure the binary is executable:  chmod +x /usr/local/bin/loki   Step 3: Create a Configuration File (Optional)  Create a directory for Loki configuration and add the local-config.yaml file:  mkdir -p /etc/loki vim /etc/loki/local-config.yaml   The content for local-config.yaml:  auth_enabled: false  server:   http_listen_port: 3100   grpc_listen_port: 9095  common:   path_prefix: /loki/data    storage_config:   boltdb_shipper:     active_index_directory: /loki/index     cache_location: /loki/cache     resync_interval: 10m   filesystem:     directory: /loki/chunks  limits_config:   retention_period: 90d   allow_structured_metadata: false   schema_config:   configs:     - from: 2020-10-21       store: boltdb-shipper       object_store: filesystem       schema: v13       index:         prefix: index_         period: 24h    compactor:   working_directory: /loki/compactor   table_manager:   retention_deletes_enabled: true   retention_period: 90d  ingester:   lifecycler:     ring:       kvstore:         store: memberlist       replication_factor: 1   chunk_target_size: 1048576     max_chunk_age: 1h   memberlist:   join_members: []    Step 4: Configure Log File Storage  Define storage directories for Loki logs:  mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor chown -R loki:loki /var/loki   Create the Loki systemd service file:  vim /etc/systemd/system/loki.service   Add the following content:  [Unit] Description=Loki Documentation=https://grafana.com/docs/loki/latest/ After=network.target  [Service] ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml Restart=on-failure User=delian Group=delian  [Install] WantedBy=multi-user.target   Step 5: Start Loki Service  Reload systemd, enable and start the Loki service:  systemctl daemon-reload systemctl enable loki systemctl start loki systemctl status loki   To monitor logs:  journalctl -u loki -f   Verify the Loki version:  loki --version   Conclusion  By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.">
 
 
 
@@ -270,7 +270,7 @@
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
     <meta itemprop="headline" content="Stability Monitor Loki">
-    <meta itemprop="description" content="Install LokiTo install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.Step 1: Download the Loki BinaryGo to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary: wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zipOnce downloaded, extract the .zip file: unzip loki-linux-amd64.zipThis will create a folder containing the Loki binary (loki-linux-amd64).Step 2: Move Loki to a System DirectoryMove the extracted binary to a directory in your PATH (e.g., /usr/local/bin):mv loki-linux-amd64 /usr/local/bin/lokiEnsure the binary is executable:chmod +x /usr/local/bin/lokiStep 3: Create a Configuration File (Optional)mkdir -p /etc/lokivim /etc/loki/local-config.yamllocal-config.yaml contentauth_enabled: falseserver:  http_listen_port: 3100  grpc_listen_port: 9095common:  path_prefix: /loki/data  # 设置 Loki 数据的路径前缀，确保所有的路径都在这个目录下storage_config:  boltdb_shipper:    active_index_directory: /loki/index    cache_location: /loki/cache    resync_interval: 10m  filesystem:    directory: /loki/chunkslimits_config:  retention_period: 90d  # 日志保留时间  allow_structured_metadata: false  # 禁用结构化元数据schema_config:  configs:    - from: 2020-10-21      store: boltdb-shipper      object_store: filesystem      schema: v13      index:        prefix: index_        period: 24h  # 设置索引周期为 24 小时compactor:  working_directory: /loki/compactor  # compactor 存储路径table_manager:  retention_deletes_enabled: true  retention_period: 90dingester:  lifecycler:    ring:      kvstore:        store: memberlist      replication_factor: 1  chunk_target_size: 1048576  # 每个 chunk 的目标大小  max_chunk_age: 1h  # chunk 最大生命周期memberlist:  join_members: []  # 单节点配置为空列表，不需要加入集群Config the category you want loki logfile savemkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactorchown -R loki:loki /var/lokivim /etc/systemd/system/loki.service[Unit]Description=LokiDocumentation=https://grafana.com/docs/loki/latest/After=network.target[Service]ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yamlRestart=on-failureUser=delianGroup=delian[Install]WantedBy=multi-user.targetmkdir -p /loki/indexmkdir -p /loki/cachemkdir -p /loki/chunksmkdir -p /loki/compactorchown -R loki:loki/loki/chown -R delian:delian /loki/chown delian:delian /usr/local/bin/lokivim /etc/systemd/system/loki.servicesystemctl daemon-reloadsystemctl enable lokisystemctl start lokisystemctl status lokijournalctl -u loki -floki --versionjournalctl -u loki -f">
+    <meta itemprop="description" content="Install LokiTo install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.Step 1: Download the Loki BinaryGo to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary:wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zipOnce downloaded, extract the .zip file:unzip loki-linux-amd64.zipThis will create a folder containing the Loki binary (loki-linux-amd64).Step 2: Move Loki to a System DirectoryMove the extracted binary to a directory in your PATH (e.g., /usr/local/bin):mv loki-linux-amd64 /usr/local/bin/lokiEnsure the binary is executable:chmod +x /usr/local/bin/lokiStep 3: Create a Configuration File (Optional)Create a directory for Loki configuration and add the local-config.yaml file:mkdir -p /etc/lokivim /etc/loki/local-config.yamlThe content for local-config.yaml:auth_enabled: falseserver:  http_listen_port: 3100  grpc_listen_port: 9095common:  path_prefix: /loki/data  storage_config:  boltdb_shipper:    active_index_directory: /loki/index    cache_location: /loki/cache    resync_interval: 10m  filesystem:    directory: /loki/chunkslimits_config:  retention_period: 90d  allow_structured_metadata: false schema_config:  configs:    - from: 2020-10-21      store: boltdb-shipper      object_store: filesystem      schema: v13      index:        prefix: index_        period: 24h  compactor:  working_directory: /loki/compactor table_manager:  retention_deletes_enabled: true  retention_period: 90dingester:  lifecycler:    ring:      kvstore:        store: memberlist      replication_factor: 1  chunk_target_size: 1048576    max_chunk_age: 1h memberlist:  join_members: [] Step 4: Configure Log File StorageDefine storage directories for Loki logs:mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactorchown -R loki:loki /var/lokiCreate the Loki systemd service file:vim /etc/systemd/system/loki.serviceAdd the following content:[Unit]Description=LokiDocumentation=https://grafana.com/docs/loki/latest/After=network.target[Service]ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yamlRestart=on-failureUser=delianGroup=delian[Install]WantedBy=multi-user.targetStep 5: Start Loki ServiceReload systemd, enable and start the Loki service:systemctl daemon-reloadsystemctl enable lokisystemctl start lokisystemctl status lokiTo monitor logs:journalctl -u loki -fVerify the Loki version:loki --versionConclusionBy following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.">
     <meta itemprop="datePublished" content="2025-01-11T00:00:00+08:00">
     
 
@@ -310,7 +310,7 @@
           <aside class="sidebar__right ">
             <nav class="toc">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
-              <ul class="toc__menu"><li><a href="#install-loki">Install Loki</a></li><li><a href="#step-1-download-the-loki-binary">Step 1: Download the Loki Binary</a></li><li><a href="#step-2-move-loki-to-a-system-directory">Step 2: Move Loki to a System Directory</a></li><li><a href="#step-3-create-a-configuration-file-optional">Step 3: Create a Configuration File (Optional)</a></li></ul>
+              <ul class="toc__menu"><li><a href="#install-loki">Install Loki</a><ul><li><a href="#step-1-download-the-loki-binary">Step 1: Download the Loki Binary</a></li><li><a href="#step-2-move-loki-to-a-system-directory">Step 2: Move Loki to a System Directory</a></li><li><a href="#step-3-create-a-configuration-file-optional">Step 3: Create a Configuration File (Optional)</a></li><li><a href="#step-4-configure-log-file-storage">Step 4: Configure Log File Storage</a></li><li><a href="#step-5-start-loki-service">Step 5: Start Loki Service</a></li><li><a href="#conclusion">Conclusion</a></li></ul></li></ul>
             </nav>
           </aside>
         
@@ -318,21 +318,21 @@
 
 <p>To install <strong>Loki</strong> version <strong>3.1.2</strong> on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.</p>
 
-<h2 id="step-1-download-the-loki-binary">Step 1: Download the Loki Binary</h2>
+<h3 id="step-1-download-the-loki-binary">Step 1: Download the Loki Binary</h3>
 
 <p>Go to the <a href="https://github.com/grafana/loki/releases">Loki GitHub releases page</a> and find version <strong>3.1.2</strong>. Or use <code class="language-plaintext highlighter-rouge">wget</code> to directly download the binary:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip
 </code></pre></div></div>
 
 <p>Once downloaded, extract the <code class="language-plaintext highlighter-rouge">.zip</code> file:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> unzip loki-linux-amd64.zip
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip loki-linux-amd64.zip
 </code></pre></div></div>
 
 <p>This will create a folder containing the Loki binary (<code class="language-plaintext highlighter-rouge">loki-linux-amd64</code>).</p>
 
-<h2 id="step-2-move-loki-to-a-system-directory">Step 2: Move Loki to a System Directory</h2>
+<h3 id="step-2-move-loki-to-a-system-directory">Step 2: Move Loki to a System Directory</h3>
 
 <p>Move the extracted binary to a directory in your PATH (e.g., <code class="language-plaintext highlighter-rouge">/usr/local/bin</code>):</p>
 
@@ -344,103 +344,120 @@
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/loki
 </code></pre></div></div>
 
-<h2 id="step-3-create-a-configuration-file-optional">Step 3: Create a Configuration File (Optional)</h2>
+<h3 id="step-3-create-a-configuration-file-optional">Step 3: Create a Configuration File (Optional)</h3>
+
+<p>Create a directory for Loki configuration and add the <code class="language-plaintext highlighter-rouge">local-config.yaml</code> file:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/loki
 vim /etc/loki/local-config.yaml
 </code></pre></div></div>
 
-<p>local-config.yaml content</p>
+<p>The content for <code class="language-plaintext highlighter-rouge">local-config.yaml</code>:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>auth_enabled: <span class="nb">false
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth_enabled</span><span class="pi">:</span> <span class="no">false</span>
 
-</span>server:
-  http_listen_port: 3100
-  grpc_listen_port: 9095
+<span class="na">server</span><span class="pi">:</span>
+  <span class="na">http_listen_port</span><span class="pi">:</span> <span class="m">3100</span>
+  <span class="na">grpc_listen_port</span><span class="pi">:</span> <span class="m">9095</span>
 
-common:
-  path_prefix: /loki/data  <span class="c"># 设置 Loki 数据的路径前缀，确保所有的路径都在这个目录下</span>
+<span class="na">common</span><span class="pi">:</span>
+  <span class="na">path_prefix</span><span class="pi">:</span> <span class="s">/loki/data</span>  
 
-storage_config:
-  boltdb_shipper:
-    active_index_directory: /loki/index
-    cache_location: /loki/cache
-    resync_interval: 10m
-  filesystem:
-    directory: /loki/chunks
+<span class="na">storage_config</span><span class="pi">:</span>
+  <span class="na">boltdb_shipper</span><span class="pi">:</span>
+    <span class="na">active_index_directory</span><span class="pi">:</span> <span class="s">/loki/index</span>
+    <span class="na">cache_location</span><span class="pi">:</span> <span class="s">/loki/cache</span>
+    <span class="na">resync_interval</span><span class="pi">:</span> <span class="s">10m</span>
+  <span class="na">filesystem</span><span class="pi">:</span>
+    <span class="na">directory</span><span class="pi">:</span> <span class="s">/loki/chunks</span>
 
-limits_config:
-  retention_period: 90d  <span class="c"># 日志保留时间</span>
-  allow_structured_metadata: <span class="nb">false</span>  <span class="c"># 禁用结构化元数据</span>
+<span class="na">limits_config</span><span class="pi">:</span>
+  <span class="na">retention_period</span><span class="pi">:</span> <span class="s">90d</span>
+  <span class="na">allow_structured_metadata</span><span class="pi">:</span> <span class="no">false</span> 
 
-schema_config:
-  configs:
-    - from: 2020-10-21
-      store: boltdb-shipper
-      object_store: filesystem
-      schema: v13
-      index:
-        prefix: index_
-        period: 24h  <span class="c"># 设置索引周期为 24 小时</span>
+<span class="na">schema_config</span><span class="pi">:</span>
+  <span class="na">configs</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">from</span><span class="pi">:</span> <span class="s">2020-10-21</span>
+      <span class="na">store</span><span class="pi">:</span> <span class="s">boltdb-shipper</span>
+      <span class="na">object_store</span><span class="pi">:</span> <span class="s">filesystem</span>
+      <span class="na">schema</span><span class="pi">:</span> <span class="s">v13</span>
+      <span class="na">index</span><span class="pi">:</span>
+        <span class="na">prefix</span><span class="pi">:</span> <span class="s">index_</span>
+        <span class="na">period</span><span class="pi">:</span> <span class="s">24h</span>  
 
-compactor:
-  working_directory: /loki/compactor  <span class="c"># compactor 存储路径</span>
+<span class="na">compactor</span><span class="pi">:</span>
+  <span class="na">working_directory</span><span class="pi">:</span> <span class="s">/loki/compactor</span> 
 
-table_manager:
-  retention_deletes_enabled: <span class="nb">true
-  </span>retention_period: 90d
+<span class="na">table_manager</span><span class="pi">:</span>
+  <span class="na">retention_deletes_enabled</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">retention_period</span><span class="pi">:</span> <span class="s">90d</span>
 
-ingester:
-  lifecycler:
-    ring:
-      kvstore:
-        store: memberlist
-      replication_factor: 1
-  chunk_target_size: 1048576  <span class="c"># 每个 chunk 的目标大小</span>
-  max_chunk_age: 1h  <span class="c"># chunk 最大生命周期</span>
+<span class="na">ingester</span><span class="pi">:</span>
+  <span class="na">lifecycler</span><span class="pi">:</span>
+    <span class="na">ring</span><span class="pi">:</span>
+      <span class="na">kvstore</span><span class="pi">:</span>
+        <span class="na">store</span><span class="pi">:</span> <span class="s">memberlist</span>
+      <span class="na">replication_factor</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">chunk_target_size</span><span class="pi">:</span> <span class="s">1048576</span>  
+  <span class="na">max_chunk_age</span><span class="pi">:</span> <span class="s">1h</span> 
 
-memberlist:
-  join_members: <span class="o">[]</span>  <span class="c"># 单节点配置为空列表，不需要加入集群</span>
+<span class="na">memberlist</span><span class="pi">:</span>
+  <span class="na">join_members</span><span class="pi">:</span> <span class="pi">[]</span> 
 </code></pre></div></div>
 
-<p>Config the category you want loki logfile save</p>
+<h3 id="step-4-configure-log-file-storage">Step 4: Configure Log File Storage</h3>
+
+<p>Define storage directories for Loki logs:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor
 <span class="nb">chown</span> <span class="nt">-R</span> loki:loki /var/loki
-vim /etc/systemd/system/loki.service
 </code></pre></div></div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
-<span class="nv">Description</span><span class="o">=</span>Loki
-<span class="nv">Documentation</span><span class="o">=</span>https://grafana.com/docs/loki/latest/
-<span class="nv">After</span><span class="o">=</span>network.target
+<p>Create the Loki systemd service file:</p>
 
-<span class="o">[</span>Service]
-<span class="nv">ExecStart</span><span class="o">=</span>/usr/local/bin/loki <span class="nt">-config</span>.file<span class="o">=</span>/etc/loki/local-config.yaml
-<span class="nv">Restart</span><span class="o">=</span>on-failure
-<span class="nv">User</span><span class="o">=</span>delian
-<span class="nv">Group</span><span class="o">=</span>delian
-
-<span class="o">[</span>Install]
-<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/loki.service
 </code></pre></div></div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /loki/index
-<span class="nb">mkdir</span> <span class="nt">-p</span> /loki/cache
-<span class="nb">mkdir</span> <span class="nt">-p</span> /loki/chunks
-<span class="nb">mkdir</span> <span class="nt">-p</span> /loki/compactor
-<span class="nb">chown</span> <span class="nt">-R</span> loki:loki/loki/
-<span class="nb">chown</span> <span class="nt">-R</span> delian:delian /loki/
-<span class="nb">chown </span>delian:delian /usr/local/bin/loki
-vim /etc/systemd/system/loki.service
-systemctl daemon-reload
+<p>Add the following content:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
+<span class="py">Description</span><span class="p">=</span><span class="s">Loki</span>
+<span class="py">Documentation</span><span class="p">=</span><span class="s">https://grafana.com/docs/loki/latest/</span>
+<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
+
+<span class="nn">[Service]</span>
+<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml</span>
+<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
+<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
+<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
+
+<span class="nn">[Install]</span>
+<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
+</code></pre></div></div>
+
+<h3 id="step-5-start-loki-service">Step 5: Start Loki Service</h3>
+
+<p>Reload systemd, enable and start the Loki service:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
 systemctl <span class="nb">enable </span>loki
 systemctl start loki
 systemctl status loki
-journalctl <span class="nt">-u</span> loki <span class="nt">-f</span>
-loki <span class="nt">--version</span>
-journalctl <span class="nt">-u</span> loki <span class="nt">-f</span>
 </code></pre></div></div>
+
+<p>To monitor logs:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> loki <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p>Verify the Loki version:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>loki <span class="nt">--version</span>
+</code></pre></div></div>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.</p>
 
         
       </section>
