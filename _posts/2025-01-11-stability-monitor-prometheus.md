@@ -1,5 +1,7 @@
 ---
 title: "Stability Monitor Prometheus"
+mathjax: true
+toc: true
 excerpt_separator: "<!--more-->"
 categories:
   - Blog
@@ -148,15 +150,6 @@ JVM monitoring can track the following metrics:
     - Number of threads in timed wait
     - Number of threads in waiting state
 
-```mermaid
-flowchart TD
-    A[Christmas] -->|Get money| B(Go shopping)
-    B --> C{Let me think}
-    C -->|One| D[Laptop]
-    C -->|Two| E[iPhone]
-    C -->|Three| F[fa:fa-car Car]
-```
-
 <div class="mermaid">
 mindmap
   root((Java进程占用内存))
@@ -225,3 +218,7 @@ Here’s how to install Prometheus step by step in English. If you use the docke
 - [Install Loki with Prometheus](/tool/stability-monitor-loki/)
 - [Install Promtail with Prometheus](/tool/stability-monitor-promtail/)
   
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>

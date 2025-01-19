@@ -1,0 +1,740 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.26.2 by Michael Rose
+  Copyright 2013-2024 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Stability Monitor Promtail - Madden’s Blog</title>
+<meta name="description" content="Installation of Promtail  Introduction  Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service.  Step 1: Download Promtail  The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here.  For example, to download version 3.1.2, you can execute the following command:  wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip   Step 2: Extract and Move Promtail to a Suitable Location  Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/.  unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail   Next, grant execute permissions to the Promtail binary to allow it to run:  chmod +x /usr/local/bin/promtail   Step 3: Create Promtail Configuration File  Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows:  mkdir -p /etc/promtail vim /etc/promtail/promtail-config.yaml   Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup.  server:   http_listen_port: 9080   grpc_listen_port: 0  positions:   filename: /tmp/positions.yaml  clients:   - url: http://192.168.18.58:3100/loki/api/v1/push     batchsize: 1048576     batchwait: 2s  scrape_configs:   - job_name: your-application-name     static_configs:       - targets:           - localhost         labels:           job: your-application-name           __path__: /var/log/your-application-name/*log   Step 4: Create Systemd Service File  In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file.  vim /etc/systemd/system/promtail.service   Add the following content to the file:  [Unit] Description=Promtail - A log collection agent for Loki Documentation=https://grafana.com/docs/loki/latest/clients/promtail/ After=network.target  [Service] ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml Restart=on-failure User=delian Group=delian  [Install] WantedBy=multi-user.target   Step 5: Start and Enable Promtail Service  After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time.  systemctl daemon-reload systemctl start promtail systemctl enable promtail systemctl status promtail   The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration.    Conclusion  In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.">
+
+
+  <meta name="author" content="Madden Zhang">
+  
+  <meta property="article:author" content="Madden Zhang">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Madden's Blog">
+<meta property="og:title" content="Stability Monitor Promtail">
+<meta property="og:url" content="http://localhost:4000/blog/stability-monitor-promtail/">
+
+
+  <meta property="og:description" content="Installation of Promtail  Introduction  Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service.  Step 1: Download Promtail  The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here.  For example, to download version 3.1.2, you can execute the following command:  wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip   Step 2: Extract and Move Promtail to a Suitable Location  Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/.  unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail   Next, grant execute permissions to the Promtail binary to allow it to run:  chmod +x /usr/local/bin/promtail   Step 3: Create Promtail Configuration File  Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows:  mkdir -p /etc/promtail vim /etc/promtail/promtail-config.yaml   Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup.  server:   http_listen_port: 9080   grpc_listen_port: 0  positions:   filename: /tmp/positions.yaml  clients:   - url: http://192.168.18.58:3100/loki/api/v1/push     batchsize: 1048576     batchwait: 2s  scrape_configs:   - job_name: your-application-name     static_configs:       - targets:           - localhost         labels:           job: your-application-name           __path__: /var/log/your-application-name/*log   Step 4: Create Systemd Service File  In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file.  vim /etc/systemd/system/promtail.service   Add the following content to the file:  [Unit] Description=Promtail - A log collection agent for Loki Documentation=https://grafana.com/docs/loki/latest/clients/promtail/ After=network.target  [Service] ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml Restart=on-failure User=delian Group=delian  [Install] WantedBy=multi-user.target   Step 5: Start and Enable Promtail Service  After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time.  systemctl daemon-reload systemctl start promtail systemctl enable promtail systemctl status promtail   The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration.    Conclusion  In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2025-01-14T00:00:00+08:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/blog/stability-monitor-promtail/">
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Madden's Blog Feed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  window.enable_copy_code_button = true;
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single" dir="ltr">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Madden's Blog
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a
+                href="/posts/"
+                
+                
+              >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/categories/"
+                
+                
+              >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/tags/"
+                
+                
+              >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/about/"
+                
+                
+              >About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/bio-photo.jpg" alt="Madden Zhang" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Madden Zhang</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>A slightly stubborn programmer.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Website</span></a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Stability Monitor Promtail">
+    <meta itemprop="description" content="Installation of PromtailIntroductionPromtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service.Step 1: Download PromtailThe first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here.For example, to download version 3.1.2, you can execute the following command:wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zipStep 2: Extract and Move Promtail to a Suitable LocationOnce the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/.unzip promtail-linux-amd64.zipmv promtail-linux-amd64 /usr/local/bin/promtailNext, grant execute permissions to the Promtail binary to allow it to run:chmod +x /usr/local/bin/promtailStep 3: Create Promtail Configuration FilePromtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows:mkdir -p /etc/promtailvim /etc/promtail/promtail-config.yamlBelow is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup.server:  http_listen_port: 9080  grpc_listen_port: 0positions:  filename: /tmp/positions.yamlclients:  - url: http://192.168.18.58:3100/loki/api/v1/push    batchsize: 1048576    batchwait: 2sscrape_configs:  - job_name: your-application-name    static_configs:      - targets:          - localhost        labels:          job: your-application-name          __path__: /var/log/your-application-name/*logStep 4: Create Systemd Service FileIn order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file.vim /etc/systemd/system/promtail.serviceAdd the following content to the file:[Unit]Description=Promtail - A log collection agent for LokiDocumentation=https://grafana.com/docs/loki/latest/clients/promtail/After=network.target[Service]ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yamlRestart=on-failureUser=delianGroup=delian[Install]WantedBy=multi-user.targetStep 5: Start and Enable Promtail ServiceAfter creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time.systemctl daemon-reloadsystemctl start promtailsystemctl enable promtailsystemctl status promtailThe service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration.ConclusionIn this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.">
+    <meta itemprop="datePublished" content="2025-01-14T00:00:00+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">
+            <a href="http://localhost:4000/blog/stability-monitor-promtail/" itemprop="url">Stability Monitor Promtail
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#installation-of-promtail">Installation of Promtail</a><ul><li><a href="#introduction">Introduction</a></li><li><a href="#step-1-download-promtail">Step 1: Download Promtail</a></li><li><a href="#step-2-extract-and-move-promtail-to-a-suitable-location">Step 2: Extract and Move Promtail to a Suitable Location</a></li><li><a href="#step-3-create-promtail-configuration-file">Step 3: Create Promtail Configuration File</a></li><li><a href="#step-4-create-systemd-service-file">Step 4: Create Systemd Service File</a></li><li><a href="#step-5-start-and-enable-promtail-service">Step 5: Start and Enable Promtail Service</a></li><li><a href="#conclusion">Conclusion</a></li></ul></li></ul>
+            </nav>
+          </aside>
+        
+        <h2 id="installation-of-promtail">Installation of Promtail</h2>
+
+<h3 id="introduction">Introduction</h3>
+
+<p>Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service.</p>
+
+<h3 id="step-1-download-promtail">Step 1: Download Promtail</h3>
+
+<p>The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release <a href="https://github.com/grafana/loki/releases">here</a>.</p>
+
+<p>For example, to download version 3.1.2, you can execute the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip
+</code></pre></div></div>
+
+<h3 id="step-2-extract-and-move-promtail-to-a-suitable-location">Step 2: Extract and Move Promtail to a Suitable Location</h3>
+
+<p>Once the file is downloaded, extract it and move the binary to a directory included in the system’s <code class="language-plaintext highlighter-rouge">$PATH</code>, such as <code class="language-plaintext highlighter-rouge">/usr/local/bin/</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip promtail-linux-amd64.zip
+<span class="nb">mv </span>promtail-linux-amd64 /usr/local/bin/promtail
+</code></pre></div></div>
+
+<p>Next, grant execute permissions to the Promtail binary to allow it to run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/promtail
+</code></pre></div></div>
+
+<h3 id="step-3-create-promtail-configuration-file">Step 3: Create Promtail Configuration File</h3>
+
+<p>Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/promtail
+vim /etc/promtail/promtail-config.yaml
+</code></pre></div></div>
+
+<p>Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">server</span><span class="pi">:</span>
+  <span class="na">http_listen_port</span><span class="pi">:</span> <span class="m">9080</span>
+  <span class="na">grpc_listen_port</span><span class="pi">:</span> <span class="m">0</span>
+
+<span class="na">positions</span><span class="pi">:</span>
+  <span class="na">filename</span><span class="pi">:</span> <span class="s">/tmp/positions.yaml</span>
+
+<span class="na">clients</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">url</span><span class="pi">:</span> <span class="s">http://192.168.18.58:3100/loki/api/v1/push</span>
+    <span class="na">batchsize</span><span class="pi">:</span> <span class="m">1048576</span>
+    <span class="na">batchwait</span><span class="pi">:</span> <span class="s">2s</span>
+
+<span class="na">scrape_configs</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s">your-application-name</span>
+    <span class="na">static_configs</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="s">localhost</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">job</span><span class="pi">:</span> <span class="s">your-application-name</span>
+          <span class="na">__path__</span><span class="pi">:</span> <span class="s">/var/log/your-application-name/*log</span>
+</code></pre></div></div>
+
+<h3 id="step-4-create-systemd-service-file">Step 4: Create Systemd Service File</h3>
+
+<p>In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/promtail.service
+</code></pre></div></div>
+
+<p>Add the following content to the file:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
+<span class="py">Description</span><span class="p">=</span><span class="s">Promtail - A log collection agent for Loki</span>
+<span class="py">Documentation</span><span class="p">=</span><span class="s">https://grafana.com/docs/loki/latest/clients/promtail/</span>
+<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
+
+<span class="nn">[Service]</span>
+<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml</span>
+<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
+<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
+<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
+
+<span class="nn">[Install]</span>
+<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
+</code></pre></div></div>
+
+<h3 id="step-5-start-and-enable-promtail-service">Step 5: Start and Enable Promtail Service</h3>
+
+<p>After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
+systemctl start promtail
+systemctl <span class="nb">enable </span>promtail
+systemctl status promtail
+</code></pre></div></div>
+
+<p>The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration.</p>
+
+<hr />
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#monitor" class="page__taxonomy-item p-category" rel="tag">monitor</a><span class="sep">, </span>
+    
+      <a href="/tags/#stability" class="page__taxonomy-item p-category" rel="tag">stability</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#blog" class="page__taxonomy-item p-category" rel="tag">Blog</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2025-01-14T00:00:00+08:00">January 14, 2025</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  <h4 class="page__share-title">Share on</h4>
+
+  <a href="https://twitter.com/intent/tweet?text=Stability+Monitor+Promtail%20http%3A%2F%2Flocalhost%3A4000%2Fblog%2Fstability-monitor-promtail%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fblog%2Fstability-monitor-promtail%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/blog/stability-monitor-promtail/" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/stability-monitor-prometheus/" class="pagination--pager" title="Stability Monitor Prometheus">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    
+<div class="page__related">
+  
+  <h2 class="page__related-title">You May Also Enjoy</h2>
+  <div class="grid__wrapper">
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-prometheus/" rel="permalink">Stability Monitor Prometheus
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Background
+A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams t...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-loki/" rel="permalink">Stability Monitor Loki
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Install Loki
+
+To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Lab...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/welcome-to-jekyll/" rel="permalink">Welcome to Jekyll!
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different wa...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="https://github.com">Post: Link
+</a> <a href="/blog/post-link/" rel="permalink"><i class="fas fa-link" aria-hidden="true" title="permalink"></i><span class="sr-only">Permalink</span></a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">This theme supports link posts, made famous by John Gruber. To use, just add link: http://url-you-want-linked to the post’s YAML front matter and you’re done.
+
+</p>
+  </article>
+</div>
+
+    
+  </div>
+</div>
+
+  
+  
+</div>
+
+      
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2025 <a href="http://localhost:4000">Madden's Blog</a>. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+  </body>
+</html>

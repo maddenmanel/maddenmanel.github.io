@@ -1,5 +1,7 @@
 ---
 title: "Stability Monitor Loki"
+mathjax: true
+toc: true
 excerpt_separator: "<!--more-->"
 categories:
   - Blog

@@ -53,9 +53,9 @@ var store = [{
         "url": "/blog/stability-monitor-prometheus/",
         "teaser": null
       },{
-        "title": "Install Promtail",
-        "excerpt":"Install Promtail First you can down load the Promtail zip file from github,https://github.com/grafana/loki/releases. For example you download the 3.1.2 version wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip Second you unzip file, and move it the suit place. unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail Grant the promtail execute privilage chmod +x /usr/local/bin/promtail Create the Promtail config file...","categories": ["monitoring"],
-        "tags": ["monitoring"],
-        "url": "/monitoring/stability-monitor-promtail/",
+        "title": "Stability Monitor Promtail",
+        "excerpt":"Installation of Promtail Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure...","categories": ["Blog"],
+        "tags": ["monitor","stability"],
+        "url": "/blog/stability-monitor-promtail/",
         "teaser": null
       }]
