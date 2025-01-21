@@ -163,6 +163,6 @@ Verify the Loki version:
 loki --version
 ```
 
-### Conclusion
+## Conclusion
 
 By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.

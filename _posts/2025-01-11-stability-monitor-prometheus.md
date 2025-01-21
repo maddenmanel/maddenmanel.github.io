@@ -10,7 +10,7 @@ tags:
   - stability
 ---
 
-### Background
+## Background
 A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects:
 <table>
   <thead>
@@ -54,7 +54,7 @@ A significant part of system stability is supported by monitoring. Large compani
   </tbody>
 </table>
 
-### Best Practices for Selection
+## Best Practices for Selection
 Small and medium-sized companies can quickly build a monitoring system that suits their business characteristics. Prometheus has already become the standard for real-time monitoring. We can quickly set up our own monitoring system based on Prometheus:
 <table>
   <thead>
@@ -98,7 +98,7 @@ Small and medium-sized companies can quickly build a monitoring system that suit
   </tbody>
 </table>
 
-### System Architecture Design
+## System Architecture Design
 <div class="mermaid">
   graph TD;
     A[Prometheus] --> B[Exporters]
@@ -113,8 +113,8 @@ Small and medium-sized companies can quickly build a monitoring system that suit
     I --> E
 </div>
 
-### Defining Refined Monitoring Metrics
-#### JVM Monitoring
+## Defining Refined Monitoring Metrics
+### JVM Monitoring
 
 JVM monitoring is used to track important JVM metrics, including GC (Garbage Collection) instant metrics, heap memory metrics, non-heap memory metrics, metaspace metrics, direct buffer metrics, JVM thread count, etc. This section introduces JVM monitoring and how to view JVM monitoring metrics.
 
@@ -169,7 +169,7 @@ mindmap
       JNI Native Code
 </div>
 
-#### Host Monitoring
+### Host Monitoring
 
 Host monitoring tracks various metrics such as CPU, memory, disk, load, network traffic, and network packet metrics. This section introduces host monitoring and how to view host monitoring metrics.
 
@@ -203,17 +203,17 @@ Host monitoring can track the following metrics:
     - Number of network errors per minute
     - Number of dropped packets per minute
     
-#### **SQL Call Analysis**
+### **SQL Call Analysis**
 
 View SQL call analysis to understand SQL call patterns in applications.
 
-#### Error Code Monitoring
+### Error Code Monitoring
 
 For core business systems, such as payment systems, error code monitoring is essential.
 
 Here’s how to install Prometheus step by step in English. If you use the docker you can use this to setup, this is the easy way. [springboot-promethenus-grafana](https://github.com/maddenmanel/springboot-prometheus-grafana). 
 
-#### Install Article list
+### Install Article list
 
 - [Install Loki with Prometheus](/tool/stability-monitor-loki/)
 - [Install Promtail with Prometheus](/tool/stability-monitor-promtail/)

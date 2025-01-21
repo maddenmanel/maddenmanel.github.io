@@ -10,9 +10,7 @@ tags:
   - stability
 ---
 
-## Installation of Promtail
-
-### Introduction
+## Introduction
 
 Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service.
 
@@ -116,6 +114,6 @@ The service will now run in the background, collecting and forwarding logs to Lo
 
 ---
 
-### Conclusion
+## Conclusion
 
 In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.
