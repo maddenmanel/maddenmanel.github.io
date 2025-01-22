@@ -35,6 +35,12 @@ var store = [{
         "url": "/blog/post-link/",
         "teaser": null
       },{
+        "title": "Distribute Design Kafka",
+        "excerpt":"Introduction Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera,...","categories": ["Blog"],
+        "tags": ["distribute","kafka"],
+        "url": "/blog/distribute-design-kafka/",
+        "teaser": null
+      },{
         "title": "Welcome to Jekyll!",
         "excerpt":"You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when...","categories": ["blog"],
         "tags": ["Jekyll","update"],
@@ -54,7 +60,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Stability Monitor Promtail",
-        "excerpt":"Installation of Promtail Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure...","categories": ["Blog"],
+        "excerpt":"Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously...","categories": ["Blog"],
         "tags": ["monitor","stability"],
         "url": "/blog/stability-monitor-promtail/",
         "teaser": null

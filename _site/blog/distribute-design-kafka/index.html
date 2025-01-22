@@ -1,0 +1,822 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.26.2 by Michael Rose
+  Copyright 2013-2024 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Distribute Design Kafka - Madden’s Blog</title>
+<meta name="description" content="Introduction  Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark.  As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles.  Key Terminologies                 Term       Explanation                       Broker       A Kafka node that handles message processing. Multiple brokers form a Kafka cluster.                 Topic       Kafka uses topics to categorize messages. Every message published to Kafka needs a topic.                 Producer       The client that sends messages to Kafka brokers.                 Consumer       The client that reads messages from Kafka brokers.                 Consumer Group       A group of consumers, where each message can only be consumed by one consumer within the group.                 Partition       The physical division of a topic. A topic can have multiple partitions.                 Segment       A partition is divided into multiple segments.                 Offset       A unique identifier for messages within a partition. Each message has a sequential offset number.           Kafka’s Storage Mechanism  Kafka’s storage mechanism can be understood from four aspects:  Partition Distribution in Topics  In a Kafka cluster, each partition of a topic is stored across multiple brokers. For instance, consider a setup where a topic like report_push has four partitions. Kafka partitions are stored as directories with the naming convention: topic-name-partition-index.  Partition File Storage  Each partition is stored as a series of segments, which are essentially large files. Each segment file consists of two parts: an index file (.index) and a data file (.log).   graph TD   A[Producer] --&gt;|Pushes data| B[Kafka Broker]   B --&gt;|Distributes messages| C[Partition]   C --&gt; D[Segment]   D --&gt; E[Message]   Segment Storage Structure  A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages. Segment files are named based on the last message’s offset, helping Kafka efficiently locate data.   graph TD   A[Segment] --&gt; B[Index File]   A --&gt; C[Data File]   B --&gt; D[Message Metadata]   C --&gt; E[Message Data]   Locating Messages Using Offsets  Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it.   graph TD   A[Partition] --&gt; B[Message with Offset]   B --&gt; C[Index File Lookup]   C --&gt; D[Data File Access]   Kafka’s Internal Architecture  The internal architecture of Kafka includes the following core components:     Producer: Sends messages to the Kafka cluster.   Broker: Handles messages and stores partitions.   Consumer: Pulls messages from the Kafka cluster.   Zookeeper: Manages Kafka’s cluster state and coordinates leader election and partition management.    graph TD   A[Producer] --&gt; B[Broker]   B --&gt; C[Partition]   C --&gt; D[Consumer]   D --&gt; E[Zookeeper]   Ensuring High Reliability  Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures.  Data Synchronization  Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers.   graph TD   A[Producer] --&gt; B[Leader Partition]   B --&gt; C[Follower 1]   B --&gt; D[Follower 2]   C --&gt; E[Write Sync]   D --&gt; E[Write Sync]   Replica Placement Strategy  Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas.   graph TD   A[Broker 1] --&gt; B[Partition 1 Replica 1]   A[Broker 2] --&gt; C[Partition 1 Replica 2]   A[Broker 3] --&gt; D[Partition 1 Replica 3]   Synchronization Strategy  Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader.   graph TD   A[Producer] --&gt; B[Leader]   B --&gt; C[Follower 1]   B --&gt; D[Follower 2]   C --&gt; E[ACK]   D --&gt; E[ACK]   E --&gt; F[Leader Commit]   Leader Election  Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition.   graph TD   A[Zookeeper] --&gt; B[Partition 1 Leader Election]   B --&gt; C[Follower 1]   B --&gt; D[Follower 2]   C --&gt; E[Leader Role]   D --&gt; F[Follower Role]   Conclusion  Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems.  The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.">
+
+
+  <meta name="author" content="Madden Zhang">
+  
+  <meta property="article:author" content="Madden Zhang">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Madden's Blog">
+<meta property="og:title" content="Distribute Design Kafka">
+<meta property="og:url" content="http://localhost:4000/blog/distribute-design-kafka/">
+
+
+  <meta property="og:description" content="Introduction  Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark.  As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles.  Key Terminologies                 Term       Explanation                       Broker       A Kafka node that handles message processing. Multiple brokers form a Kafka cluster.                 Topic       Kafka uses topics to categorize messages. Every message published to Kafka needs a topic.                 Producer       The client that sends messages to Kafka brokers.                 Consumer       The client that reads messages from Kafka brokers.                 Consumer Group       A group of consumers, where each message can only be consumed by one consumer within the group.                 Partition       The physical division of a topic. A topic can have multiple partitions.                 Segment       A partition is divided into multiple segments.                 Offset       A unique identifier for messages within a partition. Each message has a sequential offset number.           Kafka’s Storage Mechanism  Kafka’s storage mechanism can be understood from four aspects:  Partition Distribution in Topics  In a Kafka cluster, each partition of a topic is stored across multiple brokers. For instance, consider a setup where a topic like report_push has four partitions. Kafka partitions are stored as directories with the naming convention: topic-name-partition-index.  Partition File Storage  Each partition is stored as a series of segments, which are essentially large files. Each segment file consists of two parts: an index file (.index) and a data file (.log).   graph TD   A[Producer] --&gt;|Pushes data| B[Kafka Broker]   B --&gt;|Distributes messages| C[Partition]   C --&gt; D[Segment]   D --&gt; E[Message]   Segment Storage Structure  A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages. Segment files are named based on the last message’s offset, helping Kafka efficiently locate data.   graph TD   A[Segment] --&gt; B[Index File]   A --&gt; C[Data File]   B --&gt; D[Message Metadata]   C --&gt; E[Message Data]   Locating Messages Using Offsets  Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it.   graph TD   A[Partition] --&gt; B[Message with Offset]   B --&gt; C[Index File Lookup]   C --&gt; D[Data File Access]   Kafka’s Internal Architecture  The internal architecture of Kafka includes the following core components:     Producer: Sends messages to the Kafka cluster.   Broker: Handles messages and stores partitions.   Consumer: Pulls messages from the Kafka cluster.   Zookeeper: Manages Kafka’s cluster state and coordinates leader election and partition management.    graph TD   A[Producer] --&gt; B[Broker]   B --&gt; C[Partition]   C --&gt; D[Consumer]   D --&gt; E[Zookeeper]   Ensuring High Reliability  Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures.  Data Synchronization  Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers.   graph TD   A[Producer] --&gt; B[Leader Partition]   B --&gt; C[Follower 1]   B --&gt; D[Follower 2]   C --&gt; E[Write Sync]   D --&gt; E[Write Sync]   Replica Placement Strategy  Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas.   graph TD   A[Broker 1] --&gt; B[Partition 1 Replica 1]   A[Broker 2] --&gt; C[Partition 1 Replica 2]   A[Broker 3] --&gt; D[Partition 1 Replica 3]   Synchronization Strategy  Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader.   graph TD   A[Producer] --&gt; B[Leader]   B --&gt; C[Follower 1]   B --&gt; D[Follower 2]   C --&gt; E[ACK]   D --&gt; E[ACK]   E --&gt; F[Leader Commit]   Leader Election  Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition.   graph TD   A[Zookeeper] --&gt; B[Partition 1 Leader Election]   B --&gt; C[Follower 1]   B --&gt; D[Follower 2]   C --&gt; E[Leader Role]   D --&gt; F[Follower Role]   Conclusion  Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems.  The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2018-07-11T00:00:00+08:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/blog/distribute-design-kafka/">
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Madden's Blog Feed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  window.enable_copy_code_button = true;
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single" dir="ltr">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Madden's Blog
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a
+                href="/posts/"
+                
+                
+              >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/categories/"
+                
+                
+              >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/tags/"
+                
+                
+              >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/about/"
+                
+                
+              >About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/bio-photo.jpg" alt="Madden Zhang" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Madden Zhang</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>A slightly stubborn programmer.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Website</span></a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Distribute Design Kafka">
+    <meta itemprop="description" content="IntroductionApache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark.As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles.Key Terminologies            Term      Explanation                  Broker      A Kafka node that handles message processing. Multiple brokers form a Kafka cluster.              Topic      Kafka uses topics to categorize messages. Every message published to Kafka needs a topic.              Producer      The client that sends messages to Kafka brokers.              Consumer      The client that reads messages from Kafka brokers.              Consumer Group      A group of consumers, where each message can only be consumed by one consumer within the group.              Partition      The physical division of a topic. A topic can have multiple partitions.              Segment      A partition is divided into multiple segments.              Offset      A unique identifier for messages within a partition. Each message has a sequential offset number.      Kafka’s Storage MechanismKafka’s storage mechanism can be understood from four aspects:Partition Distribution in TopicsIn a Kafka cluster, each partition of a topic is stored across multiple brokers.For instance, consider a setup where a topic like report_push has four partitions.Kafka partitions are stored as directories with the naming convention: topic-name-partition-index.Partition File StorageEach partition is stored as a series of segments, which are essentially large files.Each segment file consists of two parts: an index file (.index) and a data file (.log).graph TD  A[Producer] --&gt;|Pushes data| B[Kafka Broker]  B --&gt;|Distributes messages| C[Partition]  C --&gt; D[Segment]  D --&gt; E[Message]Segment Storage StructureA segment file includes index and data files. The index file stores metadata, while the data file stores actual messages.Segment files are named based on the last message’s offset, helping Kafka efficiently locate data.graph TD  A[Segment] --&gt; B[Index File]  A --&gt; C[Data File]  B --&gt; D[Message Metadata]  C --&gt; E[Message Data]Locating Messages Using OffsetsKafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it.graph TD  A[Partition] --&gt; B[Message with Offset]  B --&gt; C[Index File Lookup]  C --&gt; D[Data File Access]Kafka’s Internal ArchitectureThe internal architecture of Kafka includes the following core components:  Producer: Sends messages to the Kafka cluster.  Broker: Handles messages and stores partitions.  Consumer: Pulls messages from the Kafka cluster.  Zookeeper: Manages Kafka’s cluster state and coordinates leader election and partition management.graph TD  A[Producer] --&gt; B[Broker]  B --&gt; C[Partition]  C --&gt; D[Consumer]  D --&gt; E[Zookeeper]Ensuring High ReliabilityKafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures.Data SynchronizationKafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers.graph TD  A[Producer] --&gt; B[Leader Partition]  B --&gt; C[Follower 1]  B --&gt; D[Follower 2]  C --&gt; E[Write Sync]  D --&gt; E[Write Sync]Replica Placement StrategyKafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas.graph TD  A[Broker 1] --&gt; B[Partition 1 Replica 1]  A[Broker 2] --&gt; C[Partition 1 Replica 2]  A[Broker 3] --&gt; D[Partition 1 Replica 3]Synchronization StrategyProducers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader.graph TD  A[Producer] --&gt; B[Leader]  B --&gt; C[Follower 1]  B --&gt; D[Follower 2]  C --&gt; E[ACK]  D --&gt; E[ACK]  E --&gt; F[Leader Commit]Leader ElectionKafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition.graph TD  A[Zookeeper] --&gt; B[Partition 1 Leader Election]  B --&gt; C[Follower 1]  B --&gt; D[Follower 2]  C --&gt; E[Leader Role]  D --&gt; F[Follower Role]ConclusionKafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems.The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.">
+    <meta itemprop="datePublished" content="2018-07-11T00:00:00+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">
+            <a href="http://localhost:4000/blog/distribute-design-kafka/" itemprop="url">Distribute Design Kafka
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#introduction">Introduction</a></li><li><a href="#key-terminologies">Key Terminologies</a></li><li><a href="#kafkas-storage-mechanism">Kafka’s Storage Mechanism</a><ul><li><a href="#partition-distribution-in-topics">Partition Distribution in Topics</a></li><li><a href="#partition-file-storage">Partition File Storage</a></li><li><a href="#segment-storage-structure">Segment Storage Structure</a></li><li><a href="#locating-messages-using-offsets">Locating Messages Using Offsets</a></li></ul></li><li><a href="#kafkas-internal-architecture">Kafka’s Internal Architecture</a></li><li><a href="#ensuring-high-reliability">Ensuring High Reliability</a><ul><li><a href="#data-synchronization">Data Synchronization</a></li><li><a href="#replica-placement-strategy">Replica Placement Strategy</a></li><li><a href="#synchronization-strategy">Synchronization Strategy</a></li><li><a href="#leader-election">Leader Election</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li></ul>
+            </nav>
+          </aside>
+        
+        <h2 id="introduction">Introduction</h2>
+
+<p>Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark.</p>
+
+<p>As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles.</p>
+
+<h2 id="key-terminologies">Key Terminologies</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Broker</td>
+      <td>A Kafka node that handles message processing. Multiple brokers form a Kafka cluster.</td>
+    </tr>
+    <tr>
+      <td>Topic</td>
+      <td>Kafka uses topics to categorize messages. Every message published to Kafka needs a topic.</td>
+    </tr>
+    <tr>
+      <td>Producer</td>
+      <td>The client that sends messages to Kafka brokers.</td>
+    </tr>
+    <tr>
+      <td>Consumer</td>
+      <td>The client that reads messages from Kafka brokers.</td>
+    </tr>
+    <tr>
+      <td>Consumer Group</td>
+      <td>A group of consumers, where each message can only be consumed by one consumer within the group.</td>
+    </tr>
+    <tr>
+      <td>Partition</td>
+      <td>The physical division of a topic. A topic can have multiple partitions.</td>
+    </tr>
+    <tr>
+      <td>Segment</td>
+      <td>A partition is divided into multiple segments.</td>
+    </tr>
+    <tr>
+      <td>Offset</td>
+      <td>A unique identifier for messages within a partition. Each message has a sequential offset number.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="kafkas-storage-mechanism">Kafka’s Storage Mechanism</h2>
+
+<p>Kafka’s storage mechanism can be understood from four aspects:</p>
+
+<h3 id="partition-distribution-in-topics">Partition Distribution in Topics</h3>
+
+<p>In a Kafka cluster, each partition of a topic is stored across multiple brokers.<br />
+For instance, consider a setup where a topic like report_push has four partitions.<br />
+Kafka partitions are stored as directories with the naming convention: <code class="language-plaintext highlighter-rouge">topic-name-partition-index</code>.</p>
+
+<h3 id="partition-file-storage">Partition File Storage</h3>
+
+<p>Each partition is stored as a series of segments, which are essentially large files.<br />
+Each segment file consists of two parts: an index file (.index) and a data file (.log).</p>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt;|Pushes data| B[Kafka Broker]
+  B --&gt;|Distributes messages| C[Partition]
+  C --&gt; D[Segment]
+  D --&gt; E[Message]
+</div>
+
+<h3 id="segment-storage-structure">Segment Storage Structure</h3>
+
+<p>A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages.<br />
+Segment files are named based on the last message’s offset, helping Kafka efficiently locate data.</p>
+
+<div class="mermaid">
+graph TD
+  A[Segment] --&gt; B[Index File]
+  A --&gt; C[Data File]
+  B --&gt; D[Message Metadata]
+  C --&gt; E[Message Data]
+</div>
+
+<h3 id="locating-messages-using-offsets">Locating Messages Using Offsets</h3>
+
+<p>Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it.</p>
+
+<div class="mermaid">
+graph TD
+  A[Partition] --&gt; B[Message with Offset]
+  B --&gt; C[Index File Lookup]
+  C --&gt; D[Data File Access]
+</div>
+
+<h2 id="kafkas-internal-architecture">Kafka’s Internal Architecture</h2>
+
+<p>The internal architecture of Kafka includes the following core components:</p>
+
+<ul>
+  <li><strong>Producer:</strong> Sends messages to the Kafka cluster.</li>
+  <li><strong>Broker:</strong> Handles messages and stores partitions.</li>
+  <li><strong>Consumer:</strong> Pulls messages from the Kafka cluster.</li>
+  <li><strong>Zookeeper:</strong> Manages Kafka’s cluster state and coordinates leader election and partition management.</li>
+</ul>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Broker]
+  B --&gt; C[Partition]
+  C --&gt; D[Consumer]
+  D --&gt; E[Zookeeper]
+</div>
+
+<h2 id="ensuring-high-reliability">Ensuring High Reliability</h2>
+
+<p>Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures.</p>
+
+<h3 id="data-synchronization">Data Synchronization</h3>
+
+<p>Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers.</p>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Leader Partition]
+  B --&gt; C[Follower 1]
+  B --&gt; D[Follower 2]
+  C --&gt; E[Write Sync]
+  D --&gt; E[Write Sync]
+</div>
+
+<h3 id="replica-placement-strategy">Replica Placement Strategy</h3>
+
+<p>Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas.</p>
+
+<div class="mermaid">
+graph TD
+  A[Broker 1] --&gt; B[Partition 1 Replica 1]
+  A[Broker 2] --&gt; C[Partition 1 Replica 2]
+  A[Broker 3] --&gt; D[Partition 1 Replica 3]
+</div>
+
+<h3 id="synchronization-strategy">Synchronization Strategy</h3>
+
+<p>Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader.</p>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Leader]
+  B --&gt; C[Follower 1]
+  B --&gt; D[Follower 2]
+  C --&gt; E[ACK]
+  D --&gt; E[ACK]
+  E --&gt; F[Leader Commit]
+</div>
+
+<h3 id="leader-election">Leader Election</h3>
+
+<p>Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition.</p>
+
+<div class="mermaid">
+graph TD
+  A[Zookeeper] --&gt; B[Partition 1 Leader Election]
+  B --&gt; C[Follower 1]
+  B --&gt; D[Follower 2]
+  C --&gt; E[Leader Role]
+  D --&gt; F[Follower Role]
+</div>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems.</p>
+
+<p>The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.</p>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#distribute" class="page__taxonomy-item p-category" rel="tag">distribute</a><span class="sep">, </span>
+    
+      <a href="/tags/#kafka" class="page__taxonomy-item p-category" rel="tag">kafka</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#blog" class="page__taxonomy-item p-category" rel="tag">Blog</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2018-07-11T00:00:00+08:00">July 11, 2018</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  <h4 class="page__share-title">Share on</h4>
+
+  <a href="https://twitter.com/intent/tweet?text=Distribute+Design+Kafka%20http%3A%2F%2Flocalhost%3A4000%2Fblog%2Fdistribute-design-kafka%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fblog%2Fdistribute-design-kafka%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/blog/distribute-design-kafka/" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/post-link/" class="pagination--pager" title="Post: Link">Previous</a>
+    
+    
+      <a href="/blog/welcome-to-jekyll/" class="pagination--pager" title="Welcome to Jekyll!">Next</a>
+    
+  </nav>
+
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    
+<div class="page__related">
+  
+  <h2 class="page__related-title">You May Also Enjoy</h2>
+  <div class="grid__wrapper">
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-promtail/" rel="permalink">Stability Monitor Promtail
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Introduction
+
+Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk thr...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-prometheus/" rel="permalink">Stability Monitor Prometheus
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Background
+A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams t...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-loki/" rel="permalink">Stability Monitor Loki
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Install Loki
+
+To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Lab...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/welcome-to-jekyll/" rel="permalink">Welcome to Jekyll!
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          less than 1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different wa...</p>
+  </article>
+</div>
+
+    
+  </div>
+</div>
+
+  
+  
+</div>
+
+      
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2025 <a href="http://localhost:4000">Madden's Blog</a>. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-01-19T11:34:29+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Madden’s Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>Madden Zhang</name></author><entry><title type="html">Stability Monitor Promtail</title><link href="http://localhost:4000/blog/stability-monitor-promtail/" rel="alternate" type="text/html" title="Stability Monitor Promtail" /><published>2025-01-14T00:00:00+08:00</published><updated>2025-01-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-promtail</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-promtail/"><![CDATA[<h2 id="installation-of-promtail">Installation of Promtail</h2>
-
-<h3 id="introduction">Introduction</h3>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-01-22T10:23:17+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Madden’s Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>Madden Zhang</name></author><entry><title type="html">Stability Monitor Promtail</title><link href="http://localhost:4000/blog/stability-monitor-promtail/" rel="alternate" type="text/html" title="Stability Monitor Promtail" /><published>2025-01-14T00:00:00+08:00</published><updated>2025-01-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-promtail</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-promtail/"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service.</p>
 
@@ -96,9 +94,9 @@ systemctl status promtail
 
 <hr />
 
-<h3 id="conclusion">Conclusion</h3>
+<h2 id="conclusion">Conclusion</h2>
 
-<p>In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Installation of Promtail Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service. Step 1: Download Promtail The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here. For example, to download version 3.1.2, you can execute the following command: wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip Step 2: Extract and Move Promtail to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/. unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail Next, grant execute permissions to the Promtail binary to allow it to run: chmod +x /usr/local/bin/promtail Step 3: Create Promtail Configuration File Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows: mkdir -p /etc/promtail vim /etc/promtail/promtail-config.yaml Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup. server: http_listen_port: 9080 grpc_listen_port: 0 positions: filename: /tmp/positions.yaml clients: - url: http://192.168.18.58:3100/loki/api/v1/push batchsize: 1048576 batchwait: 2s scrape_configs: - job_name: your-application-name static_configs: - targets: - localhost labels: job: your-application-name __path__: /var/log/your-application-name/*log Step 4: Create Systemd Service File In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file. vim /etc/systemd/system/promtail.service Add the following content to the file: [Unit] Description=Promtail - A log collection agent for Loki Documentation=https://grafana.com/docs/loki/latest/clients/promtail/ After=network.target [Service] ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Promtail Service After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time. systemctl daemon-reload systemctl start promtail systemctl enable promtail systemctl status promtail The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration. Conclusion In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.]]></summary></entry><entry><title type="html">Stability Monitor Loki</title><link href="http://localhost:4000/blog/stability-monitor-loki/" rel="alternate" type="text/html" title="Stability Monitor Loki" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-loki</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-loki/"><![CDATA[<h2 id="install-loki">Install Loki</h2>
+<p>In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service. Step 1: Download Promtail The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here. For example, to download version 3.1.2, you can execute the following command: wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip Step 2: Extract and Move Promtail to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/. unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail Next, grant execute permissions to the Promtail binary to allow it to run: chmod +x /usr/local/bin/promtail Step 3: Create Promtail Configuration File Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows: mkdir -p /etc/promtail vim /etc/promtail/promtail-config.yaml Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup. server: http_listen_port: 9080 grpc_listen_port: 0 positions: filename: /tmp/positions.yaml clients: - url: http://192.168.18.58:3100/loki/api/v1/push batchsize: 1048576 batchwait: 2s scrape_configs: - job_name: your-application-name static_configs: - targets: - localhost labels: job: your-application-name __path__: /var/log/your-application-name/*log Step 4: Create Systemd Service File In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file. vim /etc/systemd/system/promtail.service Add the following content to the file: [Unit] Description=Promtail - A log collection agent for Loki Documentation=https://grafana.com/docs/loki/latest/clients/promtail/ After=network.target [Service] ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Promtail Service After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time. systemctl daemon-reload systemctl start promtail systemctl enable promtail systemctl status promtail The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration. Conclusion In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.]]></summary></entry><entry><title type="html">Stability Monitor Loki</title><link href="http://localhost:4000/blog/stability-monitor-loki/" rel="alternate" type="text/html" title="Stability Monitor Loki" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-loki</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-loki/"><![CDATA[<h2 id="install-loki">Install Loki</h2>
 
 <p>To install <strong>Loki</strong> version <strong>3.1.2</strong> on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.</p>
 
@@ -239,9 +237,9 @@ systemctl status loki
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>loki <span class="nt">--version</span>
 </code></pre></div></div>
 
-<h3 id="conclusion">Conclusion</h3>
+<h2 id="conclusion">Conclusion</h2>
 
-<p>By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Install Loki To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide. Step 1: Download the Loki Binary Go to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary: wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip Once downloaded, extract the .zip file: unzip loki-linux-amd64.zip This will create a folder containing the Loki binary (loki-linux-amd64). Step 2: Move Loki to a System Directory Move the extracted binary to a directory in your PATH (e.g., /usr/local/bin): mv loki-linux-amd64 /usr/local/bin/loki Ensure the binary is executable: chmod +x /usr/local/bin/loki Step 3: Create a Configuration File (Optional) Create a directory for Loki configuration and add the local-config.yaml file: mkdir -p /etc/loki vim /etc/loki/local-config.yaml The content for local-config.yaml: auth_enabled: false server: http_listen_port: 3100 grpc_listen_port: 9095 common: path_prefix: /loki/data storage_config: boltdb_shipper: active_index_directory: /loki/index cache_location: /loki/cache resync_interval: 10m filesystem: directory: /loki/chunks limits_config: retention_period: 90d allow_structured_metadata: false schema_config: configs: - from: 2020-10-21 store: boltdb-shipper object_store: filesystem schema: v13 index: prefix: index_ period: 24h compactor: working_directory: /loki/compactor table_manager: retention_deletes_enabled: true retention_period: 90d ingester: lifecycler: ring: kvstore: store: memberlist replication_factor: 1 chunk_target_size: 1048576 max_chunk_age: 1h memberlist: join_members: [] Step 4: Configure Log File Storage Define storage directories for Loki logs: mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor chown -R loki:loki /var/loki Create the Loki systemd service file: vim /etc/systemd/system/loki.service Add the following content: [Unit] Description=Loki Documentation=https://grafana.com/docs/loki/latest/ After=network.target [Service] ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Loki Service Reload systemd, enable and start the Loki service: systemctl daemon-reload systemctl enable loki systemctl start loki systemctl status loki To monitor logs: journalctl -u loki -f Verify the Loki version: loki --version Conclusion By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.]]></summary></entry><entry><title type="html">Stability Monitor Prometheus</title><link href="http://localhost:4000/blog/stability-monitor-prometheus/" rel="alternate" type="text/html" title="Stability Monitor Prometheus" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-prometheus</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-prometheus/"><![CDATA[<h3 id="background">Background</h3>
+<p>By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Install Loki To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide. Step 1: Download the Loki Binary Go to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary: wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip Once downloaded, extract the .zip file: unzip loki-linux-amd64.zip This will create a folder containing the Loki binary (loki-linux-amd64). Step 2: Move Loki to a System Directory Move the extracted binary to a directory in your PATH (e.g., /usr/local/bin): mv loki-linux-amd64 /usr/local/bin/loki Ensure the binary is executable: chmod +x /usr/local/bin/loki Step 3: Create a Configuration File (Optional) Create a directory for Loki configuration and add the local-config.yaml file: mkdir -p /etc/loki vim /etc/loki/local-config.yaml The content for local-config.yaml: auth_enabled: false server: http_listen_port: 3100 grpc_listen_port: 9095 common: path_prefix: /loki/data storage_config: boltdb_shipper: active_index_directory: /loki/index cache_location: /loki/cache resync_interval: 10m filesystem: directory: /loki/chunks limits_config: retention_period: 90d allow_structured_metadata: false schema_config: configs: - from: 2020-10-21 store: boltdb-shipper object_store: filesystem schema: v13 index: prefix: index_ period: 24h compactor: working_directory: /loki/compactor table_manager: retention_deletes_enabled: true retention_period: 90d ingester: lifecycler: ring: kvstore: store: memberlist replication_factor: 1 chunk_target_size: 1048576 max_chunk_age: 1h memberlist: join_members: [] Step 4: Configure Log File Storage Define storage directories for Loki logs: mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor chown -R loki:loki /var/loki Create the Loki systemd service file: vim /etc/systemd/system/loki.service Add the following content: [Unit] Description=Loki Documentation=https://grafana.com/docs/loki/latest/ After=network.target [Service] ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Loki Service Reload systemd, enable and start the Loki service: systemctl daemon-reload systemctl enable loki systemctl start loki systemctl status loki To monitor logs: journalctl -u loki -f Verify the Loki version: loki --version Conclusion By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.]]></summary></entry><entry><title type="html">Stability Monitor Prometheus</title><link href="http://localhost:4000/blog/stability-monitor-prometheus/" rel="alternate" type="text/html" title="Stability Monitor Prometheus" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-prometheus</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-prometheus/"><![CDATA[<h2 id="background">Background</h2>
 <p>A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects:</p>
 <table>
   <thead>
@@ -285,7 +283,7 @@ systemctl status loki
   </tbody>
 </table>
 
-<h3 id="best-practices-for-selection">Best Practices for Selection</h3>
+<h2 id="best-practices-for-selection">Best Practices for Selection</h2>
 <p>Small and medium-sized companies can quickly build a monitoring system that suits their business characteristics. Prometheus has already become the standard for real-time monitoring. We can quickly set up our own monitoring system based on Prometheus:</p>
 <table>
   <thead>
@@ -329,7 +327,7 @@ systemctl status loki
   </tbody>
 </table>
 
-<h3 id="system-architecture-design">System Architecture Design</h3>
+<h2 id="system-architecture-design">System Architecture Design</h2>
 <div class="mermaid">
   graph TD;
     A[Prometheus] --&gt; B[Exporters]
@@ -344,8 +342,8 @@ systemctl status loki
     I --&gt; E
 </div>
 
-<h3 id="defining-refined-monitoring-metrics">Defining Refined Monitoring Metrics</h3>
-<h4 id="jvm-monitoring">JVM Monitoring</h4>
+<h2 id="defining-refined-monitoring-metrics">Defining Refined Monitoring Metrics</h2>
+<h3 id="jvm-monitoring">JVM Monitoring</h3>
 
 <p>JVM monitoring is used to track important JVM metrics, including GC (Garbage Collection) instant metrics, heap memory metrics, non-heap memory metrics, metaspace metrics, direct buffer metrics, JVM thread count, etc. This section introduces JVM monitoring and how to view JVM monitoring metrics.</p>
 
@@ -418,7 +416,7 @@ mindmap
       JNI Native Code
 </div>
 
-<h4 id="host-monitoring">Host Monitoring</h4>
+<h3 id="host-monitoring">Host Monitoring</h3>
 
 <p>Host monitoring tracks various metrics such as CPU, memory, disk, load, network traffic, and network packet metrics. This section introduces host monitoring and how to view host monitoring metrics.</p>
 
@@ -470,17 +468,17 @@ mindmap
   </li>
 </ul>
 
-<h4 id="sql-call-analysis"><strong>SQL Call Analysis</strong></h4>
+<h3 id="sql-call-analysis"><strong>SQL Call Analysis</strong></h3>
 
 <p>View SQL call analysis to understand SQL call patterns in applications.</p>
 
-<h4 id="error-code-monitoring">Error Code Monitoring</h4>
+<h3 id="error-code-monitoring">Error Code Monitoring</h3>
 
 <p>For core business systems, such as payment systems, error code monitoring is essential.</p>
 
 <p>Here’s how to install Prometheus step by step in English. If you use the docker you can use this to setup, this is the easy way. <a href="https://github.com/maddenmanel/springboot-prometheus-grafana">springboot-promethenus-grafana</a>.</p>
 
-<h4 id="install-article-list">Install Article list</h4>
+<h3 id="install-article-list">Install Article list</h3>
 
 <ul>
   <li><a href="/tool/stability-monitor-loki/">Install Loki with Prometheus</a></li>
@@ -503,7 +501,188 @@ mindmap
 <span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span>
 </code></pre></div></div>
 
-<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>]]></content><author><name>Madden Zhang</name></author><category term="blog" /><category term="Jekyll" /><category term="update" /><summary type="html"><![CDATA[You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.]]></summary></entry><entry><title type="html">Post: Link</title><link href="http://localhost:4000/blog/post-link/" rel="alternate" type="text/html" title="Post: Link" /><published>2010-03-07T00:00:00+08:00</published><updated>2010-03-07T00:00:00+08:00</updated><id>http://localhost:4000/blog/post-link</id><content type="html" xml:base="http://localhost:4000/blog/post-link/"><![CDATA[<p>This theme supports <strong>link posts</strong>, made famous by John Gruber. To use, just add <code class="language-plaintext highlighter-rouge">link: http://url-you-want-linked</code> to the post’s YAML front matter and you’re done.</p>
+<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>]]></content><author><name>Madden Zhang</name></author><category term="blog" /><category term="Jekyll" /><category term="update" /><summary type="html"><![CDATA[You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.]]></summary></entry><entry><title type="html">Distribute Design Kafka</title><link href="http://localhost:4000/blog/distribute-design-kafka/" rel="alternate" type="text/html" title="Distribute Design Kafka" /><published>2018-07-11T00:00:00+08:00</published><updated>2018-07-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/distribute-design-kafka</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-kafka/"><![CDATA[<h2 id="introduction">Introduction</h2>
+
+<p>Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark.</p>
+
+<p>As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles.</p>
+
+<h2 id="key-terminologies">Key Terminologies</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Broker</td>
+      <td>A Kafka node that handles message processing. Multiple brokers form a Kafka cluster.</td>
+    </tr>
+    <tr>
+      <td>Topic</td>
+      <td>Kafka uses topics to categorize messages. Every message published to Kafka needs a topic.</td>
+    </tr>
+    <tr>
+      <td>Producer</td>
+      <td>The client that sends messages to Kafka brokers.</td>
+    </tr>
+    <tr>
+      <td>Consumer</td>
+      <td>The client that reads messages from Kafka brokers.</td>
+    </tr>
+    <tr>
+      <td>Consumer Group</td>
+      <td>A group of consumers, where each message can only be consumed by one consumer within the group.</td>
+    </tr>
+    <tr>
+      <td>Partition</td>
+      <td>The physical division of a topic. A topic can have multiple partitions.</td>
+    </tr>
+    <tr>
+      <td>Segment</td>
+      <td>A partition is divided into multiple segments.</td>
+    </tr>
+    <tr>
+      <td>Offset</td>
+      <td>A unique identifier for messages within a partition. Each message has a sequential offset number.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="kafkas-storage-mechanism">Kafka’s Storage Mechanism</h2>
+
+<p>Kafka’s storage mechanism can be understood from four aspects:</p>
+
+<h3 id="partition-distribution-in-topics">Partition Distribution in Topics</h3>
+
+<p>In a Kafka cluster, each partition of a topic is stored across multiple brokers.<br />
+For instance, consider a setup where a topic like report_push has four partitions.<br />
+Kafka partitions are stored as directories with the naming convention: <code class="language-plaintext highlighter-rouge">topic-name-partition-index</code>.</p>
+
+<h3 id="partition-file-storage">Partition File Storage</h3>
+
+<p>Each partition is stored as a series of segments, which are essentially large files.<br />
+Each segment file consists of two parts: an index file (.index) and a data file (.log).</p>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt;|Pushes data| B[Kafka Broker]
+  B --&gt;|Distributes messages| C[Partition]
+  C --&gt; D[Segment]
+  D --&gt; E[Message]
+</div>
+
+<h3 id="segment-storage-structure">Segment Storage Structure</h3>
+
+<p>A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages.<br />
+Segment files are named based on the last message’s offset, helping Kafka efficiently locate data.</p>
+
+<div class="mermaid">
+graph TD
+  A[Segment] --&gt; B[Index File]
+  A --&gt; C[Data File]
+  B --&gt; D[Message Metadata]
+  C --&gt; E[Message Data]
+</div>
+
+<h3 id="locating-messages-using-offsets">Locating Messages Using Offsets</h3>
+
+<p>Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it.</p>
+
+<div class="mermaid">
+graph TD
+  A[Partition] --&gt; B[Message with Offset]
+  B --&gt; C[Index File Lookup]
+  C --&gt; D[Data File Access]
+</div>
+
+<h2 id="kafkas-internal-architecture">Kafka’s Internal Architecture</h2>
+
+<p>The internal architecture of Kafka includes the following core components:</p>
+
+<ul>
+  <li><strong>Producer:</strong> Sends messages to the Kafka cluster.</li>
+  <li><strong>Broker:</strong> Handles messages and stores partitions.</li>
+  <li><strong>Consumer:</strong> Pulls messages from the Kafka cluster.</li>
+  <li><strong>Zookeeper:</strong> Manages Kafka’s cluster state and coordinates leader election and partition management.</li>
+</ul>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Broker]
+  B --&gt; C[Partition]
+  C --&gt; D[Consumer]
+  D --&gt; E[Zookeeper]
+</div>
+
+<h2 id="ensuring-high-reliability">Ensuring High Reliability</h2>
+
+<p>Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures.</p>
+
+<h3 id="data-synchronization">Data Synchronization</h3>
+
+<p>Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers.</p>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Leader Partition]
+  B --&gt; C[Follower 1]
+  B --&gt; D[Follower 2]
+  C --&gt; E[Write Sync]
+  D --&gt; E[Write Sync]
+</div>
+
+<h3 id="replica-placement-strategy">Replica Placement Strategy</h3>
+
+<p>Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas.</p>
+
+<div class="mermaid">
+graph TD
+  A[Broker 1] --&gt; B[Partition 1 Replica 1]
+  A[Broker 2] --&gt; C[Partition 1 Replica 2]
+  A[Broker 3] --&gt; D[Partition 1 Replica 3]
+</div>
+
+<h3 id="synchronization-strategy">Synchronization Strategy</h3>
+
+<p>Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader.</p>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Leader]
+  B --&gt; C[Follower 1]
+  B --&gt; D[Follower 2]
+  C --&gt; E[ACK]
+  D --&gt; E[ACK]
+  E --&gt; F[Leader Commit]
+</div>
+
+<h3 id="leader-election">Leader Election</h3>
+
+<p>Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition.</p>
+
+<div class="mermaid">
+graph TD
+  A[Zookeeper] --&gt; B[Partition 1 Leader Election]
+  B --&gt; C[Follower 1]
+  B --&gt; D[Follower 2]
+  C --&gt; E[Leader Role]
+  D --&gt; F[Follower Role]
+</div>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems.</p>
+
+<p>The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.</p>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="distribute" /><category term="kafka" /><summary type="html"><![CDATA[Introduction Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark. As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles. Key Terminologies Term Explanation Broker A Kafka node that handles message processing. Multiple brokers form a Kafka cluster. Topic Kafka uses topics to categorize messages. Every message published to Kafka needs a topic. Producer The client that sends messages to Kafka brokers. Consumer The client that reads messages from Kafka brokers. Consumer Group A group of consumers, where each message can only be consumed by one consumer within the group. Partition The physical division of a topic. A topic can have multiple partitions. Segment A partition is divided into multiple segments. Offset A unique identifier for messages within a partition. Each message has a sequential offset number. Kafka’s Storage Mechanism Kafka’s storage mechanism can be understood from four aspects: Partition Distribution in Topics In a Kafka cluster, each partition of a topic is stored across multiple brokers. For instance, consider a setup where a topic like report_push has four partitions. Kafka partitions are stored as directories with the naming convention: topic-name-partition-index. Partition File Storage Each partition is stored as a series of segments, which are essentially large files. Each segment file consists of two parts: an index file (.index) and a data file (.log). graph TD A[Producer] --&gt;|Pushes data| B[Kafka Broker] B --&gt;|Distributes messages| C[Partition] C --&gt; D[Segment] D --&gt; E[Message] Segment Storage Structure A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages. Segment files are named based on the last message’s offset, helping Kafka efficiently locate data. graph TD A[Segment] --&gt; B[Index File] A --&gt; C[Data File] B --&gt; D[Message Metadata] C --&gt; E[Message Data] Locating Messages Using Offsets Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it. graph TD A[Partition] --&gt; B[Message with Offset] B --&gt; C[Index File Lookup] C --&gt; D[Data File Access] Kafka’s Internal Architecture The internal architecture of Kafka includes the following core components: Producer: Sends messages to the Kafka cluster. Broker: Handles messages and stores partitions. Consumer: Pulls messages from the Kafka cluster. Zookeeper: Manages Kafka’s cluster state and coordinates leader election and partition management. graph TD A[Producer] --&gt; B[Broker] B --&gt; C[Partition] C --&gt; D[Consumer] D --&gt; E[Zookeeper] Ensuring High Reliability Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures. Data Synchronization Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers. graph TD A[Producer] --&gt; B[Leader Partition] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[Write Sync] D --&gt; E[Write Sync] Replica Placement Strategy Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas. graph TD A[Broker 1] --&gt; B[Partition 1 Replica 1] A[Broker 2] --&gt; C[Partition 1 Replica 2] A[Broker 3] --&gt; D[Partition 1 Replica 3] Synchronization Strategy Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader. graph TD A[Producer] --&gt; B[Leader] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[ACK] D --&gt; E[ACK] E --&gt; F[Leader Commit] Leader Election Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition. graph TD A[Zookeeper] --&gt; B[Partition 1 Leader Election] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[Leader Role] D --&gt; F[Follower Role] Conclusion Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems. The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.]]></summary></entry><entry><title type="html">Post: Link</title><link href="http://localhost:4000/blog/post-link/" rel="alternate" type="text/html" title="Post: Link" /><published>2010-03-07T00:00:00+08:00</published><updated>2010-03-07T00:00:00+08:00</updated><id>http://localhost:4000/blog/post-link</id><content type="html" xml:base="http://localhost:4000/blog/post-link/"><![CDATA[<p>This theme supports <strong>link posts</strong>, made famous by John Gruber. To use, just add <code class="language-plaintext highlighter-rouge">link: http://url-you-want-linked</code> to the post’s YAML front matter and you’re done.</p>
 
 <blockquote>
   <p>And this is how a quote looks.</p>
@@ -689,25 +868,6 @@ mindmap
 
 <p>Costello: I said, I DON’T CARE!</p>
 
-<p>Abbott: Oh, that’s our shortstop!</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="chat" /><category term="Post Formats" /><summary type="html"><![CDATA[Abbott: Strange as it may seem, they give ball players nowadays very peculiar names.]]></summary></entry><entry><title type="html">Post: Standard</title><link href="http://localhost:4000/blog/post-standard/" rel="alternate" type="text/html" title="Post: Standard" /><published>2010-01-07T00:00:00+08:00</published><updated>2010-01-07T00:00:00+08:00</updated><id>http://localhost:4000/blog/post-standard</id><content type="html" xml:base="http://localhost:4000/blog/post-standard/"><![CDATA[<p>All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a garden, and she plucked another flower and ran with it to her mother. I suppose she must have looked rather delightful, for Mrs. Darling put her hand to her heart and cried, “Oh, why can’t you remain like this for ever!” This was all that passed between them on the subject, but henceforth Wendy knew that she must grow up. You always know after you are two. Two is the beginning of the end.</p>
-
-<p>Mrs. Darling first heard of Peter when she was tidying up her children’s minds. It is the nightly custom of every good mother after her children are asleep to rummage in their minds and put things straight for next morning, repacking into their proper places the many articles that have wandered during the day.</p>
-
-<!--more-->
-
-<p>This post has a manual excerpt <code class="language-plaintext highlighter-rouge">&lt;!--more--&gt;</code> set after the second paragraph. The following YAML Front Matter has also be applied:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">excerpt_separator</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;!--more--&gt;"</span>
-</code></pre></div></div>
-
-<p>If you could keep awake (but of course you can’t) you would see your own mother doing this, and you would find it very interesting to watch her. It is quite like tidying up drawers. You would see her on her knees, I expect, lingering humorously over some of your contents, wondering where on earth you had picked this thing up, making discoveries sweet and not so sweet, pressing this to her cheek as if it were as nice as a kitten, and hurriedly stowing that out of sight. When you wake in the morning, the naughtiness and evil passions with which you went to bed have been folded up small and placed at the bottom of your mind and on the top, beautifully aired, are spread out your prettier thoughts, ready for you to put on.</p>
-
-<p>I don’t know whether you have ever seen a map of a person’s mind. Doctors sometimes draw maps of other parts of you, and your own map can become intensely interesting, but catch them trying to draw a map of a child’s mind, which is not only confused, but keeps going round all the time. There are zigzag lines on it, just like your temperature on a card, and these are probably roads in the island, for the Neverland is always more or less an island, with astonishing splashes of colour here and there, and coral reefs and rakish-looking craft in the offing, and savages and lonely lairs, and gnomes who are mostly tailors, and caves through which a river runs, and princes with six elder brothers, and a hut fast going to decay, and one very small old lady with a hooked nose. It would be an easy map if that were all, but there is also first day at school, religion, fathers, the round pond, needle-work, murders, hangings, verbs that take the dative, chocolate pudding day, getting into braces, say ninety-nine, three-pence for pulling out your tooth yourself, and so on, and either these are part of the island or they are another map showing through, and it is all rather confusing, especially as nothing will stand still.</p>
-
-<p>Of course the Neverlands vary a good deal. John’s, for instance, had a lagoon with flamingoes flying over it at which John was shooting, while Michael, who was very small, had a flamingo with lagoons flying over it. John lived in a boat turned upside down on the sands, Michael in a wigwam, Wendy in a house of leaves deftly sewn together. John had no friends, Michael had friends at night, Wendy had a pet wolf forsaken by its parents, but on the whole the Neverlands have a family resemblance, and if they stood still in a row you could say of them that they have each other’s nose, and so forth. On these magic shores children at play are for ever beaching their coracles [simple boat]. We too have been there; we can still hear the sound of the surf, though we shall land no more.</p>
-
-<p>Of all delectable islands the Neverland is the snuggest and most compact, not large and sprawly, you know, with tedious distances between one adventure and another, but nicely crammed. When you play at it by day with the chairs and table-cloth, it is not in the least alarming, but in the two minutes before you go to sleep it becomes very real. That is why there are night-lights.</p>
-
-<p>Occasionally in her travels through her children’s minds Mrs. Darling found things she could not understand, and of these quite the most perplexing was the word Peter. She knew of no Peter, and yet he was here and there in John and Michael’s minds, while Wendy’s began to be scrawled all over with him. The name stood out in bolder letters than any of the other words, and as Mrs. Darling gazed she felt that it had an oddly cocky appearance.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="Post Formats" /><category term="readability" /><category term="standard" /><summary type="html"><![CDATA[All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a garden, and she plucked another flower and ran with it to her mother. I suppose she must have looked rather delightful, for Mrs. Darling put her hand to her heart and cried, “Oh, why can’t you remain like this for ever!” This was all that passed between them on the subject, but henceforth Wendy knew that she must grow up. You always know after you are two. Two is the beginning of the end. Mrs. Darling first heard of Peter when she was tidying up her children’s minds. It is the nightly custom of every good mother after her children are asleep to rummage in their minds and put things straight for next morning, repacking into their proper places the many articles that have wandered during the day.]]></summary></entry><entry><title type="html">Post: Modified Date</title><link href="http://localhost:4000/blog/post-modified/" rel="alternate" type="text/html" title="Post: Modified Date" /><published>2010-01-07T00:00:00+08:00</published><updated>2016-03-10T05:20:02+08:00</updated><id>http://localhost:4000/blog/post-modified</id><content type="html" xml:base="http://localhost:4000/blog/post-modified/"><![CDATA[<p>This post has been updated and should show a modified date if used in a layout.</p>
+<p>Abbott: Oh, that’s our shortstop!</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="chat" /><category term="Post Formats" /><summary type="html"><![CDATA[Abbott: Strange as it may seem, they give ball players nowadays very peculiar names.]]></summary></entry><entry><title type="html">Post: Modified Date</title><link href="http://localhost:4000/blog/post-modified/" rel="alternate" type="text/html" title="Post: Modified Date" /><published>2010-01-07T00:00:00+08:00</published><updated>2016-03-10T05:20:02+08:00</updated><id>http://localhost:4000/blog/post-modified</id><content type="html" xml:base="http://localhost:4000/blog/post-modified/"><![CDATA[<p>This post has been updated and should show a modified date if used in a layout.</p>
 
 <p>All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a garden, and she plucked another flower and ran with it to her mother. I suppose she must have looked rather delightful, for Mrs. Darling put her hand to her heart and cried, “Oh, why can’t you remain like this for ever!” This was all that passed between them on the subject, but henceforth Wendy knew that she must grow up. You always know after you are two. Two is the beginning of the end.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="Post Formats" /><category term="readability" /><category term="standard" /><summary type="html"><![CDATA[This post has been updated and should show a modified date if used in a layout.]]></summary></entry></feed>

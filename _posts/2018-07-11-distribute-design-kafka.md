@@ -44,37 +44,37 @@ Kafka partitions are stored as directories with the naming convention: `topic-na
 Each partition is stored as a series of segments, which are essentially large files.  
 Each segment file consists of two parts: an index file (.index) and a data file (.log).
 
-```mermaid
+<div class="mermaid">
 graph TD
   A[Producer] -->|Pushes data| B[Kafka Broker]
   B -->|Distributes messages| C[Partition]
   C --> D[Segment]
   D --> E[Message]
-```
+</div>
 
 ### Segment Storage Structure
 
 A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages.  
 Segment files are named based on the last message's offset, helping Kafka efficiently locate data.
 
-```mermaid
+<div class="mermaid">
 graph TD
   A[Segment] --> B[Index File]
   A --> C[Data File]
   B --> D[Message Metadata]
   C --> E[Message Data]
-```
+</div>
 
 ### Locating Messages Using Offsets
 
 Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it.
 
-```mermaid
+<div class="mermaid">
 graph TD
   A[Partition] --> B[Message with Offset]
   B --> C[Index File Lookup]
   C --> D[Data File Access]
-```
+</div>
 
 ## Kafka's Internal Architecture
 
@@ -85,13 +85,13 @@ The internal architecture of Kafka includes the following core components:
 - **Consumer:** Pulls messages from the Kafka cluster.
 - **Zookeeper:** Manages Kafka's cluster state and coordinates leader election and partition management.
 
-```mermaid
+<div class="mermaid">
 graph TD
   A[Producer] --> B[Broker]
   B --> C[Partition]
   C --> D[Consumer]
   D --> E[Zookeeper]
-```
+</div>
 
 ## Ensuring High Reliability
 
@@ -101,31 +101,31 @@ Kafka's high reliability stems from its robust replication mechanism, which ensu
 
 Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers.
 
-```mermaid
+<div class="mermaid">
 graph TD
   A[Producer] --> B[Leader Partition]
   B --> C[Follower 1]
   B --> D[Follower 2]
   C --> E[Write Sync]
   D --> E[Write Sync]
-```
+</div>
 
 ### Replica Placement Strategy
 
 Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas.
 
-```mermaid
+<div class="mermaid">
 graph TD
   A[Broker 1] --> B[Partition 1 Replica 1]
   A[Broker 2] --> C[Partition 1 Replica 2]
   A[Broker 3] --> D[Partition 1 Replica 3]
-```
+</div>
 
 ### Synchronization Strategy
 
 Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader.
 
-```mermaid
+<div class="mermaid">
 graph TD
   A[Producer] --> B[Leader]
   B --> C[Follower 1]
@@ -133,23 +133,28 @@ graph TD
   C --> E[ACK]
   D --> E[ACK]
   E --> F[Leader Commit]
-```
+</div>
 
 ### Leader Election
 
 Kafka's leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition.
 
-```mermaid
+<div class="mermaid">
 graph TD
   A[Zookeeper] --> B[Partition 1 Leader Election]
   B --> C[Follower 1]
   B --> D[Follower 2]
   C --> E[Leader Role]
   D --> F[Follower Role]
-```
+</div>
 
 ## Conclusion
 
 Kafka's architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems.
 
 The above content outlines Kafka's design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka's message storage, architecture, and reliability features.
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
