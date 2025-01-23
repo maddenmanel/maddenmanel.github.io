@@ -1,20 +1,8 @@
 var store = [{
-        "title": "Post: Standard",
-        "excerpt":"All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a garden, and she plucked another flower and ran with it to her mother. I suppose she...","categories": ["Blog"],
-        "tags": ["Post Formats","readability","standard"],
-        "url": "/blog/post-standard/",
-        "teaser": null
-      },{
-        "title": "Post: Notice",
-        "excerpt":"A notice displays information that explains nearby content. Often used to call attention to a particular detail. When using Kramdown {: .notice} can be added after a sentence to assign the .notice to the &lt;p&gt;&lt;/p&gt; element. Changes in Service: We just updated our privacy policy here to better service our...","categories": ["Blog"],
-        "tags": ["Post Formats","notice"],
-        "url": "/blog/post-notice/",
-        "teaser": null
-      },{
-        "title": "Post: Quote",
-        "excerpt":"   Only one thing is impossible for God: To find any sense in any copyright law on the planet.       Mark Twain   ","categories": ["Blog"],
-        "tags": ["Post Formats","quote"],
-        "url": "/blog/post-quote/",
+        "title": "Welcome to Jekyll!",
+        "excerpt":"You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when...","categories": ["Blog"],
+        "tags": ["Jekyll","update"],
+        "url": "/blog/welcome-to-jekyll/",
         "teaser": null
       },{
         "title": "Distribute Design Kafka",
@@ -27,12 +15,6 @@ var store = [{
         "excerpt":"Introduction Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems. This article explores Redis’s internal architecture, its approach to data persistence...","categories": ["Blog"],
         "tags": ["distribute","redis"],
         "url": "/blog/distribute-design-redis/",
-        "teaser": null
-      },{
-        "title": "Welcome to Jekyll!",
-        "excerpt":"You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when...","categories": ["blog"],
-        "tags": ["Jekyll","update"],
-        "url": "/blog/welcome-to-jekyll/",
         "teaser": null
       },{
         "title": "Stability Monitor Loki",

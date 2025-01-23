@@ -1,4 +1,102 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-01-23T16:34:42+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Madden’s Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>Madden Zhang</name></author><entry><title type="html">Stability Monitor Alertmanager</title><link href="http://localhost:4000/blog/stability-monitor-alertmanager/" rel="alternate" type="text/html" title="Stability Monitor Alertmanager" /><published>2025-01-14T00:00:00+08:00</published><updated>2025-01-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-alertmanager</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-alertmanager/"><![CDATA[<h2 id="introduction">Introduction</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-01-23T18:28:14+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Madden’s Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>Madden Zhang</name></author><entry><title type="html">Stability Monitor Promtail</title><link href="http://localhost:4000/blog/stability-monitor-promtail/" rel="alternate" type="text/html" title="Stability Monitor Promtail" /><published>2025-01-14T00:00:00+08:00</published><updated>2025-01-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-promtail</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-promtail/"><![CDATA[<h2 id="introduction">Introduction</h2>
+
+<p>Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service.</p>
+
+<h3 id="step-1-download-promtail">Step 1: Download Promtail</h3>
+
+<p>The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release <a href="https://github.com/grafana/loki/releases">here</a>.</p>
+
+<p>For example, to download version 3.1.2, you can execute the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip
+</code></pre></div></div>
+
+<h3 id="step-2-extract-and-move-promtail-to-a-suitable-location">Step 2: Extract and Move Promtail to a Suitable Location</h3>
+
+<p>Once the file is downloaded, extract it and move the binary to a directory included in the system’s <code class="language-plaintext highlighter-rouge">$PATH</code>, such as <code class="language-plaintext highlighter-rouge">/usr/local/bin/</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip promtail-linux-amd64.zip
+<span class="nb">mv </span>promtail-linux-amd64 /usr/local/bin/promtail
+</code></pre></div></div>
+
+<p>Next, grant execute permissions to the Promtail binary to allow it to run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/promtail
+</code></pre></div></div>
+
+<h3 id="step-3-create-promtail-configuration-file">Step 3: Create Promtail Configuration File</h3>
+
+<p>Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/promtail
+vim /etc/promtail/promtail-config.yaml
+</code></pre></div></div>
+
+<p>Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">server</span><span class="pi">:</span>
+  <span class="na">http_listen_port</span><span class="pi">:</span> <span class="m">9080</span>
+  <span class="na">grpc_listen_port</span><span class="pi">:</span> <span class="m">0</span>
+
+<span class="na">positions</span><span class="pi">:</span>
+  <span class="na">filename</span><span class="pi">:</span> <span class="s">/tmp/positions.yaml</span>
+
+<span class="na">clients</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">url</span><span class="pi">:</span> <span class="s">http://192.168.18.58:3100/loki/api/v1/push</span>
+    <span class="na">batchsize</span><span class="pi">:</span> <span class="m">1048576</span>
+    <span class="na">batchwait</span><span class="pi">:</span> <span class="s">2s</span>
+
+<span class="na">scrape_configs</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s">your-application-name</span>
+    <span class="na">static_configs</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="s">localhost</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">job</span><span class="pi">:</span> <span class="s">your-application-name</span>
+          <span class="na">__path__</span><span class="pi">:</span> <span class="s">/var/log/your-application-name/*log</span>
+</code></pre></div></div>
+
+<h3 id="step-4-create-systemd-service-file">Step 4: Create Systemd Service File</h3>
+
+<p>In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/promtail.service
+</code></pre></div></div>
+
+<p>Add the following content to the file:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
+<span class="py">Description</span><span class="p">=</span><span class="s">Promtail - A log collection agent for Loki</span>
+<span class="py">Documentation</span><span class="p">=</span><span class="s">https://grafana.com/docs/loki/latest/clients/promtail/</span>
+<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
+
+<span class="nn">[Service]</span>
+<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml</span>
+<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
+<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
+<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
+
+<span class="nn">[Install]</span>
+<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
+</code></pre></div></div>
+
+<h3 id="step-5-start-and-enable-promtail-service">Step 5: Start and Enable Promtail Service</h3>
+
+<p>After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
+systemctl start promtail
+systemctl <span class="nb">enable </span>promtail
+systemctl status promtail
+</code></pre></div></div>
+
+<p>The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration.</p>
+
+<hr />
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service. Step 1: Download Promtail The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here. For example, to download version 3.1.2, you can execute the following command: wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip Step 2: Extract and Move Promtail to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/. unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail Next, grant execute permissions to the Promtail binary to allow it to run: chmod +x /usr/local/bin/promtail Step 3: Create Promtail Configuration File Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows: mkdir -p /etc/promtail vim /etc/promtail/promtail-config.yaml Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup. server: http_listen_port: 9080 grpc_listen_port: 0 positions: filename: /tmp/positions.yaml clients: - url: http://192.168.18.58:3100/loki/api/v1/push batchsize: 1048576 batchwait: 2s scrape_configs: - job_name: your-application-name static_configs: - targets: - localhost labels: job: your-application-name __path__: /var/log/your-application-name/*log Step 4: Create Systemd Service File In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file. vim /etc/systemd/system/promtail.service Add the following content to the file: [Unit] Description=Promtail - A log collection agent for Loki Documentation=https://grafana.com/docs/loki/latest/clients/promtail/ After=network.target [Service] ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Promtail Service After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time. systemctl daemon-reload systemctl start promtail systemctl enable promtail systemctl status promtail The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration. Conclusion In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.]]></summary></entry><entry><title type="html">Stability Monitor Alertmanager</title><link href="http://localhost:4000/blog/stability-monitor-alertmanager/" rel="alternate" type="text/html" title="Stability Monitor Alertmanager" /><published>2025-01-14T00:00:00+08:00</published><updated>2025-01-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-alertmanager</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-alertmanager/"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Alertmanager is a tool designed to handle alerts sent by Prometheus, providing features such as deduplication, grouping, and routing of alerts to various receivers like email, Slack, or custom webhooks. This article demonstrates the process of installing and configuring Alertmanager, ensuring it operates as a service, and integrating it with Prometheus to handle alert notifications effectively.</p>
 
@@ -173,248 +271,7 @@ systemctl status alertmanager
 
 <p>In this article, we have walked through the installation and configuration of Alertmanager, as well as the setup of alerting rules in Prometheus. By following the outlined steps, you can ensure that your monitoring system is capable of detecting and notifying you about critical infrastructure issues, helping you to maintain operational reliability.</p>
 
-<p>By configuring both Prometheus and Alertmanager, you set up a robust alerting mechanism, which will notify you in a timely manner about critical problems within your infrastructure.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="alertmanager" /><summary type="html"><![CDATA[Introduction Alertmanager is a tool designed to handle alerts sent by Prometheus, providing features such as deduplication, grouping, and routing of alerts to various receivers like email, Slack, or custom webhooks. This article demonstrates the process of installing and configuring Alertmanager, ensuring it operates as a service, and integrating it with Prometheus to handle alert notifications effectively. Step 1: Download Alertmanager The first step is to download the Alertmanager binary from the official GitHub repository. You can download the latest release from Prometheus’s Alertmanager GitHub page. For example, to download version 0.24.0, run the following command: wget https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0-linux-amd64.tar.gz Step 2: Extract and Move Alertmanager to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH (e.g., /usr/local/bin/): tar -xvzf alertmanager-0.24.0-linux-amd64.tar.gz mv alertmanager-0.24.0-linux-amd64/alertmanager /usr/local/bin/ Next, grant execute permissions to the Alertmanager binary: chmod +x /usr/local/bin/alertmanager Step 3: Create Alertmanager Configuration File Alertmanager requires a configuration file (alertmanager.yml) to define how it handles incoming alerts and how they should be routed to notification receivers. Create the configuration directory and the file: mkdir -p /etc/alertmanager vim /etc/alertmanager/alertmanager.yml Here is a sample configuration file to get started: global: resolve_timeout: 5m route: group_by: ['alertname'] receiver: 'email-config' receivers: - name: 'email-config' email_configs: - to: 'your-email@example.com' from: 'alertmanager@example.com' smarthost: 'smtp.example.com:587' auth_username: 'your-username' auth_password: 'your-password' require_tls: true group_interval: 5m This configuration sets up a route that groups alerts by their alertname and sends notifications via email. You can customize this for other notification types (e.g., Slack, PagerDuty, etc.). Step 4: Create Systemd Service File To ensure that Alertmanager starts automatically at system boot and runs as a background service, create a systemd service file: vim /etc/systemd/system/alertmanager.service Add the following content to the file: [Unit] Description=Alertmanager - A tool to handle alerts sent by Prometheus Documentation=https://prometheus.io/docs/alerting/latest/alertmanager/ After=network.target [Service] ExecStart=/usr/local/bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Alertmanager Service Once the service file is created, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time: systemctl daemon-reload systemctl start alertmanager systemctl enable alertmanager systemctl status alertmanager Alertmanager will now run in the background and handle alerts according to the configuration file. Step 6: Configuring Alerting Rules in Prometheus To trigger alerts, Prometheus requires alerting rules. These rules define the conditions under which an alert should be fired. Alerting rules can be defined in the prometheus.yml configuration file or in a separate rules file. Step 6.1: Define Alerting Rules in Prometheus Create a separate file for alerting rules (e.g., alert.rules.yml), or define the rules directly in prometheus.yml. Below is an example of an alert rules file: Create a rules file: vim /etc/prometheus/alert.rules.yml Add the following alerting rules: groups: - name: example-alerts rules: - alert: HighCPUUsage expr: avg(rate(cpu_usage_seconds_total{mode="user"}[5m])) by (instance) &gt; 0.9 for: 5m labels: severity: critical annotations: summary: "High CPU usage on " description: "CPU usage is above 90% for the last 5 minutes on ." - alert: DiskSpaceLow expr: (node_filesystem_free_bytes / node_filesystem_size_bytes) * 100 &lt; 10 for: 10m labels: severity: warning annotations: summary: "Low disk space on " description: "Disk space on is below 10%." Update the prometheus.yml file to include the alert rules: rule_files: - /etc/prometheus/alert.rules.yml Step 6.2: Ensure Prometheus Sends Alerts to Alertmanager Make sure Prometheus is configured to send alerts to Alertmanager. Modify the alerting section in the prometheus.yml file: alerting: alertmanagers: - static_configs: - targets: - 'localhost:9093' Reload Prometheus to apply the changes: systemctl reload prometheus Step 7: Testing and Verifying Alerts After setting up the alerting rules, it’s important to test that the alerts are correctly triggered and routed. Verify Alertmanager Receives Alerts: Visit the Alertmanager web interface (http://&lt;alertmanager-ip&gt;:9093) to check if alerts are being received and processed. Test Alert Triggers: You can artificially trigger alert conditions (e.g., simulate high CPU usage) to test the rule. Check Notification Receivers: Ensure that the notifications are sent to the configured receivers (e.g., email, Slack). Conclusion In this article, we have walked through the installation and configuration of Alertmanager, as well as the setup of alerting rules in Prometheus. By following the outlined steps, you can ensure that your monitoring system is capable of detecting and notifying you about critical infrastructure issues, helping you to maintain operational reliability. By configuring both Prometheus and Alertmanager, you set up a robust alerting mechanism, which will notify you in a timely manner about critical problems within your infrastructure.]]></summary></entry><entry><title type="html">Stability Monitor Promtail</title><link href="http://localhost:4000/blog/stability-monitor-promtail/" rel="alternate" type="text/html" title="Stability Monitor Promtail" /><published>2025-01-14T00:00:00+08:00</published><updated>2025-01-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-promtail</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-promtail/"><![CDATA[<h2 id="introduction">Introduction</h2>
-
-<p>Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service.</p>
-
-<h3 id="step-1-download-promtail">Step 1: Download Promtail</h3>
-
-<p>The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release <a href="https://github.com/grafana/loki/releases">here</a>.</p>
-
-<p>For example, to download version 3.1.2, you can execute the following command:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip
-</code></pre></div></div>
-
-<h3 id="step-2-extract-and-move-promtail-to-a-suitable-location">Step 2: Extract and Move Promtail to a Suitable Location</h3>
-
-<p>Once the file is downloaded, extract it and move the binary to a directory included in the system’s <code class="language-plaintext highlighter-rouge">$PATH</code>, such as <code class="language-plaintext highlighter-rouge">/usr/local/bin/</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip promtail-linux-amd64.zip
-<span class="nb">mv </span>promtail-linux-amd64 /usr/local/bin/promtail
-</code></pre></div></div>
-
-<p>Next, grant execute permissions to the Promtail binary to allow it to run:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/promtail
-</code></pre></div></div>
-
-<h3 id="step-3-create-promtail-configuration-file">Step 3: Create Promtail Configuration File</h3>
-
-<p>Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/promtail
-vim /etc/promtail/promtail-config.yaml
-</code></pre></div></div>
-
-<p>Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup.</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">server</span><span class="pi">:</span>
-  <span class="na">http_listen_port</span><span class="pi">:</span> <span class="m">9080</span>
-  <span class="na">grpc_listen_port</span><span class="pi">:</span> <span class="m">0</span>
-
-<span class="na">positions</span><span class="pi">:</span>
-  <span class="na">filename</span><span class="pi">:</span> <span class="s">/tmp/positions.yaml</span>
-
-<span class="na">clients</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">url</span><span class="pi">:</span> <span class="s">http://192.168.18.58:3100/loki/api/v1/push</span>
-    <span class="na">batchsize</span><span class="pi">:</span> <span class="m">1048576</span>
-    <span class="na">batchwait</span><span class="pi">:</span> <span class="s">2s</span>
-
-<span class="na">scrape_configs</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s">your-application-name</span>
-    <span class="na">static_configs</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="s">localhost</span>
-        <span class="na">labels</span><span class="pi">:</span>
-          <span class="na">job</span><span class="pi">:</span> <span class="s">your-application-name</span>
-          <span class="na">__path__</span><span class="pi">:</span> <span class="s">/var/log/your-application-name/*log</span>
-</code></pre></div></div>
-
-<h3 id="step-4-create-systemd-service-file">Step 4: Create Systemd Service File</h3>
-
-<p>In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/promtail.service
-</code></pre></div></div>
-
-<p>Add the following content to the file:</p>
-
-<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
-<span class="py">Description</span><span class="p">=</span><span class="s">Promtail - A log collection agent for Loki</span>
-<span class="py">Documentation</span><span class="p">=</span><span class="s">https://grafana.com/docs/loki/latest/clients/promtail/</span>
-<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
-
-<span class="nn">[Service]</span>
-<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml</span>
-<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
-<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
-<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
-
-<span class="nn">[Install]</span>
-<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
-</code></pre></div></div>
-
-<h3 id="step-5-start-and-enable-promtail-service">Step 5: Start and Enable Promtail Service</h3>
-
-<p>After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
-systemctl start promtail
-systemctl <span class="nb">enable </span>promtail
-systemctl status promtail
-</code></pre></div></div>
-
-<p>The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration.</p>
-
-<hr />
-
-<h2 id="conclusion">Conclusion</h2>
-
-<p>In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service. Step 1: Download Promtail The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here. For example, to download version 3.1.2, you can execute the following command: wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip Step 2: Extract and Move Promtail to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/. unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail Next, grant execute permissions to the Promtail binary to allow it to run: chmod +x /usr/local/bin/promtail Step 3: Create Promtail Configuration File Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows: mkdir -p /etc/promtail vim /etc/promtail/promtail-config.yaml Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup. server: http_listen_port: 9080 grpc_listen_port: 0 positions: filename: /tmp/positions.yaml clients: - url: http://192.168.18.58:3100/loki/api/v1/push batchsize: 1048576 batchwait: 2s scrape_configs: - job_name: your-application-name static_configs: - targets: - localhost labels: job: your-application-name __path__: /var/log/your-application-name/*log Step 4: Create Systemd Service File In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file. vim /etc/systemd/system/promtail.service Add the following content to the file: [Unit] Description=Promtail - A log collection agent for Loki Documentation=https://grafana.com/docs/loki/latest/clients/promtail/ After=network.target [Service] ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Promtail Service After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time. systemctl daemon-reload systemctl start promtail systemctl enable promtail systemctl status promtail The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration. Conclusion In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.]]></summary></entry><entry><title type="html">Stability Monitor Loki</title><link href="http://localhost:4000/blog/stability-monitor-loki/" rel="alternate" type="text/html" title="Stability Monitor Loki" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-loki</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-loki/"><![CDATA[<h2 id="install-loki">Install Loki</h2>
-
-<p>To install <strong>Loki</strong> version <strong>3.1.2</strong> on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.</p>
-
-<h3 id="step-1-download-the-loki-binary">Step 1: Download the Loki Binary</h3>
-
-<p>Go to the <a href="https://github.com/grafana/loki/releases">Loki GitHub releases page</a> and find version <strong>3.1.2</strong>. Or use <code class="language-plaintext highlighter-rouge">wget</code> to directly download the binary:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip
-</code></pre></div></div>
-
-<p>Once downloaded, extract the <code class="language-plaintext highlighter-rouge">.zip</code> file:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip loki-linux-amd64.zip
-</code></pre></div></div>
-
-<p>This will create a folder containing the Loki binary (<code class="language-plaintext highlighter-rouge">loki-linux-amd64</code>).</p>
-
-<h3 id="step-2-move-loki-to-a-system-directory">Step 2: Move Loki to a System Directory</h3>
-
-<p>Move the extracted binary to a directory in your PATH (e.g., <code class="language-plaintext highlighter-rouge">/usr/local/bin</code>):</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mv </span>loki-linux-amd64 /usr/local/bin/loki
-</code></pre></div></div>
-
-<p>Ensure the binary is executable:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/loki
-</code></pre></div></div>
-
-<h3 id="step-3-create-a-configuration-file-optional">Step 3: Create a Configuration File (Optional)</h3>
-
-<p>Create a directory for Loki configuration and add the <code class="language-plaintext highlighter-rouge">local-config.yaml</code> file:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/loki
-vim /etc/loki/local-config.yaml
-</code></pre></div></div>
-
-<p>The content for <code class="language-plaintext highlighter-rouge">local-config.yaml</code>:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth_enabled</span><span class="pi">:</span> <span class="no">false</span>
-
-<span class="na">server</span><span class="pi">:</span>
-  <span class="na">http_listen_port</span><span class="pi">:</span> <span class="m">3100</span>
-  <span class="na">grpc_listen_port</span><span class="pi">:</span> <span class="m">9095</span>
-
-<span class="na">common</span><span class="pi">:</span>
-  <span class="na">path_prefix</span><span class="pi">:</span> <span class="s">/loki/data</span>  
-
-<span class="na">storage_config</span><span class="pi">:</span>
-  <span class="na">boltdb_shipper</span><span class="pi">:</span>
-    <span class="na">active_index_directory</span><span class="pi">:</span> <span class="s">/loki/index</span>
-    <span class="na">cache_location</span><span class="pi">:</span> <span class="s">/loki/cache</span>
-    <span class="na">resync_interval</span><span class="pi">:</span> <span class="s">10m</span>
-  <span class="na">filesystem</span><span class="pi">:</span>
-    <span class="na">directory</span><span class="pi">:</span> <span class="s">/loki/chunks</span>
-
-<span class="na">limits_config</span><span class="pi">:</span>
-  <span class="na">retention_period</span><span class="pi">:</span> <span class="s">90d</span>
-  <span class="na">allow_structured_metadata</span><span class="pi">:</span> <span class="no">false</span> 
-
-<span class="na">schema_config</span><span class="pi">:</span>
-  <span class="na">configs</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">from</span><span class="pi">:</span> <span class="s">2020-10-21</span>
-      <span class="na">store</span><span class="pi">:</span> <span class="s">boltdb-shipper</span>
-      <span class="na">object_store</span><span class="pi">:</span> <span class="s">filesystem</span>
-      <span class="na">schema</span><span class="pi">:</span> <span class="s">v13</span>
-      <span class="na">index</span><span class="pi">:</span>
-        <span class="na">prefix</span><span class="pi">:</span> <span class="s">index_</span>
-        <span class="na">period</span><span class="pi">:</span> <span class="s">24h</span>  
-
-<span class="na">compactor</span><span class="pi">:</span>
-  <span class="na">working_directory</span><span class="pi">:</span> <span class="s">/loki/compactor</span> 
-
-<span class="na">table_manager</span><span class="pi">:</span>
-  <span class="na">retention_deletes_enabled</span><span class="pi">:</span> <span class="no">true</span>
-  <span class="na">retention_period</span><span class="pi">:</span> <span class="s">90d</span>
-
-<span class="na">ingester</span><span class="pi">:</span>
-  <span class="na">lifecycler</span><span class="pi">:</span>
-    <span class="na">ring</span><span class="pi">:</span>
-      <span class="na">kvstore</span><span class="pi">:</span>
-        <span class="na">store</span><span class="pi">:</span> <span class="s">memberlist</span>
-      <span class="na">replication_factor</span><span class="pi">:</span> <span class="m">1</span>
-  <span class="na">chunk_target_size</span><span class="pi">:</span> <span class="s">1048576</span>  
-  <span class="na">max_chunk_age</span><span class="pi">:</span> <span class="s">1h</span> 
-
-<span class="na">memberlist</span><span class="pi">:</span>
-  <span class="na">join_members</span><span class="pi">:</span> <span class="pi">[]</span> 
-</code></pre></div></div>
-
-<h3 id="step-4-configure-log-file-storage">Step 4: Configure Log File Storage</h3>
-
-<p>Define storage directories for Loki logs:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor
-<span class="nb">chown</span> <span class="nt">-R</span> loki:loki /var/loki
-</code></pre></div></div>
-
-<p>Create the Loki systemd service file:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/loki.service
-</code></pre></div></div>
-
-<p>Add the following content:</p>
-
-<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
-<span class="py">Description</span><span class="p">=</span><span class="s">Loki</span>
-<span class="py">Documentation</span><span class="p">=</span><span class="s">https://grafana.com/docs/loki/latest/</span>
-<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
-
-<span class="nn">[Service]</span>
-<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml</span>
-<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
-<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
-<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
-
-<span class="nn">[Install]</span>
-<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
-</code></pre></div></div>
-
-<h3 id="step-5-start-loki-service">Step 5: Start Loki Service</h3>
-
-<p>Reload systemd, enable and start the Loki service:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
-systemctl <span class="nb">enable </span>loki
-systemctl start loki
-systemctl status loki
-</code></pre></div></div>
-
-<p>To monitor logs:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> loki <span class="nt">-f</span>
-</code></pre></div></div>
-
-<p>Verify the Loki version:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>loki <span class="nt">--version</span>
-</code></pre></div></div>
-
-<h2 id="conclusion">Conclusion</h2>
-
-<p>By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Install Loki To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide. Step 1: Download the Loki Binary Go to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary: wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip Once downloaded, extract the .zip file: unzip loki-linux-amd64.zip This will create a folder containing the Loki binary (loki-linux-amd64). Step 2: Move Loki to a System Directory Move the extracted binary to a directory in your PATH (e.g., /usr/local/bin): mv loki-linux-amd64 /usr/local/bin/loki Ensure the binary is executable: chmod +x /usr/local/bin/loki Step 3: Create a Configuration File (Optional) Create a directory for Loki configuration and add the local-config.yaml file: mkdir -p /etc/loki vim /etc/loki/local-config.yaml The content for local-config.yaml: auth_enabled: false server: http_listen_port: 3100 grpc_listen_port: 9095 common: path_prefix: /loki/data storage_config: boltdb_shipper: active_index_directory: /loki/index cache_location: /loki/cache resync_interval: 10m filesystem: directory: /loki/chunks limits_config: retention_period: 90d allow_structured_metadata: false schema_config: configs: - from: 2020-10-21 store: boltdb-shipper object_store: filesystem schema: v13 index: prefix: index_ period: 24h compactor: working_directory: /loki/compactor table_manager: retention_deletes_enabled: true retention_period: 90d ingester: lifecycler: ring: kvstore: store: memberlist replication_factor: 1 chunk_target_size: 1048576 max_chunk_age: 1h memberlist: join_members: [] Step 4: Configure Log File Storage Define storage directories for Loki logs: mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor chown -R loki:loki /var/loki Create the Loki systemd service file: vim /etc/systemd/system/loki.service Add the following content: [Unit] Description=Loki Documentation=https://grafana.com/docs/loki/latest/ After=network.target [Service] ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Loki Service Reload systemd, enable and start the Loki service: systemctl daemon-reload systemctl enable loki systemctl start loki systemctl status loki To monitor logs: journalctl -u loki -f Verify the Loki version: loki --version Conclusion By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.]]></summary></entry><entry><title type="html">Stability Monitor Prometheus</title><link href="http://localhost:4000/blog/stability-monitor-prometheus/" rel="alternate" type="text/html" title="Stability Monitor Prometheus" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-prometheus</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-prometheus/"><![CDATA[<h2 id="background">Background</h2>
+<p>By configuring both Prometheus and Alertmanager, you set up a robust alerting mechanism, which will notify you in a timely manner about critical problems within your infrastructure.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="alertmanager" /><summary type="html"><![CDATA[Introduction Alertmanager is a tool designed to handle alerts sent by Prometheus, providing features such as deduplication, grouping, and routing of alerts to various receivers like email, Slack, or custom webhooks. This article demonstrates the process of installing and configuring Alertmanager, ensuring it operates as a service, and integrating it with Prometheus to handle alert notifications effectively. Step 1: Download Alertmanager The first step is to download the Alertmanager binary from the official GitHub repository. You can download the latest release from Prometheus’s Alertmanager GitHub page. For example, to download version 0.24.0, run the following command: wget https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0-linux-amd64.tar.gz Step 2: Extract and Move Alertmanager to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH (e.g., /usr/local/bin/): tar -xvzf alertmanager-0.24.0-linux-amd64.tar.gz mv alertmanager-0.24.0-linux-amd64/alertmanager /usr/local/bin/ Next, grant execute permissions to the Alertmanager binary: chmod +x /usr/local/bin/alertmanager Step 3: Create Alertmanager Configuration File Alertmanager requires a configuration file (alertmanager.yml) to define how it handles incoming alerts and how they should be routed to notification receivers. Create the configuration directory and the file: mkdir -p /etc/alertmanager vim /etc/alertmanager/alertmanager.yml Here is a sample configuration file to get started: global: resolve_timeout: 5m route: group_by: ['alertname'] receiver: 'email-config' receivers: - name: 'email-config' email_configs: - to: 'your-email@example.com' from: 'alertmanager@example.com' smarthost: 'smtp.example.com:587' auth_username: 'your-username' auth_password: 'your-password' require_tls: true group_interval: 5m This configuration sets up a route that groups alerts by their alertname and sends notifications via email. You can customize this for other notification types (e.g., Slack, PagerDuty, etc.). Step 4: Create Systemd Service File To ensure that Alertmanager starts automatically at system boot and runs as a background service, create a systemd service file: vim /etc/systemd/system/alertmanager.service Add the following content to the file: [Unit] Description=Alertmanager - A tool to handle alerts sent by Prometheus Documentation=https://prometheus.io/docs/alerting/latest/alertmanager/ After=network.target [Service] ExecStart=/usr/local/bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Alertmanager Service Once the service file is created, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time: systemctl daemon-reload systemctl start alertmanager systemctl enable alertmanager systemctl status alertmanager Alertmanager will now run in the background and handle alerts according to the configuration file. Step 6: Configuring Alerting Rules in Prometheus To trigger alerts, Prometheus requires alerting rules. These rules define the conditions under which an alert should be fired. Alerting rules can be defined in the prometheus.yml configuration file or in a separate rules file. Step 6.1: Define Alerting Rules in Prometheus Create a separate file for alerting rules (e.g., alert.rules.yml), or define the rules directly in prometheus.yml. Below is an example of an alert rules file: Create a rules file: vim /etc/prometheus/alert.rules.yml Add the following alerting rules: groups: - name: example-alerts rules: - alert: HighCPUUsage expr: avg(rate(cpu_usage_seconds_total{mode="user"}[5m])) by (instance) &gt; 0.9 for: 5m labels: severity: critical annotations: summary: "High CPU usage on " description: "CPU usage is above 90% for the last 5 minutes on ." - alert: DiskSpaceLow expr: (node_filesystem_free_bytes / node_filesystem_size_bytes) * 100 &lt; 10 for: 10m labels: severity: warning annotations: summary: "Low disk space on " description: "Disk space on is below 10%." Update the prometheus.yml file to include the alert rules: rule_files: - /etc/prometheus/alert.rules.yml Step 6.2: Ensure Prometheus Sends Alerts to Alertmanager Make sure Prometheus is configured to send alerts to Alertmanager. Modify the alerting section in the prometheus.yml file: alerting: alertmanagers: - static_configs: - targets: - 'localhost:9093' Reload Prometheus to apply the changes: systemctl reload prometheus Step 7: Testing and Verifying Alerts After setting up the alerting rules, it’s important to test that the alerts are correctly triggered and routed. Verify Alertmanager Receives Alerts: Visit the Alertmanager web interface (http://&lt;alertmanager-ip&gt;:9093) to check if alerts are being received and processed. Test Alert Triggers: You can artificially trigger alert conditions (e.g., simulate high CPU usage) to test the rule. Check Notification Receivers: Ensure that the notifications are sent to the configured receivers (e.g., email, Slack). Conclusion In this article, we have walked through the installation and configuration of Alertmanager, as well as the setup of alerting rules in Prometheus. By following the outlined steps, you can ensure that your monitoring system is capable of detecting and notifying you about critical infrastructure issues, helping you to maintain operational reliability. By configuring both Prometheus and Alertmanager, you set up a robust alerting mechanism, which will notify you in a timely manner about critical problems within your infrastructure.]]></summary></entry><entry><title type="html">Stability Monitor Prometheus</title><link href="http://localhost:4000/blog/stability-monitor-prometheus/" rel="alternate" type="text/html" title="Stability Monitor Prometheus" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-prometheus</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-prometheus/"><![CDATA[<h2 id="background">Background</h2>
 <p>A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects:</p>
 <table>
   <thead>
@@ -663,20 +520,331 @@ mindmap
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
-</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Background A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) Best Practices for Selection Small and medium-sized companies can quickly build a monitoring system that suits their business characteristics. Prometheus has already become the standard for real-time monitoring. We can quickly set up our own monitoring system based on Prometheus: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter, Redis Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) System Architecture Design graph TD; A[Prometheus] --&gt; B[Exporters] A --&gt; C[Blackbox Exporter] A --&gt; D[Alertmanager] B --&gt; E[Grafana] C --&gt; E D --&gt; E F[Loki] --&gt; G[Promtail/Fluent Bit] G --&gt; E H[OpenTelemetry] --&gt; I[Jaeger] I --&gt; E Defining Refined Monitoring Metrics JVM Monitoring JVM monitoring is used to track important JVM metrics, including GC (Garbage Collection) instant metrics, heap memory metrics, non-heap memory metrics, metaspace metrics, direct buffer metrics, JVM thread count, etc. This section introduces JVM monitoring and how to view JVM monitoring metrics. JVM monitoring can track the following metrics: GC (Garbage Collection) instant and cumulative details FullGC count YoungGC count FullGC duration YoungGC duration Heap Memory Details Total heap memory Old generation heap memory size Young generation Survivor area size Young generation Eden area size Metaspace Metaspace size Non-Heap Memory Maximum non-heap memory size Used non-heap memory size Direct Buffer Total DirectBuffer size (bytes) Used DirectBuffer size (bytes) JVM Thread Count Total number of threads Number of deadlocked threads Number of newly created threads Number of blocked threads Number of runnable threads Number of terminated threads Number of threads in timed wait Number of threads in waiting state mindmap root((Java Process Memory Usage)) JVM Memory Heap Memory Young Generation Old Generation Non-Heap Memory Metaspace Compressed Class Space Virtual Machine Thread Stack Native Thread Stack Code Cache Direct Buffers Non-JVM Memory Native Runtime Libraries JNI Native Code Host Monitoring Host monitoring tracks various metrics such as CPU, memory, disk, load, network traffic, and network packet metrics. This section introduces host monitoring and how to view host monitoring metrics. Host monitoring can track the following metrics: CPU Total CPU usage System CPU usage User CPU usage CPU usage waiting for I/O completion Physical Memory Total system memory Free system memory Used system memory Memory in PageCache Memory in BufferCache Disk Total system disk size Free system disk size Used system disk size Load System load average Network Traffic Network received bytes Network sent bytes Network Packets Number of received packets per minute Number of sent packets per minute Number of network errors per minute Number of dropped packets per minute SQL Call Analysis View SQL call analysis to understand SQL call patterns in applications. Error Code Monitoring For core business systems, such as payment systems, error code monitoring is essential. Here’s how to install Prometheus step by step in English. If you use the docker you can use this to setup, this is the easy way. springboot-promethenus-grafana. Install Article list Install Loki with Prometheus Install Promtail with Prometheus]]></summary></entry><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/blog/welcome-to-jekyll/" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2019-04-19T03:34:30+08:00</published><updated>2019-04-19T03:34:30+08:00</updated><id>http://localhost:4000/blog/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/blog/welcome-to-jekyll/"><![CDATA[<p>You’ll find this post in your <code class="language-plaintext highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code class="language-plaintext highlighter-rouge">jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
+</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Background A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) Best Practices for Selection Small and medium-sized companies can quickly build a monitoring system that suits their business characteristics. Prometheus has already become the standard for real-time monitoring. We can quickly set up our own monitoring system based on Prometheus: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter, Redis Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) System Architecture Design graph TD; A[Prometheus] --&gt; B[Exporters] A --&gt; C[Blackbox Exporter] A --&gt; D[Alertmanager] B --&gt; E[Grafana] C --&gt; E D --&gt; E F[Loki] --&gt; G[Promtail/Fluent Bit] G --&gt; E H[OpenTelemetry] --&gt; I[Jaeger] I --&gt; E Defining Refined Monitoring Metrics JVM Monitoring JVM monitoring is used to track important JVM metrics, including GC (Garbage Collection) instant metrics, heap memory metrics, non-heap memory metrics, metaspace metrics, direct buffer metrics, JVM thread count, etc. This section introduces JVM monitoring and how to view JVM monitoring metrics. JVM monitoring can track the following metrics: GC (Garbage Collection) instant and cumulative details FullGC count YoungGC count FullGC duration YoungGC duration Heap Memory Details Total heap memory Old generation heap memory size Young generation Survivor area size Young generation Eden area size Metaspace Metaspace size Non-Heap Memory Maximum non-heap memory size Used non-heap memory size Direct Buffer Total DirectBuffer size (bytes) Used DirectBuffer size (bytes) JVM Thread Count Total number of threads Number of deadlocked threads Number of newly created threads Number of blocked threads Number of runnable threads Number of terminated threads Number of threads in timed wait Number of threads in waiting state mindmap root((Java Process Memory Usage)) JVM Memory Heap Memory Young Generation Old Generation Non-Heap Memory Metaspace Compressed Class Space Virtual Machine Thread Stack Native Thread Stack Code Cache Direct Buffers Non-JVM Memory Native Runtime Libraries JNI Native Code Host Monitoring Host monitoring tracks various metrics such as CPU, memory, disk, load, network traffic, and network packet metrics. This section introduces host monitoring and how to view host monitoring metrics. Host monitoring can track the following metrics: CPU Total CPU usage System CPU usage User CPU usage CPU usage waiting for I/O completion Physical Memory Total system memory Free system memory Used system memory Memory in PageCache Memory in BufferCache Disk Total system disk size Free system disk size Used system disk size Load System load average Network Traffic Network received bytes Network sent bytes Network Packets Number of received packets per minute Number of sent packets per minute Number of network errors per minute Number of dropped packets per minute SQL Call Analysis View SQL call analysis to understand SQL call patterns in applications. Error Code Monitoring For core business systems, such as payment systems, error code monitoring is essential. Here’s how to install Prometheus step by step in English. If you use the docker you can use this to setup, this is the easy way. springboot-promethenus-grafana. Install Article list Install Loki with Prometheus Install Promtail with Prometheus]]></summary></entry><entry><title type="html">Stability Monitor Loki</title><link href="http://localhost:4000/blog/stability-monitor-loki/" rel="alternate" type="text/html" title="Stability Monitor Loki" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-loki</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-loki/"><![CDATA[<h2 id="install-loki">Install Loki</h2>
 
-<p>To add new posts, simply add a file in the <code class="language-plaintext highlighter-rouge">_posts</code> directory that follows the convention <code class="language-plaintext highlighter-rouge">YYYY-MM-DD-name-of-post.ext</code> and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.</p>
+<p>To install <strong>Loki</strong> version <strong>3.1.2</strong> on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.</p>
 
-<p>Jekyll also offers powerful support for code snippets:</p>
+<h3 id="step-1-download-the-loki-binary">Step 1: Download the Loki Binary</h3>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-  <span class="nb">puts</span> <span class="s2">"Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
-<span class="k">end</span>
-<span class="n">print_hi</span><span class="p">(</span><span class="s1">'Tom'</span><span class="p">)</span>
-<span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span>
+<p>Go to the <a href="https://github.com/grafana/loki/releases">Loki GitHub releases page</a> and find version <strong>3.1.2</strong>. Or use <code class="language-plaintext highlighter-rouge">wget</code> to directly download the binary:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip
 </code></pre></div></div>
 
-<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>]]></content><author><name>Madden Zhang</name></author><category term="blog" /><category term="Jekyll" /><category term="update" /><summary type="html"><![CDATA[You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.]]></summary></entry><entry><title type="html">Distribute Design Redis</title><link href="http://localhost:4000/blog/distribute-design-redis/" rel="alternate" type="text/html" title="Distribute Design Redis" /><published>2018-07-11T00:00:00+08:00</published><updated>2025-01-24T05:20:02+08:00</updated><id>http://localhost:4000/blog/distribute-design-redis</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-redis/"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>Once downloaded, extract the <code class="language-plaintext highlighter-rouge">.zip</code> file:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip loki-linux-amd64.zip
+</code></pre></div></div>
+
+<p>This will create a folder containing the Loki binary (<code class="language-plaintext highlighter-rouge">loki-linux-amd64</code>).</p>
+
+<h3 id="step-2-move-loki-to-a-system-directory">Step 2: Move Loki to a System Directory</h3>
+
+<p>Move the extracted binary to a directory in your PATH (e.g., <code class="language-plaintext highlighter-rouge">/usr/local/bin</code>):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mv </span>loki-linux-amd64 /usr/local/bin/loki
+</code></pre></div></div>
+
+<p>Ensure the binary is executable:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/loki
+</code></pre></div></div>
+
+<h3 id="step-3-create-a-configuration-file-optional">Step 3: Create a Configuration File (Optional)</h3>
+
+<p>Create a directory for Loki configuration and add the <code class="language-plaintext highlighter-rouge">local-config.yaml</code> file:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/loki
+vim /etc/loki/local-config.yaml
+</code></pre></div></div>
+
+<p>The content for <code class="language-plaintext highlighter-rouge">local-config.yaml</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth_enabled</span><span class="pi">:</span> <span class="no">false</span>
+
+<span class="na">server</span><span class="pi">:</span>
+  <span class="na">http_listen_port</span><span class="pi">:</span> <span class="m">3100</span>
+  <span class="na">grpc_listen_port</span><span class="pi">:</span> <span class="m">9095</span>
+
+<span class="na">common</span><span class="pi">:</span>
+  <span class="na">path_prefix</span><span class="pi">:</span> <span class="s">/loki/data</span>  
+
+<span class="na">storage_config</span><span class="pi">:</span>
+  <span class="na">boltdb_shipper</span><span class="pi">:</span>
+    <span class="na">active_index_directory</span><span class="pi">:</span> <span class="s">/loki/index</span>
+    <span class="na">cache_location</span><span class="pi">:</span> <span class="s">/loki/cache</span>
+    <span class="na">resync_interval</span><span class="pi">:</span> <span class="s">10m</span>
+  <span class="na">filesystem</span><span class="pi">:</span>
+    <span class="na">directory</span><span class="pi">:</span> <span class="s">/loki/chunks</span>
+
+<span class="na">limits_config</span><span class="pi">:</span>
+  <span class="na">retention_period</span><span class="pi">:</span> <span class="s">90d</span>
+  <span class="na">allow_structured_metadata</span><span class="pi">:</span> <span class="no">false</span> 
+
+<span class="na">schema_config</span><span class="pi">:</span>
+  <span class="na">configs</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">from</span><span class="pi">:</span> <span class="s">2020-10-21</span>
+      <span class="na">store</span><span class="pi">:</span> <span class="s">boltdb-shipper</span>
+      <span class="na">object_store</span><span class="pi">:</span> <span class="s">filesystem</span>
+      <span class="na">schema</span><span class="pi">:</span> <span class="s">v13</span>
+      <span class="na">index</span><span class="pi">:</span>
+        <span class="na">prefix</span><span class="pi">:</span> <span class="s">index_</span>
+        <span class="na">period</span><span class="pi">:</span> <span class="s">24h</span>  
+
+<span class="na">compactor</span><span class="pi">:</span>
+  <span class="na">working_directory</span><span class="pi">:</span> <span class="s">/loki/compactor</span> 
+
+<span class="na">table_manager</span><span class="pi">:</span>
+  <span class="na">retention_deletes_enabled</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">retention_period</span><span class="pi">:</span> <span class="s">90d</span>
+
+<span class="na">ingester</span><span class="pi">:</span>
+  <span class="na">lifecycler</span><span class="pi">:</span>
+    <span class="na">ring</span><span class="pi">:</span>
+      <span class="na">kvstore</span><span class="pi">:</span>
+        <span class="na">store</span><span class="pi">:</span> <span class="s">memberlist</span>
+      <span class="na">replication_factor</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">chunk_target_size</span><span class="pi">:</span> <span class="s">1048576</span>  
+  <span class="na">max_chunk_age</span><span class="pi">:</span> <span class="s">1h</span> 
+
+<span class="na">memberlist</span><span class="pi">:</span>
+  <span class="na">join_members</span><span class="pi">:</span> <span class="pi">[]</span> 
+</code></pre></div></div>
+
+<h3 id="step-4-configure-log-file-storage">Step 4: Configure Log File Storage</h3>
+
+<p>Define storage directories for Loki logs:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor
+<span class="nb">chown</span> <span class="nt">-R</span> loki:loki /var/loki
+</code></pre></div></div>
+
+<p>Create the Loki systemd service file:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/loki.service
+</code></pre></div></div>
+
+<p>Add the following content:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
+<span class="py">Description</span><span class="p">=</span><span class="s">Loki</span>
+<span class="py">Documentation</span><span class="p">=</span><span class="s">https://grafana.com/docs/loki/latest/</span>
+<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
+
+<span class="nn">[Service]</span>
+<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml</span>
+<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
+<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
+<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
+
+<span class="nn">[Install]</span>
+<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
+</code></pre></div></div>
+
+<h3 id="step-5-start-loki-service">Step 5: Start Loki Service</h3>
+
+<p>Reload systemd, enable and start the Loki service:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
+systemctl <span class="nb">enable </span>loki
+systemctl start loki
+systemctl status loki
+</code></pre></div></div>
+
+<p>To monitor logs:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> loki <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p>Verify the Loki version:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>loki <span class="nt">--version</span>
+</code></pre></div></div>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Install Loki To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide. Step 1: Download the Loki Binary Go to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary: wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip Once downloaded, extract the .zip file: unzip loki-linux-amd64.zip This will create a folder containing the Loki binary (loki-linux-amd64). Step 2: Move Loki to a System Directory Move the extracted binary to a directory in your PATH (e.g., /usr/local/bin): mv loki-linux-amd64 /usr/local/bin/loki Ensure the binary is executable: chmod +x /usr/local/bin/loki Step 3: Create a Configuration File (Optional) Create a directory for Loki configuration and add the local-config.yaml file: mkdir -p /etc/loki vim /etc/loki/local-config.yaml The content for local-config.yaml: auth_enabled: false server: http_listen_port: 3100 grpc_listen_port: 9095 common: path_prefix: /loki/data storage_config: boltdb_shipper: active_index_directory: /loki/index cache_location: /loki/cache resync_interval: 10m filesystem: directory: /loki/chunks limits_config: retention_period: 90d allow_structured_metadata: false schema_config: configs: - from: 2020-10-21 store: boltdb-shipper object_store: filesystem schema: v13 index: prefix: index_ period: 24h compactor: working_directory: /loki/compactor table_manager: retention_deletes_enabled: true retention_period: 90d ingester: lifecycler: ring: kvstore: store: memberlist replication_factor: 1 chunk_target_size: 1048576 max_chunk_age: 1h memberlist: join_members: [] Step 4: Configure Log File Storage Define storage directories for Loki logs: mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor chown -R loki:loki /var/loki Create the Loki systemd service file: vim /etc/systemd/system/loki.service Add the following content: [Unit] Description=Loki Documentation=https://grafana.com/docs/loki/latest/ After=network.target [Service] ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Loki Service Reload systemd, enable and start the Loki service: systemctl daemon-reload systemctl enable loki systemctl start loki systemctl status loki To monitor logs: journalctl -u loki -f Verify the Loki version: loki --version Conclusion By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.]]></summary></entry><entry><title type="html">Distribute Design Kafka</title><link href="http://localhost:4000/blog/distribute-design-kafka/" rel="alternate" type="text/html" title="Distribute Design Kafka" /><published>2018-07-11T00:00:00+08:00</published><updated>2018-07-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/distribute-design-kafka</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-kafka/"><![CDATA[<h2 id="introduction">Introduction</h2>
+
+<p>Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark.</p>
+
+<p>As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles.</p>
+
+<h2 id="key-terminologies">Key Terminologies</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Broker</td>
+      <td>A Kafka node that handles message processing. Multiple brokers form a Kafka cluster.</td>
+    </tr>
+    <tr>
+      <td>Topic</td>
+      <td>Kafka uses topics to categorize messages. Every message published to Kafka needs a topic.</td>
+    </tr>
+    <tr>
+      <td>Producer</td>
+      <td>The client that sends messages to Kafka brokers.</td>
+    </tr>
+    <tr>
+      <td>Consumer</td>
+      <td>The client that reads messages from Kafka brokers.</td>
+    </tr>
+    <tr>
+      <td>Consumer Group</td>
+      <td>A group of consumers, where each message can only be consumed by one consumer within the group.</td>
+    </tr>
+    <tr>
+      <td>Partition</td>
+      <td>The physical division of a topic. A topic can have multiple partitions.</td>
+    </tr>
+    <tr>
+      <td>Segment</td>
+      <td>A partition is divided into multiple segments.</td>
+    </tr>
+    <tr>
+      <td>Offset</td>
+      <td>A unique identifier for messages within a partition. Each message has a sequential offset number.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="kafkas-storage-mechanism">Kafka’s Storage Mechanism</h2>
+
+<p>Kafka’s storage mechanism can be understood from four aspects:</p>
+
+<h3 id="partition-distribution-in-topics">Partition Distribution in Topics</h3>
+
+<p>In a Kafka cluster, each partition of a topic is stored across multiple brokers.<br />
+For instance, consider a setup where a topic like report_push has four partitions.<br />
+Kafka partitions are stored as directories with the naming convention: <code class="language-plaintext highlighter-rouge">topic-name-partition-index</code>.</p>
+
+<h3 id="partition-file-storage">Partition File Storage</h3>
+
+<p>Each partition is stored as a series of segments, which are essentially large files.<br />
+Each segment file consists of two parts: an index file (.index) and a data file (.log).</p>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt;|Pushes data| B[Kafka Broker]
+  B --&gt;|Distributes messages| C[Partition]
+  C --&gt; D[Segment]
+  D --&gt; E[Message]
+</div>
+
+<h3 id="segment-storage-structure">Segment Storage Structure</h3>
+
+<p>A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages.<br />
+Segment files are named based on the last message’s offset, helping Kafka efficiently locate data.</p>
+
+<div class="mermaid">
+graph TD
+  A[Segment] --&gt; B[Index File]
+  A --&gt; C[Data File]
+  B --&gt; D[Message Metadata]
+  C --&gt; E[Message Data]
+</div>
+
+<h3 id="locating-messages-using-offsets">Locating Messages Using Offsets</h3>
+
+<p>Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it.</p>
+
+<div class="mermaid">
+graph TD
+  A[Partition] --&gt; B[Message with Offset]
+  B --&gt; C[Index File Lookup]
+  C --&gt; D[Data File Access]
+</div>
+
+<h2 id="kafkas-internal-architecture">Kafka’s Internal Architecture</h2>
+
+<p>The internal architecture of Kafka includes the following core components:</p>
+
+<ul>
+  <li><strong>Producer:</strong> Sends messages to the Kafka cluster.</li>
+  <li><strong>Broker:</strong> Handles messages and stores partitions.</li>
+  <li><strong>Consumer:</strong> Pulls messages from the Kafka cluster.</li>
+  <li><strong>Zookeeper:</strong> Manages Kafka’s cluster state and coordinates leader election and partition management.</li>
+</ul>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Broker]
+  B --&gt; C[Partition]
+  C --&gt; D[Consumer]
+  D --&gt; E[Zookeeper]
+</div>
+
+<h2 id="ensuring-high-reliability">Ensuring High Reliability</h2>
+
+<p>Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures.</p>
+
+<h3 id="data-synchronization">Data Synchronization</h3>
+
+<p>Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers.</p>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Leader Partition]
+  B --&gt; C[Follower 1]
+  B --&gt; D[Follower 2]
+  C --&gt; E[Write Sync]
+  D --&gt; E[Write Sync]
+</div>
+
+<h3 id="replica-placement-strategy">Replica Placement Strategy</h3>
+
+<p>Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas.</p>
+
+<div class="mermaid">
+graph TD
+  A[Broker 1] --&gt; B[Partition 1 Replica 1]
+  A[Broker 2] --&gt; C[Partition 1 Replica 2]
+  A[Broker 3] --&gt; D[Partition 1 Replica 3]
+</div>
+
+<h3 id="synchronization-strategy">Synchronization Strategy</h3>
+
+<p>Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader.</p>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Leader]
+  B --&gt; C[Follower 1]
+  B --&gt; D[Follower 2]
+  C --&gt; E[ACK]
+  D --&gt; E[ACK]
+  E --&gt; F[Leader Commit]
+</div>
+
+<h3 id="leader-election">Leader Election</h3>
+
+<p>Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition.</p>
+
+<div class="mermaid">
+graph TD
+  A[Zookeeper] --&gt; B[Partition 1 Leader Election]
+  B --&gt; C[Follower 1]
+  B --&gt; D[Follower 2]
+  C --&gt; E[Leader Role]
+  D --&gt; F[Follower Role]
+</div>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems.</p>
+
+<p>The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.</p>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="distribute" /><category term="kafka" /><summary type="html"><![CDATA[Introduction Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark. As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles. Key Terminologies Term Explanation Broker A Kafka node that handles message processing. Multiple brokers form a Kafka cluster. Topic Kafka uses topics to categorize messages. Every message published to Kafka needs a topic. Producer The client that sends messages to Kafka brokers. Consumer The client that reads messages from Kafka brokers. Consumer Group A group of consumers, where each message can only be consumed by one consumer within the group. Partition The physical division of a topic. A topic can have multiple partitions. Segment A partition is divided into multiple segments. Offset A unique identifier for messages within a partition. Each message has a sequential offset number. Kafka’s Storage Mechanism Kafka’s storage mechanism can be understood from four aspects: Partition Distribution in Topics In a Kafka cluster, each partition of a topic is stored across multiple brokers. For instance, consider a setup where a topic like report_push has four partitions. Kafka partitions are stored as directories with the naming convention: topic-name-partition-index. Partition File Storage Each partition is stored as a series of segments, which are essentially large files. Each segment file consists of two parts: an index file (.index) and a data file (.log). graph TD A[Producer] --&gt;|Pushes data| B[Kafka Broker] B --&gt;|Distributes messages| C[Partition] C --&gt; D[Segment] D --&gt; E[Message] Segment Storage Structure A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages. Segment files are named based on the last message’s offset, helping Kafka efficiently locate data. graph TD A[Segment] --&gt; B[Index File] A --&gt; C[Data File] B --&gt; D[Message Metadata] C --&gt; E[Message Data] Locating Messages Using Offsets Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it. graph TD A[Partition] --&gt; B[Message with Offset] B --&gt; C[Index File Lookup] C --&gt; D[Data File Access] Kafka’s Internal Architecture The internal architecture of Kafka includes the following core components: Producer: Sends messages to the Kafka cluster. Broker: Handles messages and stores partitions. Consumer: Pulls messages from the Kafka cluster. Zookeeper: Manages Kafka’s cluster state and coordinates leader election and partition management. graph TD A[Producer] --&gt; B[Broker] B --&gt; C[Partition] C --&gt; D[Consumer] D --&gt; E[Zookeeper] Ensuring High Reliability Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures. Data Synchronization Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers. graph TD A[Producer] --&gt; B[Leader Partition] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[Write Sync] D --&gt; E[Write Sync] Replica Placement Strategy Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas. graph TD A[Broker 1] --&gt; B[Partition 1 Replica 1] A[Broker 2] --&gt; C[Partition 1 Replica 2] A[Broker 3] --&gt; D[Partition 1 Replica 3] Synchronization Strategy Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader. graph TD A[Producer] --&gt; B[Leader] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[ACK] D --&gt; E[ACK] E --&gt; F[Leader Commit] Leader Election Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition. graph TD A[Zookeeper] --&gt; B[Partition 1 Leader Election] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[Leader Role] D --&gt; F[Follower Role] Conclusion Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems. The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.]]></summary></entry><entry><title type="html">Distribute Design Redis</title><link href="http://localhost:4000/blog/distribute-design-redis/" rel="alternate" type="text/html" title="Distribute Design Redis" /><published>2018-07-11T00:00:00+08:00</published><updated>2025-01-24T05:20:02+08:00</updated><id>http://localhost:4000/blog/distribute-design-redis</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-redis/"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems.</p>
 
@@ -870,260 +1038,17 @@ graph TD
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
-</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="distribute" /><category term="redis" /><summary type="html"><![CDATA[Introduction Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems. This article explores Redis’s internal architecture, its approach to data persistence and replication, as well as various deployment architectures and best practices. Additionally, we will discuss Redis’s performance optimization for handling hot data and its ideal use cases in large-scale distributed systems. Key Terminologies Term Explanation Node A Redis instance in a Redis cluster or standalone setup. Key-Value Store Redis stores data in a key-value format, where each key maps to a value. Publisher A client that sends messages to a Redis channel. Subscriber A client that listens to messages from a Redis channel. Replication Redis replication allows data to be copied to multiple nodes for fault tolerance. Master Node The primary node in a replication setup, responsible for data writes. Replica Node A secondary node in a replication setup that copies data from the master node. Persistence Redis offers different persistence options, such as snapshots and append-only files (AOF). Redis Storage Mechanism Redis’s design is optimized for high performance by storing data in memory, but it also supports persistence to ensure data durability. Redis provides several options for data persistence and replication to ensure that data remains safe even during node failures. Key-Value Store Model Redis stores all data as key-value pairs. This simple model is highly efficient for quick lookups, making Redis ideal for caching and real-time systems. Data Persistence in Redis Redis provides two primary persistence mechanisms to ensure durability: Snapshotting (RDB): Redis periodically saves the dataset to disk in the form of snapshots (RDB files). This allows quick restarts but may lead to data loss if the server crashes between snapshots. Append-Only File (AOF): Redis logs every write operation received by the server to an append-only file. This ensures that even if Redis crashes, it can recover the exact state from the logs, albeit at a performance cost. Redis Data Structures Redis supports a wide range of data types, including: Strings: Simple key-value pairs (e.g., session data). Lists: Ordered collections of strings, ideal for queues or message buffers. Sets: Unordered collections of unique strings, useful for tasks like membership checking. Hashes: A map of field-value pairs, akin to a dictionary. Sorted Sets: Like sets, but with an associated score, allowing ordering by score (used for leaderboards, etc.). Memory Management Redis employs an in-memory storage model, meaning all data is held in RAM. While this provides extreme performance benefits, it also limits the amount of data that can be handled. Redis handles memory pressure through eviction policies, such as: LRU (Least Recently Used): Evicts the least recently accessed keys when the memory limit is reached. TTL (Time To Live): Keys can have an expiration time, and Redis will automatically remove expired keys. No-eviction: When memory is full, Redis returns errors for write operations. Redis Internal Architecture Redis’s internal architecture can be broken down into key components that ensure high availability, reliability, and scalability: Master-Slave Replication Redis uses a master-slave replication model to ensure data redundancy. The master node is responsible for handling all write operations, while the slave nodes asynchronously replicate data from the master. This replication ensures that data is always available, even if the master node fails. graph TD A[Publisher] --&gt; B[Redis Master Node] B --&gt; C[Replica 1] B --&gt; D[Replica 2] C --&gt; E[Write Sync] D --&gt; E[Write Sync] Redis Sentinel for High Availability Redis Sentinel provides high availability and automatic failover. It monitors the health of Redis instances, and if the master node fails, Sentinel will automatically promote one of the replica nodes to become the new master. graph TD A[Sentinel] --&gt; B[Master Node] B --&gt; C[Replica 1] B --&gt; D[Replica 2] C --&gt; E[Failover Process] D --&gt; E[Failover Process] Redis Cluster for Horizontal Scaling Redis Cluster is a distributed implementation of Redis that partitions data across multiple nodes. Each node in the cluster holds a portion of the data and can act as a master or replica. This allows Redis to scale horizontally by adding more nodes to handle increased load and larger datasets. graph TD A[Redis Client] --&gt; B[Cluster Node 1] B --&gt; C[Cluster Node 2] C --&gt; D[Cluster Node 3] D --&gt; E[Cluster Node N] Handling Hot Data Hot data refers to frequently accessed data that must be served with minimal latency. Redis excels at managing hot data due to its in-memory design and support for complex data structures. Techniques for Optimizing Hot Data Access Data Sharding: Redis Cluster allows data to be partitioned (sharded) across multiple nodes, ensuring that hot data resides on the appropriate node with minimal impact on performance. Caching: Redis is widely used as a cache for frequently accessed data. By caching hot data in Redis, applications can reduce the load on primary databases and improve response times. Memory Optimizations: Using data types like hashes, which store multiple fields in a single key, can reduce memory usage when dealing with large datasets with frequent access patterns. Deployment Architectures Redis offers three primary deployment architectures to suit different operational needs: 1. Standalone Redis Instance A simple, single Redis instance is suitable for small-scale applications or as a local cache for a single application. However, this architecture doesn’t provide fault tolerance or horizontal scaling. 2. Master-Slave Replication In this architecture, a Redis master node is paired with one or more replica nodes. The master handles all write operations, while the replicas asynchronously copy the data. This architecture offers redundancy, allowing reads to be distributed among replicas. 3. Redis Cluster Redis Cluster is a more advanced architecture where data is partitioned across multiple Redis nodes, allowing horizontal scaling. Redis Cluster automatically distributes data and handles failover, making it suitable for large-scale distributed applications. Use Cases for Redis Redis is suitable for various use cases due to its high performance and flexibility: Caching: Redis is commonly used as a cache for web applications to store frequently accessed data, reducing load on databases and improving response times. Session Management: Redis can store session data for web applications, ensuring quick access to user-specific information. Real-Time Analytics: Redis’s support for data structures like sorted sets makes it ideal for real-time analytics and tracking use cases (e.g., leaderboards). Pub/Sub Messaging: Redis’s Pub/Sub capabilities are widely used for building real-time messaging systems and event-driven architectures. Best Practices for Redis Persistence Options: Choose the appropriate persistence model based on your use case. If durability is crucial, use AOF for better recovery options. If performance is more important, use RDB snapshots. Memory Management: Monitor memory usage and set proper eviction policies (LRU, TTL) to ensure Redis doesn’t run out of memory. Sharding and Clustering: Use Redis Cluster to distribute large datasets across multiple nodes for scalability and high availability. Monitoring and Alerts: Implement monitoring tools like Redis’s INFO command or third-party tools to keep track of Redis’s performance metrics (e.g., memory usage, commands per second). Security: Use password protection and encrypted connections (e.g., TLS) to secure Redis instances, especially in production environments. Conclusion Redis is a powerful, fast, and flexible data store that can be used in various distributed systems. Its design focuses on simplicity and performance, with in-memory storage and sophisticated replication and clustering mechanisms to ensure reliability, scalability, and fault tolerance. By understanding Redis’s underlying architecture and following best practices, you can build highly efficient and resilient distributed systems. Redis’s ability to handle hot data, combined with its flexible deployment architectures, makes it an excellent choice for caching, real-time analytics, messaging, and many other use cases.]]></summary></entry><entry><title type="html">Distribute Design Kafka</title><link href="http://localhost:4000/blog/distribute-design-kafka/" rel="alternate" type="text/html" title="Distribute Design Kafka" /><published>2018-07-11T00:00:00+08:00</published><updated>2018-07-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/distribute-design-kafka</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-kafka/"><![CDATA[<h2 id="introduction">Introduction</h2>
+</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="distribute" /><category term="redis" /><summary type="html"><![CDATA[Introduction Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems. This article explores Redis’s internal architecture, its approach to data persistence and replication, as well as various deployment architectures and best practices. Additionally, we will discuss Redis’s performance optimization for handling hot data and its ideal use cases in large-scale distributed systems. Key Terminologies Term Explanation Node A Redis instance in a Redis cluster or standalone setup. Key-Value Store Redis stores data in a key-value format, where each key maps to a value. Publisher A client that sends messages to a Redis channel. Subscriber A client that listens to messages from a Redis channel. Replication Redis replication allows data to be copied to multiple nodes for fault tolerance. Master Node The primary node in a replication setup, responsible for data writes. Replica Node A secondary node in a replication setup that copies data from the master node. Persistence Redis offers different persistence options, such as snapshots and append-only files (AOF). Redis Storage Mechanism Redis’s design is optimized for high performance by storing data in memory, but it also supports persistence to ensure data durability. Redis provides several options for data persistence and replication to ensure that data remains safe even during node failures. Key-Value Store Model Redis stores all data as key-value pairs. This simple model is highly efficient for quick lookups, making Redis ideal for caching and real-time systems. Data Persistence in Redis Redis provides two primary persistence mechanisms to ensure durability: Snapshotting (RDB): Redis periodically saves the dataset to disk in the form of snapshots (RDB files). This allows quick restarts but may lead to data loss if the server crashes between snapshots. Append-Only File (AOF): Redis logs every write operation received by the server to an append-only file. This ensures that even if Redis crashes, it can recover the exact state from the logs, albeit at a performance cost. Redis Data Structures Redis supports a wide range of data types, including: Strings: Simple key-value pairs (e.g., session data). Lists: Ordered collections of strings, ideal for queues or message buffers. Sets: Unordered collections of unique strings, useful for tasks like membership checking. Hashes: A map of field-value pairs, akin to a dictionary. Sorted Sets: Like sets, but with an associated score, allowing ordering by score (used for leaderboards, etc.). Memory Management Redis employs an in-memory storage model, meaning all data is held in RAM. While this provides extreme performance benefits, it also limits the amount of data that can be handled. Redis handles memory pressure through eviction policies, such as: LRU (Least Recently Used): Evicts the least recently accessed keys when the memory limit is reached. TTL (Time To Live): Keys can have an expiration time, and Redis will automatically remove expired keys. No-eviction: When memory is full, Redis returns errors for write operations. Redis Internal Architecture Redis’s internal architecture can be broken down into key components that ensure high availability, reliability, and scalability: Master-Slave Replication Redis uses a master-slave replication model to ensure data redundancy. The master node is responsible for handling all write operations, while the slave nodes asynchronously replicate data from the master. This replication ensures that data is always available, even if the master node fails. graph TD A[Publisher] --&gt; B[Redis Master Node] B --&gt; C[Replica 1] B --&gt; D[Replica 2] C --&gt; E[Write Sync] D --&gt; E[Write Sync] Redis Sentinel for High Availability Redis Sentinel provides high availability and automatic failover. It monitors the health of Redis instances, and if the master node fails, Sentinel will automatically promote one of the replica nodes to become the new master. graph TD A[Sentinel] --&gt; B[Master Node] B --&gt; C[Replica 1] B --&gt; D[Replica 2] C --&gt; E[Failover Process] D --&gt; E[Failover Process] Redis Cluster for Horizontal Scaling Redis Cluster is a distributed implementation of Redis that partitions data across multiple nodes. Each node in the cluster holds a portion of the data and can act as a master or replica. This allows Redis to scale horizontally by adding more nodes to handle increased load and larger datasets. graph TD A[Redis Client] --&gt; B[Cluster Node 1] B --&gt; C[Cluster Node 2] C --&gt; D[Cluster Node 3] D --&gt; E[Cluster Node N] Handling Hot Data Hot data refers to frequently accessed data that must be served with minimal latency. Redis excels at managing hot data due to its in-memory design and support for complex data structures. Techniques for Optimizing Hot Data Access Data Sharding: Redis Cluster allows data to be partitioned (sharded) across multiple nodes, ensuring that hot data resides on the appropriate node with minimal impact on performance. Caching: Redis is widely used as a cache for frequently accessed data. By caching hot data in Redis, applications can reduce the load on primary databases and improve response times. Memory Optimizations: Using data types like hashes, which store multiple fields in a single key, can reduce memory usage when dealing with large datasets with frequent access patterns. Deployment Architectures Redis offers three primary deployment architectures to suit different operational needs: 1. Standalone Redis Instance A simple, single Redis instance is suitable for small-scale applications or as a local cache for a single application. However, this architecture doesn’t provide fault tolerance or horizontal scaling. 2. Master-Slave Replication In this architecture, a Redis master node is paired with one or more replica nodes. The master handles all write operations, while the replicas asynchronously copy the data. This architecture offers redundancy, allowing reads to be distributed among replicas. 3. Redis Cluster Redis Cluster is a more advanced architecture where data is partitioned across multiple Redis nodes, allowing horizontal scaling. Redis Cluster automatically distributes data and handles failover, making it suitable for large-scale distributed applications. Use Cases for Redis Redis is suitable for various use cases due to its high performance and flexibility: Caching: Redis is commonly used as a cache for web applications to store frequently accessed data, reducing load on databases and improving response times. Session Management: Redis can store session data for web applications, ensuring quick access to user-specific information. Real-Time Analytics: Redis’s support for data structures like sorted sets makes it ideal for real-time analytics and tracking use cases (e.g., leaderboards). Pub/Sub Messaging: Redis’s Pub/Sub capabilities are widely used for building real-time messaging systems and event-driven architectures. Best Practices for Redis Persistence Options: Choose the appropriate persistence model based on your use case. If durability is crucial, use AOF for better recovery options. If performance is more important, use RDB snapshots. Memory Management: Monitor memory usage and set proper eviction policies (LRU, TTL) to ensure Redis doesn’t run out of memory. Sharding and Clustering: Use Redis Cluster to distribute large datasets across multiple nodes for scalability and high availability. Monitoring and Alerts: Implement monitoring tools like Redis’s INFO command or third-party tools to keep track of Redis’s performance metrics (e.g., memory usage, commands per second). Security: Use password protection and encrypted connections (e.g., TLS) to secure Redis instances, especially in production environments. Conclusion Redis is a powerful, fast, and flexible data store that can be used in various distributed systems. Its design focuses on simplicity and performance, with in-memory storage and sophisticated replication and clustering mechanisms to ensure reliability, scalability, and fault tolerance. By understanding Redis’s underlying architecture and following best practices, you can build highly efficient and resilient distributed systems. Redis’s ability to handle hot data, combined with its flexible deployment architectures, makes it an excellent choice for caching, real-time analytics, messaging, and many other use cases.]]></summary></entry><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/blog/welcome-to-jekyll/" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2010-04-19T03:34:30+08:00</published><updated>2010-04-19T03:34:30+08:00</updated><id>http://localhost:4000/blog/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/blog/welcome-to-jekyll/"><![CDATA[<p>You’ll find this post in your <code class="language-plaintext highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code class="language-plaintext highlighter-rouge">jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
 
-<p>Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark.</p>
+<p>To add new posts, simply add a file in the <code class="language-plaintext highlighter-rouge">_posts</code> directory that follows the convention <code class="language-plaintext highlighter-rouge">YYYY-MM-DD-name-of-post.ext</code> and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.</p>
 
-<p>As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles.</p>
+<p>Jekyll also offers powerful support for code snippets:</p>
 
-<h2 id="key-terminologies">Key Terminologies</h2>
-
-<table>
-  <thead>
-    <tr>
-      <th>Term</th>
-      <th>Explanation</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Broker</td>
-      <td>A Kafka node that handles message processing. Multiple brokers form a Kafka cluster.</td>
-    </tr>
-    <tr>
-      <td>Topic</td>
-      <td>Kafka uses topics to categorize messages. Every message published to Kafka needs a topic.</td>
-    </tr>
-    <tr>
-      <td>Producer</td>
-      <td>The client that sends messages to Kafka brokers.</td>
-    </tr>
-    <tr>
-      <td>Consumer</td>
-      <td>The client that reads messages from Kafka brokers.</td>
-    </tr>
-    <tr>
-      <td>Consumer Group</td>
-      <td>A group of consumers, where each message can only be consumed by one consumer within the group.</td>
-    </tr>
-    <tr>
-      <td>Partition</td>
-      <td>The physical division of a topic. A topic can have multiple partitions.</td>
-    </tr>
-    <tr>
-      <td>Segment</td>
-      <td>A partition is divided into multiple segments.</td>
-    </tr>
-    <tr>
-      <td>Offset</td>
-      <td>A unique identifier for messages within a partition. Each message has a sequential offset number.</td>
-    </tr>
-  </tbody>
-</table>
-
-<h2 id="kafkas-storage-mechanism">Kafka’s Storage Mechanism</h2>
-
-<p>Kafka’s storage mechanism can be understood from four aspects:</p>
-
-<h3 id="partition-distribution-in-topics">Partition Distribution in Topics</h3>
-
-<p>In a Kafka cluster, each partition of a topic is stored across multiple brokers.<br />
-For instance, consider a setup where a topic like report_push has four partitions.<br />
-Kafka partitions are stored as directories with the naming convention: <code class="language-plaintext highlighter-rouge">topic-name-partition-index</code>.</p>
-
-<h3 id="partition-file-storage">Partition File Storage</h3>
-
-<p>Each partition is stored as a series of segments, which are essentially large files.<br />
-Each segment file consists of two parts: an index file (.index) and a data file (.log).</p>
-
-<div class="mermaid">
-graph TD
-  A[Producer] --&gt;|Pushes data| B[Kafka Broker]
-  B --&gt;|Distributes messages| C[Partition]
-  C --&gt; D[Segment]
-  D --&gt; E[Message]
-</div>
-
-<h3 id="segment-storage-structure">Segment Storage Structure</h3>
-
-<p>A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages.<br />
-Segment files are named based on the last message’s offset, helping Kafka efficiently locate data.</p>
-
-<div class="mermaid">
-graph TD
-  A[Segment] --&gt; B[Index File]
-  A --&gt; C[Data File]
-  B --&gt; D[Message Metadata]
-  C --&gt; E[Message Data]
-</div>
-
-<h3 id="locating-messages-using-offsets">Locating Messages Using Offsets</h3>
-
-<p>Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it.</p>
-
-<div class="mermaid">
-graph TD
-  A[Partition] --&gt; B[Message with Offset]
-  B --&gt; C[Index File Lookup]
-  C --&gt; D[Data File Access]
-</div>
-
-<h2 id="kafkas-internal-architecture">Kafka’s Internal Architecture</h2>
-
-<p>The internal architecture of Kafka includes the following core components:</p>
-
-<ul>
-  <li><strong>Producer:</strong> Sends messages to the Kafka cluster.</li>
-  <li><strong>Broker:</strong> Handles messages and stores partitions.</li>
-  <li><strong>Consumer:</strong> Pulls messages from the Kafka cluster.</li>
-  <li><strong>Zookeeper:</strong> Manages Kafka’s cluster state and coordinates leader election and partition management.</li>
-</ul>
-
-<div class="mermaid">
-graph TD
-  A[Producer] --&gt; B[Broker]
-  B --&gt; C[Partition]
-  C --&gt; D[Consumer]
-  D --&gt; E[Zookeeper]
-</div>
-
-<h2 id="ensuring-high-reliability">Ensuring High Reliability</h2>
-
-<p>Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures.</p>
-
-<h3 id="data-synchronization">Data Synchronization</h3>
-
-<p>Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers.</p>
-
-<div class="mermaid">
-graph TD
-  A[Producer] --&gt; B[Leader Partition]
-  B --&gt; C[Follower 1]
-  B --&gt; D[Follower 2]
-  C --&gt; E[Write Sync]
-  D --&gt; E[Write Sync]
-</div>
-
-<h3 id="replica-placement-strategy">Replica Placement Strategy</h3>
-
-<p>Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas.</p>
-
-<div class="mermaid">
-graph TD
-  A[Broker 1] --&gt; B[Partition 1 Replica 1]
-  A[Broker 2] --&gt; C[Partition 1 Replica 2]
-  A[Broker 3] --&gt; D[Partition 1 Replica 3]
-</div>
-
-<h3 id="synchronization-strategy">Synchronization Strategy</h3>
-
-<p>Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader.</p>
-
-<div class="mermaid">
-graph TD
-  A[Producer] --&gt; B[Leader]
-  B --&gt; C[Follower 1]
-  B --&gt; D[Follower 2]
-  C --&gt; E[ACK]
-  D --&gt; E[ACK]
-  E --&gt; F[Leader Commit]
-</div>
-
-<h3 id="leader-election">Leader Election</h3>
-
-<p>Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition.</p>
-
-<div class="mermaid">
-graph TD
-  A[Zookeeper] --&gt; B[Partition 1 Leader Election]
-  B --&gt; C[Follower 1]
-  B --&gt; D[Follower 2]
-  C --&gt; E[Leader Role]
-  D --&gt; F[Follower Role]
-</div>
-
-<h2 id="conclusion">Conclusion</h2>
-
-<p>Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems.</p>
-
-<p>The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.</p>
-
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true });
-</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="distribute" /><category term="kafka" /><summary type="html"><![CDATA[Introduction Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark. As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles. Key Terminologies Term Explanation Broker A Kafka node that handles message processing. Multiple brokers form a Kafka cluster. Topic Kafka uses topics to categorize messages. Every message published to Kafka needs a topic. Producer The client that sends messages to Kafka brokers. Consumer The client that reads messages from Kafka brokers. Consumer Group A group of consumers, where each message can only be consumed by one consumer within the group. Partition The physical division of a topic. A topic can have multiple partitions. Segment A partition is divided into multiple segments. Offset A unique identifier for messages within a partition. Each message has a sequential offset number. Kafka’s Storage Mechanism Kafka’s storage mechanism can be understood from four aspects: Partition Distribution in Topics In a Kafka cluster, each partition of a topic is stored across multiple brokers. For instance, consider a setup where a topic like report_push has four partitions. Kafka partitions are stored as directories with the naming convention: topic-name-partition-index. Partition File Storage Each partition is stored as a series of segments, which are essentially large files. Each segment file consists of two parts: an index file (.index) and a data file (.log). graph TD A[Producer] --&gt;|Pushes data| B[Kafka Broker] B --&gt;|Distributes messages| C[Partition] C --&gt; D[Segment] D --&gt; E[Message] Segment Storage Structure A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages. Segment files are named based on the last message’s offset, helping Kafka efficiently locate data. graph TD A[Segment] --&gt; B[Index File] A --&gt; C[Data File] B --&gt; D[Message Metadata] C --&gt; E[Message Data] Locating Messages Using Offsets Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it. graph TD A[Partition] --&gt; B[Message with Offset] B --&gt; C[Index File Lookup] C --&gt; D[Data File Access] Kafka’s Internal Architecture The internal architecture of Kafka includes the following core components: Producer: Sends messages to the Kafka cluster. Broker: Handles messages and stores partitions. Consumer: Pulls messages from the Kafka cluster. Zookeeper: Manages Kafka’s cluster state and coordinates leader election and partition management. graph TD A[Producer] --&gt; B[Broker] B --&gt; C[Partition] C --&gt; D[Consumer] D --&gt; E[Zookeeper] Ensuring High Reliability Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures. Data Synchronization Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers. graph TD A[Producer] --&gt; B[Leader Partition] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[Write Sync] D --&gt; E[Write Sync] Replica Placement Strategy Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas. graph TD A[Broker 1] --&gt; B[Partition 1 Replica 1] A[Broker 2] --&gt; C[Partition 1 Replica 2] A[Broker 3] --&gt; D[Partition 1 Replica 3] Synchronization Strategy Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader. graph TD A[Producer] --&gt; B[Leader] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[ACK] D --&gt; E[ACK] E --&gt; F[Leader Commit] Leader Election Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition. graph TD A[Zookeeper] --&gt; B[Partition 1 Leader Election] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[Leader Role] D --&gt; F[Follower Role] Conclusion Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems. The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.]]></summary></entry><entry><title type="html">Post: Notice</title><link href="http://localhost:4000/blog/post-notice/" rel="alternate" type="text/html" title="Post: Notice" /><published>2010-02-05T00:00:00+08:00</published><updated>2010-02-05T00:00:00+08:00</updated><id>http://localhost:4000/blog/post-notice</id><content type="html" xml:base="http://localhost:4000/blog/post-notice/"><![CDATA[<p>A notice displays information that explains nearby content. Often used to call attention to a particular detail.</p>
-
-<p>When using Kramdown <code class="language-plaintext highlighter-rouge">{: .notice}</code> can be added after a sentence to assign the <code class="language-plaintext highlighter-rouge">.notice</code> to the <code class="language-plaintext highlighter-rouge">&lt;p&gt;&lt;/p&gt;</code> element.</p>
-
-<p class="notice"><strong>Changes in Service:</strong> We just updated our <a href="#">privacy policy</a> here to better service our customers. We recommend reviewing the changes.</p>
-
-<p class="notice--primary"><strong>Primary Notice:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. <a href="#">Praesent libero</a>. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet.</p>
-
-<p class="notice--info"><strong>Info Notice:</strong> Lorem ipsum dolor sit amet, <a href="#">consectetur adipiscing elit</a>. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet.</p>
-
-<p class="notice--warning"><strong>Warning Notice:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. <a href="#">Integer nec odio</a>. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet.</p>
-
-<p class="notice--danger"><strong>Danger Notice:</strong> Lorem ipsum dolor sit amet, <a href="#">consectetur adipiscing</a> elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet.</p>
-
-<p class="notice--success"><strong>Success Notice:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at <a href="#">nibh elementum</a> imperdiet.</p>
-
-<p>Want to wrap several paragraphs or other elements in a notice? Using Liquid to capture the content and then filter it with <code class="language-plaintext highlighter-rouge">markdownify</code> is a good way to go.</p>
-
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{% capture notice-2 %}
-#### New Site Features
-
-* You can now have cover images on blog pages
-* Drafts will now auto-save while writing
-{% endcapture %}
-
-<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"notice"</span><span class="nt">&gt;</span>{{ notice-2 | markdownify }}<span class="nt">&lt;/div&gt;</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+  <span class="nb">puts</span> <span class="s2">"Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+<span class="n">print_hi</span><span class="p">(</span><span class="s1">'Tom'</span><span class="p">)</span>
+<span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span>
 </code></pre></div></div>
 
-<div class="notice">
-  
-<h4 id="new-site-features">New Site Features</h4>
-
-<ul>
-  <li>You can now have cover images on blog pages</li>
-  <li>Drafts will now auto-save while writing</li>
-</ul>
-
-</div>
-
-<p>Or you could skip the capture and stick with straight HTML.</p>
-
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"notice"</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;h4&gt;</span>Message<span class="nt">&lt;/h4&gt;</span>
-  <span class="nt">&lt;p&gt;</span>A basic message.<span class="nt">&lt;/p&gt;</span>
-<span class="nt">&lt;/div&gt;</span>
-</code></pre></div></div>
-
-<div class="notice">
-  <h4>Message</h4>
-  <p>A basic message.</p>
-</div>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="Post Formats" /><category term="notice" /><summary type="html"><![CDATA[A notice displays information that explains nearby content. Often used to call attention to a particular detail.]]></summary></entry><entry><title type="html">Post: Quote</title><link href="http://localhost:4000/blog/post-quote/" rel="alternate" type="text/html" title="Post: Quote" /><published>2010-02-05T00:00:00+08:00</published><updated>2010-02-05T00:00:00+08:00</updated><id>http://localhost:4000/blog/post-quote</id><content type="html" xml:base="http://localhost:4000/blog/post-quote/"><![CDATA[<blockquote>
-  <p>Only one thing is impossible for God: To find any sense in any copyright law on the planet.</p>
-</blockquote>
-
-<blockquote>
-  <p><cite><a href="http://www.brainyquote.com/quotes/quotes/m/marktwain163473.html">Mark Twain</a></cite></p>
-</blockquote>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="Post Formats" /><category term="quote" /><summary type="html"><![CDATA[Only one thing is impossible for God: To find any sense in any copyright law on the planet. Mark Twain]]></summary></entry><entry><title type="html">Post: Standard</title><link href="http://localhost:4000/blog/post-standard/" rel="alternate" type="text/html" title="Post: Standard" /><published>2010-01-07T00:00:00+08:00</published><updated>2010-01-07T00:00:00+08:00</updated><id>http://localhost:4000/blog/post-standard</id><content type="html" xml:base="http://localhost:4000/blog/post-standard/"><![CDATA[<p>All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a garden, and she plucked another flower and ran with it to her mother. I suppose she must have looked rather delightful, for Mrs. Darling put her hand to her heart and cried, “Oh, why can’t you remain like this for ever!” This was all that passed between them on the subject, but henceforth Wendy knew that she must grow up. You always know after you are two. Two is the beginning of the end.</p>
-
-<p>Mrs. Darling first heard of Peter when she was tidying up her children’s minds. It is the nightly custom of every good mother after her children are asleep to rummage in their minds and put things straight for next morning, repacking into their proper places the many articles that have wandered during the day.</p>
-
-<!--more-->
-
-<p>This post has a manual excerpt <code class="language-plaintext highlighter-rouge">&lt;!--more--&gt;</code> set after the second paragraph. The following YAML Front Matter has also be applied:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">excerpt_separator</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;!--more--&gt;"</span>
-</code></pre></div></div>
-
-<p>If you could keep awake (but of course you can’t) you would see your own mother doing this, and you would find it very interesting to watch her. It is quite like tidying up drawers. You would see her on her knees, I expect, lingering humorously over some of your contents, wondering where on earth you had picked this thing up, making discoveries sweet and not so sweet, pressing this to her cheek as if it were as nice as a kitten, and hurriedly stowing that out of sight. When you wake in the morning, the naughtiness and evil passions with which you went to bed have been folded up small and placed at the bottom of your mind and on the top, beautifully aired, are spread out your prettier thoughts, ready for you to put on.</p>
-
-<p>I don’t know whether you have ever seen a map of a person’s mind. Doctors sometimes draw maps of other parts of you, and your own map can become intensely interesting, but catch them trying to draw a map of a child’s mind, which is not only confused, but keeps going round all the time. There are zigzag lines on it, just like your temperature on a card, and these are probably roads in the island, for the Neverland is always more or less an island, with astonishing splashes of colour here and there, and coral reefs and rakish-looking craft in the offing, and savages and lonely lairs, and gnomes who are mostly tailors, and caves through which a river runs, and princes with six elder brothers, and a hut fast going to decay, and one very small old lady with a hooked nose. It would be an easy map if that were all, but there is also first day at school, religion, fathers, the round pond, needle-work, murders, hangings, verbs that take the dative, chocolate pudding day, getting into braces, say ninety-nine, three-pence for pulling out your tooth yourself, and so on, and either these are part of the island or they are another map showing through, and it is all rather confusing, especially as nothing will stand still.</p>
-
-<p>Of course the Neverlands vary a good deal. John’s, for instance, had a lagoon with flamingoes flying over it at which John was shooting, while Michael, who was very small, had a flamingo with lagoons flying over it. John lived in a boat turned upside down on the sands, Michael in a wigwam, Wendy in a house of leaves deftly sewn together. John had no friends, Michael had friends at night, Wendy had a pet wolf forsaken by its parents, but on the whole the Neverlands have a family resemblance, and if they stood still in a row you could say of them that they have each other’s nose, and so forth. On these magic shores children at play are for ever beaching their coracles [simple boat]. We too have been there; we can still hear the sound of the surf, though we shall land no more.</p>
-
-<p>Of all delectable islands the Neverland is the snuggest and most compact, not large and sprawly, you know, with tedious distances between one adventure and another, but nicely crammed. When you play at it by day with the chairs and table-cloth, it is not in the least alarming, but in the two minutes before you go to sleep it becomes very real. That is why there are night-lights.</p>
-
-<p>Occasionally in her travels through her children’s minds Mrs. Darling found things she could not understand, and of these quite the most perplexing was the word Peter. She knew of no Peter, and yet he was here and there in John and Michael’s minds, while Wendy’s began to be scrawled all over with him. The name stood out in bolder letters than any of the other words, and as Mrs. Darling gazed she felt that it had an oddly cocky appearance.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="Post Formats" /><category term="readability" /><category term="standard" /><summary type="html"><![CDATA[All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a garden, and she plucked another flower and ran with it to her mother. I suppose she must have looked rather delightful, for Mrs. Darling put her hand to her heart and cried, “Oh, why can’t you remain like this for ever!” This was all that passed between them on the subject, but henceforth Wendy knew that she must grow up. You always know after you are two. Two is the beginning of the end. Mrs. Darling first heard of Peter when she was tidying up her children’s minds. It is the nightly custom of every good mother after her children are asleep to rummage in their minds and put things straight for next morning, repacking into their proper places the many articles that have wandered during the day.]]></summary></entry></feed>
+<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="Jekyll" /><category term="update" /><summary type="html"><![CDATA[You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.]]></summary></entry></feed>
