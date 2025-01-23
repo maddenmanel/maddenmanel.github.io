@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
-<loc>http://localhost:4000/blog/post-modified/</loc>
-<lastmod>2016-03-10T05:20:02+08:00</lastmod>
-</url>
-<url>
 <loc>http://localhost:4000/blog/post-standard/</loc>
 <lastmod>2010-01-07T00:00:00+08:00</lastmod>
-</url>
-<url>
-<loc>http://localhost:4000/blog/post-chat/</loc>
-<lastmod>2010-01-08T00:00:00+08:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/blog/post-notice/</loc>
@@ -21,12 +13,12 @@
 <lastmod>2010-02-05T00:00:00+08:00</lastmod>
 </url>
 <url>
-<loc>http://localhost:4000/blog/post-link/</loc>
-<lastmod>2010-03-07T00:00:00+08:00</lastmod>
-</url>
-<url>
 <loc>http://localhost:4000/blog/distribute-design-kafka/</loc>
 <lastmod>2018-07-11T00:00:00+08:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/blog/distribute-design-redis/</loc>
+<lastmod>2025-01-24T05:20:02+08:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/blog/welcome-to-jekyll/</loc>
@@ -39,6 +31,10 @@
 <url>
 <loc>http://localhost:4000/blog/stability-monitor-prometheus/</loc>
 <lastmod>2025-01-11T00:00:00+08:00</lastmod>
+</url>
+<url>
+<loc>http://localhost:4000/blog/stability-monitor-alertmanager/</loc>
+<lastmod>2025-01-14T00:00:00+08:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/blog/stability-monitor-promtail/</loc>
@@ -61,8 +57,5 @@
 </url>
 <url>
 <loc>http://localhost:4000/page2/</loc>
-</url>
-<url>
-<loc>http://localhost:4000/page3/</loc>
 </url>
 </urlset>

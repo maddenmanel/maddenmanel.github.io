@@ -1,20 +1,8 @@
 var store = [{
-        "title": "Post: Modified Date",
-        "excerpt":"This post has been updated and should show a modified date if used in a layout. All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a...","categories": ["Blog"],
-        "tags": ["Post Formats","readability","standard"],
-        "url": "/blog/post-modified/",
-        "teaser": null
-      },{
         "title": "Post: Standard",
         "excerpt":"All children, except one, grow up. They soon know that they will grow up, and the way Wendy knew was this. One day when she was two years old she was playing in a garden, and she plucked another flower and ran with it to her mother. I suppose she...","categories": ["Blog"],
         "tags": ["Post Formats","readability","standard"],
         "url": "/blog/post-standard/",
-        "teaser": null
-      },{
-        "title": "Post: Chat",
-        "excerpt":"Abbott: Strange as it may seem, they give ball players nowadays very peculiar names. Costello: Funny names? Abbott: Nicknames, nicknames. Now, on the St. Louis team we have Who’s on first, What’s on second, I Don’t Know is on third– Costello: That’s what I want to find out. I want...","categories": ["Blog"],
-        "tags": ["chat","Post Formats"],
-        "url": "/blog/post-chat/",
         "teaser": null
       },{
         "title": "Post: Notice",
@@ -29,16 +17,16 @@ var store = [{
         "url": "/blog/post-quote/",
         "teaser": null
       },{
-        "title": "Post: Link",
-        "excerpt":"This theme supports link posts, made famous by John Gruber. To use, just add link: http://url-you-want-linked to the post’s YAML front matter and you’re done.      And this is how a quote looks.    Some link can also be shown.  ","categories": ["Blog"],
-        "tags": ["link","Post Formats"],
-        "url": "/blog/post-link/",
-        "teaser": null
-      },{
         "title": "Distribute Design Kafka",
         "excerpt":"Introduction Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera,...","categories": ["Blog"],
         "tags": ["distribute","kafka"],
         "url": "/blog/distribute-design-kafka/",
+        "teaser": null
+      },{
+        "title": "Distribute Design Redis",
+        "excerpt":"Introduction Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems. This article explores Redis’s internal architecture, its approach to data persistence...","categories": ["Blog"],
+        "tags": ["distribute","redis"],
+        "url": "/blog/distribute-design-redis/",
         "teaser": null
       },{
         "title": "Welcome to Jekyll!",
@@ -57,6 +45,12 @@ var store = [{
         "excerpt":"Background A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters,...","categories": ["Blog"],
         "tags": ["monitor","stability"],
         "url": "/blog/stability-monitor-prometheus/",
+        "teaser": null
+      },{
+        "title": "Stability Monitor Alertmanager",
+        "excerpt":"Introduction Alertmanager is a tool designed to handle alerts sent by Prometheus, providing features such as deduplication, grouping, and routing of alerts to various receivers like email, Slack, or custom webhooks. This article demonstrates the process of installing and configuring Alertmanager, ensuring it operates as a service, and integrating it...","categories": ["Blog"],
+        "tags": ["monitor","alertmanager"],
+        "url": "/blog/stability-monitor-alertmanager/",
         "teaser": null
       },{
         "title": "Stability Monitor Promtail",

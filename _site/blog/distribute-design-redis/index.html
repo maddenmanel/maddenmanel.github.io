@@ -1,0 +1,839 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.26.2 by Michael Rose
+  Copyright 2013-2024 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Distribute Design Redis - Madden’s Blog</title>
+<meta name="description" content="Introduction  Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems.  This article explores Redis’s internal architecture, its approach to data persistence and replication, as well as various deployment architectures and best practices. Additionally, we will discuss Redis’s performance optimization for handling hot data and its ideal use cases in large-scale distributed systems.  Key Terminologies                 Term       Explanation                       Node       A Redis instance in a Redis cluster or standalone setup.                 Key-Value Store       Redis stores data in a key-value format, where each key maps to a value.                 Publisher       A client that sends messages to a Redis channel.                 Subscriber       A client that listens to messages from a Redis channel.                 Replication       Redis replication allows data to be copied to multiple nodes for fault tolerance.                 Master Node       The primary node in a replication setup, responsible for data writes.                 Replica Node       A secondary node in a replication setup that copies data from the master node.                 Persistence       Redis offers different persistence options, such as snapshots and append-only files (AOF).           Redis Storage Mechanism  Redis’s design is optimized for high performance by storing data in memory, but it also supports persistence to ensure data durability. Redis provides several options for data persistence and replication to ensure that data remains safe even during node failures.  Key-Value Store Model  Redis stores all data as key-value pairs. This simple model is highly efficient for quick lookups, making Redis ideal for caching and real-time systems.  Data Persistence in Redis  Redis provides two primary persistence mechanisms to ensure durability:          Snapshotting (RDB): Redis periodically saves the dataset to disk in the form of snapshots (RDB files). This allows quick restarts but may lead to data loss if the server crashes between snapshots.           Append-Only File (AOF): Redis logs every write operation received by the server to an append-only file. This ensures that even if Redis crashes, it can recover the exact state from the logs, albeit at a performance cost.      Redis Data Structures  Redis supports a wide range of data types, including:     Strings: Simple key-value pairs (e.g., session data).   Lists: Ordered collections of strings, ideal for queues or message buffers.   Sets: Unordered collections of unique strings, useful for tasks like membership checking.   Hashes: A map of field-value pairs, akin to a dictionary.   Sorted Sets: Like sets, but with an associated score, allowing ordering by score (used for leaderboards, etc.).   Memory Management  Redis employs an in-memory storage model, meaning all data is held in RAM. While this provides extreme performance benefits, it also limits the amount of data that can be handled. Redis handles memory pressure through eviction policies, such as:     LRU (Least Recently Used): Evicts the least recently accessed keys when the memory limit is reached.   TTL (Time To Live): Keys can have an expiration time, and Redis will automatically remove expired keys.   No-eviction: When memory is full, Redis returns errors for write operations.   Redis Internal Architecture  Redis’s internal architecture can be broken down into key components that ensure high availability, reliability, and scalability:  Master-Slave Replication  Redis uses a master-slave replication model to ensure data redundancy. The master node is responsible for handling all write operations, while the slave nodes asynchronously replicate data from the master. This replication ensures that data is always available, even if the master node fails.   graph TD   A[Publisher] --&gt; B[Redis Master Node]   B --&gt; C[Replica 1]   B --&gt; D[Replica 2]   C --&gt; E[Write Sync]   D --&gt; E[Write Sync]   Redis Sentinel for High Availability  Redis Sentinel provides high availability and automatic failover. It monitors the health of Redis instances, and if the master node fails, Sentinel will automatically promote one of the replica nodes to become the new master.   graph TD   A[Sentinel] --&gt; B[Master Node]   B --&gt; C[Replica 1]   B --&gt; D[Replica 2]   C --&gt; E[Failover Process]   D --&gt; E[Failover Process]   Redis Cluster for Horizontal Scaling  Redis Cluster is a distributed implementation of Redis that partitions data across multiple nodes. Each node in the cluster holds a portion of the data and can act as a master or replica. This allows Redis to scale horizontally by adding more nodes to handle increased load and larger datasets.   graph TD   A[Redis Client] --&gt; B[Cluster Node 1]   B --&gt; C[Cluster Node 2]   C --&gt; D[Cluster Node 3]   D --&gt; E[Cluster Node N]   Handling Hot Data  Hot data refers to frequently accessed data that must be served with minimal latency. Redis excels at managing hot data due to its in-memory design and support for complex data structures.  Techniques for Optimizing Hot Data Access     Data Sharding: Redis Cluster allows data to be partitioned (sharded) across multiple nodes, ensuring that hot data resides on the appropriate node with minimal impact on performance.   Caching: Redis is widely used as a cache for frequently accessed data. By caching hot data in Redis, applications can reduce the load on primary databases and improve response times.   Memory Optimizations: Using data types like hashes, which store multiple fields in a single key, can reduce memory usage when dealing with large datasets with frequent access patterns.   Deployment Architectures  Redis offers three primary deployment architectures to suit different operational needs:  1. Standalone Redis Instance  A simple, single Redis instance is suitable for small-scale applications or as a local cache for a single application. However, this architecture doesn’t provide fault tolerance or horizontal scaling.  2. Master-Slave Replication  In this architecture, a Redis master node is paired with one or more replica nodes. The master handles all write operations, while the replicas asynchronously copy the data. This architecture offers redundancy, allowing reads to be distributed among replicas.  3. Redis Cluster  Redis Cluster is a more advanced architecture where data is partitioned across multiple Redis nodes, allowing horizontal scaling. Redis Cluster automatically distributes data and handles failover, making it suitable for large-scale distributed applications.  Use Cases for Redis  Redis is suitable for various use cases due to its high performance and flexibility:     Caching: Redis is commonly used as a cache for web applications to store frequently accessed data, reducing load on databases and improving response times.   Session Management: Redis can store session data for web applications, ensuring quick access to user-specific information.   Real-Time Analytics: Redis’s support for data structures like sorted sets makes it ideal for real-time analytics and tracking use cases (e.g., leaderboards).   Pub/Sub Messaging: Redis’s Pub/Sub capabilities are widely used for building real-time messaging systems and event-driven architectures.   Best Practices for Redis     Persistence Options: Choose the appropriate persistence model based on your use case. If durability is crucial, use AOF for better recovery options. If performance is more important, use RDB snapshots.   Memory Management: Monitor memory usage and set proper eviction policies (LRU, TTL) to ensure Redis doesn’t run out of memory.   Sharding and Clustering: Use Redis Cluster to distribute large datasets across multiple nodes for scalability and high availability.   Monitoring and Alerts: Implement monitoring tools like Redis’s INFO command or third-party tools to keep track of Redis’s performance metrics (e.g., memory usage, commands per second).   Security: Use password protection and encrypted connections (e.g., TLS) to secure Redis instances, especially in production environments.   Conclusion  Redis is a powerful, fast, and flexible data store that can be used in various distributed systems. Its design focuses on simplicity and performance, with in-memory storage and sophisticated replication and clustering mechanisms to ensure reliability, scalability, and fault tolerance. By understanding Redis’s underlying architecture and following best practices, you can build highly efficient and resilient distributed systems.  Redis’s ability to handle hot data, combined with its flexible deployment architectures, makes it an excellent choice for caching, real-time analytics, messaging, and many other use cases.">
+
+
+  <meta name="author" content="Madden Zhang">
+  
+  <meta property="article:author" content="Madden Zhang">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Madden's Blog">
+<meta property="og:title" content="Distribute Design Redis">
+<meta property="og:url" content="http://localhost:4000/blog/distribute-design-redis/">
+
+
+  <meta property="og:description" content="Introduction  Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems.  This article explores Redis’s internal architecture, its approach to data persistence and replication, as well as various deployment architectures and best practices. Additionally, we will discuss Redis’s performance optimization for handling hot data and its ideal use cases in large-scale distributed systems.  Key Terminologies                 Term       Explanation                       Node       A Redis instance in a Redis cluster or standalone setup.                 Key-Value Store       Redis stores data in a key-value format, where each key maps to a value.                 Publisher       A client that sends messages to a Redis channel.                 Subscriber       A client that listens to messages from a Redis channel.                 Replication       Redis replication allows data to be copied to multiple nodes for fault tolerance.                 Master Node       The primary node in a replication setup, responsible for data writes.                 Replica Node       A secondary node in a replication setup that copies data from the master node.                 Persistence       Redis offers different persistence options, such as snapshots and append-only files (AOF).           Redis Storage Mechanism  Redis’s design is optimized for high performance by storing data in memory, but it also supports persistence to ensure data durability. Redis provides several options for data persistence and replication to ensure that data remains safe even during node failures.  Key-Value Store Model  Redis stores all data as key-value pairs. This simple model is highly efficient for quick lookups, making Redis ideal for caching and real-time systems.  Data Persistence in Redis  Redis provides two primary persistence mechanisms to ensure durability:          Snapshotting (RDB): Redis periodically saves the dataset to disk in the form of snapshots (RDB files). This allows quick restarts but may lead to data loss if the server crashes between snapshots.           Append-Only File (AOF): Redis logs every write operation received by the server to an append-only file. This ensures that even if Redis crashes, it can recover the exact state from the logs, albeit at a performance cost.      Redis Data Structures  Redis supports a wide range of data types, including:     Strings: Simple key-value pairs (e.g., session data).   Lists: Ordered collections of strings, ideal for queues or message buffers.   Sets: Unordered collections of unique strings, useful for tasks like membership checking.   Hashes: A map of field-value pairs, akin to a dictionary.   Sorted Sets: Like sets, but with an associated score, allowing ordering by score (used for leaderboards, etc.).   Memory Management  Redis employs an in-memory storage model, meaning all data is held in RAM. While this provides extreme performance benefits, it also limits the amount of data that can be handled. Redis handles memory pressure through eviction policies, such as:     LRU (Least Recently Used): Evicts the least recently accessed keys when the memory limit is reached.   TTL (Time To Live): Keys can have an expiration time, and Redis will automatically remove expired keys.   No-eviction: When memory is full, Redis returns errors for write operations.   Redis Internal Architecture  Redis’s internal architecture can be broken down into key components that ensure high availability, reliability, and scalability:  Master-Slave Replication  Redis uses a master-slave replication model to ensure data redundancy. The master node is responsible for handling all write operations, while the slave nodes asynchronously replicate data from the master. This replication ensures that data is always available, even if the master node fails.   graph TD   A[Publisher] --&gt; B[Redis Master Node]   B --&gt; C[Replica 1]   B --&gt; D[Replica 2]   C --&gt; E[Write Sync]   D --&gt; E[Write Sync]   Redis Sentinel for High Availability  Redis Sentinel provides high availability and automatic failover. It monitors the health of Redis instances, and if the master node fails, Sentinel will automatically promote one of the replica nodes to become the new master.   graph TD   A[Sentinel] --&gt; B[Master Node]   B --&gt; C[Replica 1]   B --&gt; D[Replica 2]   C --&gt; E[Failover Process]   D --&gt; E[Failover Process]   Redis Cluster for Horizontal Scaling  Redis Cluster is a distributed implementation of Redis that partitions data across multiple nodes. Each node in the cluster holds a portion of the data and can act as a master or replica. This allows Redis to scale horizontally by adding more nodes to handle increased load and larger datasets.   graph TD   A[Redis Client] --&gt; B[Cluster Node 1]   B --&gt; C[Cluster Node 2]   C --&gt; D[Cluster Node 3]   D --&gt; E[Cluster Node N]   Handling Hot Data  Hot data refers to frequently accessed data that must be served with minimal latency. Redis excels at managing hot data due to its in-memory design and support for complex data structures.  Techniques for Optimizing Hot Data Access     Data Sharding: Redis Cluster allows data to be partitioned (sharded) across multiple nodes, ensuring that hot data resides on the appropriate node with minimal impact on performance.   Caching: Redis is widely used as a cache for frequently accessed data. By caching hot data in Redis, applications can reduce the load on primary databases and improve response times.   Memory Optimizations: Using data types like hashes, which store multiple fields in a single key, can reduce memory usage when dealing with large datasets with frequent access patterns.   Deployment Architectures  Redis offers three primary deployment architectures to suit different operational needs:  1. Standalone Redis Instance  A simple, single Redis instance is suitable for small-scale applications or as a local cache for a single application. However, this architecture doesn’t provide fault tolerance or horizontal scaling.  2. Master-Slave Replication  In this architecture, a Redis master node is paired with one or more replica nodes. The master handles all write operations, while the replicas asynchronously copy the data. This architecture offers redundancy, allowing reads to be distributed among replicas.  3. Redis Cluster  Redis Cluster is a more advanced architecture where data is partitioned across multiple Redis nodes, allowing horizontal scaling. Redis Cluster automatically distributes data and handles failover, making it suitable for large-scale distributed applications.  Use Cases for Redis  Redis is suitable for various use cases due to its high performance and flexibility:     Caching: Redis is commonly used as a cache for web applications to store frequently accessed data, reducing load on databases and improving response times.   Session Management: Redis can store session data for web applications, ensuring quick access to user-specific information.   Real-Time Analytics: Redis’s support for data structures like sorted sets makes it ideal for real-time analytics and tracking use cases (e.g., leaderboards).   Pub/Sub Messaging: Redis’s Pub/Sub capabilities are widely used for building real-time messaging systems and event-driven architectures.   Best Practices for Redis     Persistence Options: Choose the appropriate persistence model based on your use case. If durability is crucial, use AOF for better recovery options. If performance is more important, use RDB snapshots.   Memory Management: Monitor memory usage and set proper eviction policies (LRU, TTL) to ensure Redis doesn’t run out of memory.   Sharding and Clustering: Use Redis Cluster to distribute large datasets across multiple nodes for scalability and high availability.   Monitoring and Alerts: Implement monitoring tools like Redis’s INFO command or third-party tools to keep track of Redis’s performance metrics (e.g., memory usage, commands per second).   Security: Use password protection and encrypted connections (e.g., TLS) to secure Redis instances, especially in production environments.   Conclusion  Redis is a powerful, fast, and flexible data store that can be used in various distributed systems. Its design focuses on simplicity and performance, with in-memory storage and sophisticated replication and clustering mechanisms to ensure reliability, scalability, and fault tolerance. By understanding Redis’s underlying architecture and following best practices, you can build highly efficient and resilient distributed systems.  Redis’s ability to handle hot data, combined with its flexible deployment architectures, makes it an excellent choice for caching, real-time analytics, messaging, and many other use cases.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2018-07-11T00:00:00+08:00">
+
+
+
+  <meta property="article:modified_time" content="2025-01-24T05:20:02+08:00">
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/blog/distribute-design-redis/">
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Madden's Blog Feed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  window.enable_copy_code_button = true;
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single" dir="ltr">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Madden's Blog
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a
+                href="/posts/"
+                
+                
+              >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/categories/"
+                
+                
+              >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/tags/"
+                
+                
+              >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/about/"
+                
+                
+              >About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/bio-photo.jpg" alt="Madden Zhang" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Madden Zhang</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>A slightly stubborn programmer.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Website</span></a></li>
+          
+        
+          
+            <li><a href="https://twitter.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Distribute Design Redis">
+    <meta itemprop="description" content="IntroductionRedis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems.This article explores Redis’s internal architecture, its approach to data persistence and replication, as well as various deployment architectures and best practices. Additionally, we will discuss Redis’s performance optimization for handling hot data and its ideal use cases in large-scale distributed systems.Key Terminologies            Term      Explanation                  Node      A Redis instance in a Redis cluster or standalone setup.              Key-Value Store      Redis stores data in a key-value format, where each key maps to a value.              Publisher      A client that sends messages to a Redis channel.              Subscriber      A client that listens to messages from a Redis channel.              Replication      Redis replication allows data to be copied to multiple nodes for fault tolerance.              Master Node      The primary node in a replication setup, responsible for data writes.              Replica Node      A secondary node in a replication setup that copies data from the master node.              Persistence      Redis offers different persistence options, such as snapshots and append-only files (AOF).      Redis Storage MechanismRedis’s design is optimized for high performance by storing data in memory, but it also supports persistence to ensure data durability. Redis provides several options for data persistence and replication to ensure that data remains safe even during node failures.Key-Value Store ModelRedis stores all data as key-value pairs. This simple model is highly efficient for quick lookups, making Redis ideal for caching and real-time systems.Data Persistence in RedisRedis provides two primary persistence mechanisms to ensure durability:      Snapshotting (RDB): Redis periodically saves the dataset to disk in the form of snapshots (RDB files). This allows quick restarts but may lead to data loss if the server crashes between snapshots.        Append-Only File (AOF): Redis logs every write operation received by the server to an append-only file. This ensures that even if Redis crashes, it can recover the exact state from the logs, albeit at a performance cost.  Redis Data StructuresRedis supports a wide range of data types, including:  Strings: Simple key-value pairs (e.g., session data).  Lists: Ordered collections of strings, ideal for queues or message buffers.  Sets: Unordered collections of unique strings, useful for tasks like membership checking.  Hashes: A map of field-value pairs, akin to a dictionary.  Sorted Sets: Like sets, but with an associated score, allowing ordering by score (used for leaderboards, etc.).Memory ManagementRedis employs an in-memory storage model, meaning all data is held in RAM. While this provides extreme performance benefits, it also limits the amount of data that can be handled. Redis handles memory pressure through eviction policies, such as:  LRU (Least Recently Used): Evicts the least recently accessed keys when the memory limit is reached.  TTL (Time To Live): Keys can have an expiration time, and Redis will automatically remove expired keys.  No-eviction: When memory is full, Redis returns errors for write operations.Redis Internal ArchitectureRedis’s internal architecture can be broken down into key components that ensure high availability, reliability, and scalability:Master-Slave ReplicationRedis uses a master-slave replication model to ensure data redundancy. The master node is responsible for handling all write operations, while the slave nodes asynchronously replicate data from the master. This replication ensures that data is always available, even if the master node fails.graph TD  A[Publisher] --&gt; B[Redis Master Node]  B --&gt; C[Replica 1]  B --&gt; D[Replica 2]  C --&gt; E[Write Sync]  D --&gt; E[Write Sync]Redis Sentinel for High AvailabilityRedis Sentinel provides high availability and automatic failover. It monitors the health of Redis instances, and if the master node fails, Sentinel will automatically promote one of the replica nodes to become the new master.graph TD  A[Sentinel] --&gt; B[Master Node]  B --&gt; C[Replica 1]  B --&gt; D[Replica 2]  C --&gt; E[Failover Process]  D --&gt; E[Failover Process]Redis Cluster for Horizontal ScalingRedis Cluster is a distributed implementation of Redis that partitions data across multiple nodes. Each node in the cluster holds a portion of the data and can act as a master or replica. This allows Redis to scale horizontally by adding more nodes to handle increased load and larger datasets.graph TD  A[Redis Client] --&gt; B[Cluster Node 1]  B --&gt; C[Cluster Node 2]  C --&gt; D[Cluster Node 3]  D --&gt; E[Cluster Node N]Handling Hot DataHot data refers to frequently accessed data that must be served with minimal latency. Redis excels at managing hot data due to its in-memory design and support for complex data structures.Techniques for Optimizing Hot Data Access  Data Sharding: Redis Cluster allows data to be partitioned (sharded) across multiple nodes, ensuring that hot data resides on the appropriate node with minimal impact on performance.  Caching: Redis is widely used as a cache for frequently accessed data. By caching hot data in Redis, applications can reduce the load on primary databases and improve response times.  Memory Optimizations: Using data types like hashes, which store multiple fields in a single key, can reduce memory usage when dealing with large datasets with frequent access patterns.Deployment ArchitecturesRedis offers three primary deployment architectures to suit different operational needs:1. Standalone Redis InstanceA simple, single Redis instance is suitable for small-scale applications or as a local cache for a single application. However, this architecture doesn’t provide fault tolerance or horizontal scaling.2. Master-Slave ReplicationIn this architecture, a Redis master node is paired with one or more replica nodes. The master handles all write operations, while the replicas asynchronously copy the data. This architecture offers redundancy, allowing reads to be distributed among replicas.3. Redis ClusterRedis Cluster is a more advanced architecture where data is partitioned across multiple Redis nodes, allowing horizontal scaling. Redis Cluster automatically distributes data and handles failover, making it suitable for large-scale distributed applications.Use Cases for RedisRedis is suitable for various use cases due to its high performance and flexibility:  Caching: Redis is commonly used as a cache for web applications to store frequently accessed data, reducing load on databases and improving response times.  Session Management: Redis can store session data for web applications, ensuring quick access to user-specific information.  Real-Time Analytics: Redis’s support for data structures like sorted sets makes it ideal for real-time analytics and tracking use cases (e.g., leaderboards).  Pub/Sub Messaging: Redis’s Pub/Sub capabilities are widely used for building real-time messaging systems and event-driven architectures.Best Practices for Redis  Persistence Options: Choose the appropriate persistence model based on your use case. If durability is crucial, use AOF for better recovery options. If performance is more important, use RDB snapshots.  Memory Management: Monitor memory usage and set proper eviction policies (LRU, TTL) to ensure Redis doesn’t run out of memory.  Sharding and Clustering: Use Redis Cluster to distribute large datasets across multiple nodes for scalability and high availability.  Monitoring and Alerts: Implement monitoring tools like Redis’s INFO command or third-party tools to keep track of Redis’s performance metrics (e.g., memory usage, commands per second).  Security: Use password protection and encrypted connections (e.g., TLS) to secure Redis instances, especially in production environments.ConclusionRedis is a powerful, fast, and flexible data store that can be used in various distributed systems. Its design focuses on simplicity and performance, with in-memory storage and sophisticated replication and clustering mechanisms to ensure reliability, scalability, and fault tolerance. By understanding Redis’s underlying architecture and following best practices, you can build highly efficient and resilient distributed systems.Redis’s ability to handle hot data, combined with its flexible deployment architectures, makes it an excellent choice for caching, real-time analytics, messaging, and many other use cases.">
+    <meta itemprop="datePublished" content="2018-07-11T00:00:00+08:00">
+    <meta itemprop="dateModified" content="2025-01-24T05:20:02+08:00">
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">
+            <a href="http://localhost:4000/blog/distribute-design-redis/" itemprop="url">Distribute Design Redis
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          6 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#introduction">Introduction</a></li><li><a href="#key-terminologies">Key Terminologies</a></li><li><a href="#redis-storage-mechanism">Redis Storage Mechanism</a><ul><li><a href="#key-value-store-model">Key-Value Store Model</a></li><li><a href="#data-persistence-in-redis">Data Persistence in Redis</a></li><li><a href="#redis-data-structures">Redis Data Structures</a></li><li><a href="#memory-management">Memory Management</a></li></ul></li><li><a href="#redis-internal-architecture">Redis Internal Architecture</a><ul><li><a href="#master-slave-replication">Master-Slave Replication</a></li><li><a href="#redis-sentinel-for-high-availability">Redis Sentinel for High Availability</a></li><li><a href="#redis-cluster-for-horizontal-scaling">Redis Cluster for Horizontal Scaling</a></li></ul></li><li><a href="#handling-hot-data">Handling Hot Data</a><ul><li><a href="#techniques-for-optimizing-hot-data-access">Techniques for Optimizing Hot Data Access</a></li></ul></li><li><a href="#deployment-architectures">Deployment Architectures</a><ul><li><a href="#1-standalone-redis-instance">1. Standalone Redis Instance</a></li><li><a href="#2-master-slave-replication">2. Master-Slave Replication</a></li><li><a href="#3-redis-cluster">3. Redis Cluster</a></li></ul></li><li><a href="#use-cases-for-redis">Use Cases for Redis</a></li><li><a href="#best-practices-for-redis">Best Practices for Redis</a></li><li><a href="#conclusion">Conclusion</a></li></ul>
+            </nav>
+          </aside>
+        
+        <h2 id="introduction">Introduction</h2>
+
+<p>Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems.</p>
+
+<p>This article explores Redis’s internal architecture, its approach to data persistence and replication, as well as various deployment architectures and best practices. Additionally, we will discuss Redis’s performance optimization for handling hot data and its ideal use cases in large-scale distributed systems.</p>
+
+<h2 id="key-terminologies">Key Terminologies</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Node</td>
+      <td>A Redis instance in a Redis cluster or standalone setup.</td>
+    </tr>
+    <tr>
+      <td>Key-Value Store</td>
+      <td>Redis stores data in a key-value format, where each key maps to a value.</td>
+    </tr>
+    <tr>
+      <td>Publisher</td>
+      <td>A client that sends messages to a Redis channel.</td>
+    </tr>
+    <tr>
+      <td>Subscriber</td>
+      <td>A client that listens to messages from a Redis channel.</td>
+    </tr>
+    <tr>
+      <td>Replication</td>
+      <td>Redis replication allows data to be copied to multiple nodes for fault tolerance.</td>
+    </tr>
+    <tr>
+      <td>Master Node</td>
+      <td>The primary node in a replication setup, responsible for data writes.</td>
+    </tr>
+    <tr>
+      <td>Replica Node</td>
+      <td>A secondary node in a replication setup that copies data from the master node.</td>
+    </tr>
+    <tr>
+      <td>Persistence</td>
+      <td>Redis offers different persistence options, such as snapshots and append-only files (AOF).</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="redis-storage-mechanism">Redis Storage Mechanism</h2>
+
+<p>Redis’s design is optimized for high performance by storing data in memory, but it also supports persistence to ensure data durability. Redis provides several options for data persistence and replication to ensure that data remains safe even during node failures.</p>
+
+<h3 id="key-value-store-model">Key-Value Store Model</h3>
+
+<p>Redis stores all data as key-value pairs. This simple model is highly efficient for quick lookups, making Redis ideal for caching and real-time systems.</p>
+
+<h3 id="data-persistence-in-redis">Data Persistence in Redis</h3>
+
+<p>Redis provides two primary persistence mechanisms to ensure durability:</p>
+
+<ul>
+  <li>
+    <p><strong>Snapshotting (RDB):</strong> Redis periodically saves the dataset to disk in the form of snapshots (RDB files). This allows quick restarts but may lead to data loss if the server crashes between snapshots.</p>
+  </li>
+  <li>
+    <p><strong>Append-Only File (AOF):</strong> Redis logs every write operation received by the server to an append-only file. This ensures that even if Redis crashes, it can recover the exact state from the logs, albeit at a performance cost.</p>
+  </li>
+</ul>
+
+<h3 id="redis-data-structures">Redis Data Structures</h3>
+
+<p>Redis supports a wide range of data types, including:</p>
+
+<ul>
+  <li><strong>Strings:</strong> Simple key-value pairs (e.g., session data).</li>
+  <li><strong>Lists:</strong> Ordered collections of strings, ideal for queues or message buffers.</li>
+  <li><strong>Sets:</strong> Unordered collections of unique strings, useful for tasks like membership checking.</li>
+  <li><strong>Hashes:</strong> A map of field-value pairs, akin to a dictionary.</li>
+  <li><strong>Sorted Sets:</strong> Like sets, but with an associated score, allowing ordering by score (used for leaderboards, etc.).</li>
+</ul>
+
+<h3 id="memory-management">Memory Management</h3>
+
+<p>Redis employs an <strong>in-memory</strong> storage model, meaning all data is held in RAM. While this provides extreme performance benefits, it also limits the amount of data that can be handled. Redis handles memory pressure through eviction policies, such as:</p>
+
+<ul>
+  <li><strong>LRU (Least Recently Used):</strong> Evicts the least recently accessed keys when the memory limit is reached.</li>
+  <li><strong>TTL (Time To Live):</strong> Keys can have an expiration time, and Redis will automatically remove expired keys.</li>
+  <li><strong>No-eviction:</strong> When memory is full, Redis returns errors for write operations.</li>
+</ul>
+
+<h2 id="redis-internal-architecture">Redis Internal Architecture</h2>
+
+<p>Redis’s internal architecture can be broken down into key components that ensure high availability, reliability, and scalability:</p>
+
+<h3 id="master-slave-replication">Master-Slave Replication</h3>
+
+<p>Redis uses a master-slave replication model to ensure data redundancy. The master node is responsible for handling all write operations, while the slave nodes asynchronously replicate data from the master. This replication ensures that data is always available, even if the master node fails.</p>
+
+<div class="mermaid">
+graph TD
+  A[Publisher] --&gt; B[Redis Master Node]
+  B --&gt; C[Replica 1]
+  B --&gt; D[Replica 2]
+  C --&gt; E[Write Sync]
+  D --&gt; E[Write Sync]
+</div>
+
+<h3 id="redis-sentinel-for-high-availability">Redis Sentinel for High Availability</h3>
+
+<p>Redis Sentinel provides high availability and automatic failover. It monitors the health of Redis instances, and if the master node fails, Sentinel will automatically promote one of the replica nodes to become the new master.</p>
+
+<div class="mermaid">
+graph TD
+  A[Sentinel] --&gt; B[Master Node]
+  B --&gt; C[Replica 1]
+  B --&gt; D[Replica 2]
+  C --&gt; E[Failover Process]
+  D --&gt; E[Failover Process]
+</div>
+
+<h3 id="redis-cluster-for-horizontal-scaling">Redis Cluster for Horizontal Scaling</h3>
+
+<p>Redis Cluster is a distributed implementation of Redis that partitions data across multiple nodes. Each node in the cluster holds a portion of the data and can act as a master or replica. This allows Redis to scale horizontally by adding more nodes to handle increased load and larger datasets.</p>
+
+<div class="mermaid">
+graph TD
+  A[Redis Client] --&gt; B[Cluster Node 1]
+  B --&gt; C[Cluster Node 2]
+  C --&gt; D[Cluster Node 3]
+  D --&gt; E[Cluster Node N]
+</div>
+
+<h2 id="handling-hot-data">Handling Hot Data</h2>
+
+<p>Hot data refers to frequently accessed data that must be served with minimal latency. Redis excels at managing hot data due to its in-memory design and support for complex data structures.</p>
+
+<h3 id="techniques-for-optimizing-hot-data-access">Techniques for Optimizing Hot Data Access</h3>
+
+<ol>
+  <li><strong>Data Sharding:</strong> Redis Cluster allows data to be partitioned (sharded) across multiple nodes, ensuring that hot data resides on the appropriate node with minimal impact on performance.</li>
+  <li><strong>Caching:</strong> Redis is widely used as a cache for frequently accessed data. By caching hot data in Redis, applications can reduce the load on primary databases and improve response times.</li>
+  <li><strong>Memory Optimizations:</strong> Using data types like hashes, which store multiple fields in a single key, can reduce memory usage when dealing with large datasets with frequent access patterns.</li>
+</ol>
+
+<h2 id="deployment-architectures">Deployment Architectures</h2>
+
+<p>Redis offers three primary deployment architectures to suit different operational needs:</p>
+
+<h3 id="1-standalone-redis-instance">1. <strong>Standalone Redis Instance</strong></h3>
+
+<p>A simple, single Redis instance is suitable for small-scale applications or as a local cache for a single application. However, this architecture doesn’t provide fault tolerance or horizontal scaling.</p>
+
+<h3 id="2-master-slave-replication">2. <strong>Master-Slave Replication</strong></h3>
+
+<p>In this architecture, a Redis master node is paired with one or more replica nodes. The master handles all write operations, while the replicas asynchronously copy the data. This architecture offers redundancy, allowing reads to be distributed among replicas.</p>
+
+<h3 id="3-redis-cluster">3. <strong>Redis Cluster</strong></h3>
+
+<p>Redis Cluster is a more advanced architecture where data is partitioned across multiple Redis nodes, allowing horizontal scaling. Redis Cluster automatically distributes data and handles failover, making it suitable for large-scale distributed applications.</p>
+
+<h2 id="use-cases-for-redis">Use Cases for Redis</h2>
+
+<p>Redis is suitable for various use cases due to its high performance and flexibility:</p>
+
+<ol>
+  <li><strong>Caching:</strong> Redis is commonly used as a cache for web applications to store frequently accessed data, reducing load on databases and improving response times.</li>
+  <li><strong>Session Management:</strong> Redis can store session data for web applications, ensuring quick access to user-specific information.</li>
+  <li><strong>Real-Time Analytics:</strong> Redis’s support for data structures like sorted sets makes it ideal for real-time analytics and tracking use cases (e.g., leaderboards).</li>
+  <li><strong>Pub/Sub Messaging:</strong> Redis’s Pub/Sub capabilities are widely used for building real-time messaging systems and event-driven architectures.</li>
+</ol>
+
+<h2 id="best-practices-for-redis">Best Practices for Redis</h2>
+
+<ol>
+  <li><strong>Persistence Options:</strong> Choose the appropriate persistence model based on your use case. If durability is crucial, use AOF for better recovery options. If performance is more important, use RDB snapshots.</li>
+  <li><strong>Memory Management:</strong> Monitor memory usage and set proper eviction policies (LRU, TTL) to ensure Redis doesn’t run out of memory.</li>
+  <li><strong>Sharding and Clustering:</strong> Use Redis Cluster to distribute large datasets across multiple nodes for scalability and high availability.</li>
+  <li><strong>Monitoring and Alerts:</strong> Implement monitoring tools like Redis’s <code class="language-plaintext highlighter-rouge">INFO</code> command or third-party tools to keep track of Redis’s performance metrics (e.g., memory usage, commands per second).</li>
+  <li><strong>Security:</strong> Use password protection and encrypted connections (e.g., TLS) to secure Redis instances, especially in production environments.</li>
+</ol>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Redis is a powerful, fast, and flexible data store that can be used in various distributed systems. Its design focuses on simplicity and performance, with in-memory storage and sophisticated replication and clustering mechanisms to ensure reliability, scalability, and fault tolerance. By understanding Redis’s underlying architecture and following best practices, you can build highly efficient and resilient distributed systems.</p>
+
+<p>Redis’s ability to handle hot data, combined with its flexible deployment architectures, makes it an excellent choice for caching, real-time analytics, messaging, and many other use cases.</p>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#distribute" class="page__taxonomy-item p-category" rel="tag">distribute</a><span class="sep">, </span>
+    
+      <a href="/tags/#redis" class="page__taxonomy-item p-category" rel="tag">redis</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#blog" class="page__taxonomy-item p-category" rel="tag">Blog</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2025-01-23">January 23, 2025</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  <h4 class="page__share-title">Share on</h4>
+
+  <a href="https://twitter.com/intent/tweet?text=Distribute+Design+Redis%20http%3A%2F%2Flocalhost%3A4000%2Fblog%2Fdistribute-design-redis%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fblog%2Fdistribute-design-redis%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/blog/distribute-design-redis/" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/distribute-design-kafka/" class="pagination--pager" title="Distribute Design Kafka">Previous</a>
+    
+    
+      <a href="/blog/welcome-to-jekyll/" class="pagination--pager" title="Welcome to Jekyll!">Next</a>
+    
+  </nav>
+
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    
+<div class="page__related">
+  
+  <h2 class="page__related-title">You May Also Enjoy</h2>
+  <div class="grid__wrapper">
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-promtail/" rel="permalink">Stability Monitor Promtail
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Introduction
+
+Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk thr...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-alertmanager/" rel="permalink">Stability Monitor Alertmanager
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Introduction
+
+Alertmanager is a tool designed to handle alerts sent by Prometheus, providing features such as deduplication, grouping, and routing of alerts ...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-prometheus/" rel="permalink">Stability Monitor Prometheus
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Background
+A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams t...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-loki/" rel="permalink">Stability Monitor Loki
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          1 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Install Loki
+
+To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Lab...</p>
+  </article>
+</div>
+
+    
+  </div>
+</div>
+
+  
+  
+</div>
+
+      
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2025 <a href="http://localhost:4000">Madden's Blog</a>. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
