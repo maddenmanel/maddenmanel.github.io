@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-01-23T22:28:15+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Madden’s Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>Madden Zhang</name></author><entry><title type="html">Devops CI/CD Jenkins</title><link href="http://localhost:4000/blog/devops-cicd-jenkins/" rel="alternate" type="text/html" title="Devops CI/CD Jenkins" /><published>2025-01-23T00:00:00+08:00</published><updated>2025-01-23T00:00:00+08:00</updated><id>http://localhost:4000/blog/devops-cicd-jenkins</id><content type="html" xml:base="http://localhost:4000/blog/devops-cicd-jenkins/"><![CDATA[<h2 id="introduction">Introduction</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-01-23T22:37:52+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Madden’s Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>Madden Zhang</name></author><entry><title type="html">Devops CI/CD Jenkins</title><link href="http://localhost:4000/blog/devops-cicd-jenkins/" rel="alternate" type="text/html" title="Devops CI/CD Jenkins" /><published>2025-01-23T00:00:00+08:00</published><updated>2025-01-23T00:00:00+08:00</updated><id>http://localhost:4000/blog/devops-cicd-jenkins</id><content type="html" xml:base="http://localhost:4000/blog/devops-cicd-jenkins/"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Jenkins is a popular open-source automation server that facilitates continuous integration and continuous delivery (CI/CD). It helps automate the building, testing, and deployment of applications. This guide provides detailed steps to install Jenkins on <strong>macOS</strong> using <strong>Docker</strong>, configure a basic pipeline, and introduce approval processes for SQL script execution and release deployment.</p>
 
@@ -437,105 +437,209 @@ gitlab/gitlab-ce:latest
 
 <p>By following this guide, you have successfully installed <strong>GitLab</strong> on <strong>macOS</strong> using Docker and set up <strong>CI/CD pipelines</strong> for your projects. GitLab makes it easy to automate your build, test, and deployment processes.</p>
 
-<p>Let me know if you need further assistance!</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="devOps" /><category term="gitlab" /><category term="CI/CD" /><summary type="html"><![CDATA[Introduction GitLab is a powerful DevOps platform that provides a complete CI/CD pipeline for automating the build, test, and deployment of applications. In this guide, we’ll walk you through the steps to install GitLab on macOS using Docker and configure it for CI/CD workflows. Prerequisites Before proceeding, ensure you have the following: macOS machine with an internet connection. Docker installed on your system. If not, download it from Docker and install it. GitLab user credentials for accessing the GitLab UI. Step 1: Install Docker First, ensure Docker is installed on your macOS system. If you haven’t done it yet, download Docker Desktop for macOS from the official website. Once downloaded, follow the installation steps. To verify the installation, run: docker --version This should return the Docker version installed. Step 2: Pull the GitLab Docker Image To install GitLab using Docker, run the following command to pull the official GitLab Community Edition image: docker pull gitlab/gitlab-ce:latest Step 3: Run GitLab Using Docker Once the image is downloaded, you can run GitLab in a Docker container. Execute the following command: docker run -d -p 80:80 -p 443:443 -p 22:22 --name gitlab --restart always \ -v /your/host/path/to/gitlab/config:/etc/gitlab \ -v /your/host/path/to/gitlab/data:/var/opt/gitlab \ -v /your/host/path/to/gitlab/logs:/var/log/gitlab \ gitlab/gitlab-ce:latest Explanation: -p 80:80 -p 443:443 -p 22:22: Maps the required ports for HTTP, HTTPS, and SSH. --name gitlab: Names the container gitlab. --restart always: Ensures GitLab restarts automatically if the container or Docker daemon restarts. -v /your/host/path: Mounts host directories to the container for persistent data. Replace /your/host/path with the actual paths on your machine where GitLab data, logs, and configuration will be stored. Step 4: Access GitLab Web Interface Once GitLab is running, open your web browser and navigate to: http://localhost You should see the GitLab setup page. Follow the instructions to set up an admin password and configure your GitLab instance. Step 5: Configure GitLab for CI/CD GitLab offers built-in CI/CD features to automate the build, test, and deployment of your code. To configure GitLab CI/CD: Create a .gitlab-ci.yml file in the root of your repository. This file defines the CI/CD pipeline for your project. Example .gitlab-ci.yml for a simple Node.js application: stages: - build - test - deploy build: stage: build script: - npm install test: stage: test script: - npm test deploy: stage: deploy script: - ./deploy.sh Push your repository to GitLab. GitLab will automatically detect the .gitlab-ci.yml file and trigger the pipeline based on the defined stages. Step 6: Monitor GitLab Logs To monitor the logs of the GitLab container, you can use the following command: docker logs -f gitlab This will show real-time logs for the GitLab container. Step 7: Automating GitLab Restart (Optional) To ensure GitLab restarts automatically after a system reboot, you can set up Docker’s restart policy. Run the following command: docker update --restart unless-stopped gitlab Step 8: Backup GitLab (Optional) It’s important to back up your GitLab data regularly. Follow these steps to back it up: Stop GitLab container: docker stop gitlab Backup GitLab data: docker cp gitlab:/var/opt/gitlab /path/to/gitlab/backup/folder Restart GitLab container: docker start gitlab Conclusion By following this guide, you have successfully installed GitLab on macOS using Docker and set up CI/CD pipelines for your projects. GitLab makes it easy to automate your build, test, and deployment processes. Let me know if you need further assistance!]]></summary></entry><entry><title type="html">Stability Monitor Promtail</title><link href="http://localhost:4000/blog/stability-monitor-promtail/" rel="alternate" type="text/html" title="Stability Monitor Promtail" /><published>2025-01-14T00:00:00+08:00</published><updated>2025-01-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-promtail</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-promtail/"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p>Let me know if you need further assistance!</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="devOps" /><category term="gitlab" /><category term="CI/CD" /><summary type="html"><![CDATA[Introduction GitLab is a powerful DevOps platform that provides a complete CI/CD pipeline for automating the build, test, and deployment of applications. In this guide, we’ll walk you through the steps to install GitLab on macOS using Docker and configure it for CI/CD workflows. Prerequisites Before proceeding, ensure you have the following: macOS machine with an internet connection. Docker installed on your system. If not, download it from Docker and install it. GitLab user credentials for accessing the GitLab UI. Step 1: Install Docker First, ensure Docker is installed on your macOS system. If you haven’t done it yet, download Docker Desktop for macOS from the official website. Once downloaded, follow the installation steps. To verify the installation, run: docker --version This should return the Docker version installed. Step 2: Pull the GitLab Docker Image To install GitLab using Docker, run the following command to pull the official GitLab Community Edition image: docker pull gitlab/gitlab-ce:latest Step 3: Run GitLab Using Docker Once the image is downloaded, you can run GitLab in a Docker container. Execute the following command: docker run -d -p 80:80 -p 443:443 -p 22:22 --name gitlab --restart always \ -v /your/host/path/to/gitlab/config:/etc/gitlab \ -v /your/host/path/to/gitlab/data:/var/opt/gitlab \ -v /your/host/path/to/gitlab/logs:/var/log/gitlab \ gitlab/gitlab-ce:latest Explanation: -p 80:80 -p 443:443 -p 22:22: Maps the required ports for HTTP, HTTPS, and SSH. --name gitlab: Names the container gitlab. --restart always: Ensures GitLab restarts automatically if the container or Docker daemon restarts. -v /your/host/path: Mounts host directories to the container for persistent data. Replace /your/host/path with the actual paths on your machine where GitLab data, logs, and configuration will be stored. Step 4: Access GitLab Web Interface Once GitLab is running, open your web browser and navigate to: http://localhost You should see the GitLab setup page. Follow the instructions to set up an admin password and configure your GitLab instance. Step 5: Configure GitLab for CI/CD GitLab offers built-in CI/CD features to automate the build, test, and deployment of your code. To configure GitLab CI/CD: Create a .gitlab-ci.yml file in the root of your repository. This file defines the CI/CD pipeline for your project. Example .gitlab-ci.yml for a simple Node.js application: stages: - build - test - deploy build: stage: build script: - npm install test: stage: test script: - npm test deploy: stage: deploy script: - ./deploy.sh Push your repository to GitLab. GitLab will automatically detect the .gitlab-ci.yml file and trigger the pipeline based on the defined stages. Step 6: Monitor GitLab Logs To monitor the logs of the GitLab container, you can use the following command: docker logs -f gitlab This will show real-time logs for the GitLab container. Step 7: Automating GitLab Restart (Optional) To ensure GitLab restarts automatically after a system reboot, you can set up Docker’s restart policy. Run the following command: docker update --restart unless-stopped gitlab Step 8: Backup GitLab (Optional) It’s important to back up your GitLab data regularly. Follow these steps to back it up: Stop GitLab container: docker stop gitlab Backup GitLab data: docker cp gitlab:/var/opt/gitlab /path/to/gitlab/backup/folder Restart GitLab container: docker start gitlab Conclusion By following this guide, you have successfully installed GitLab on macOS using Docker and set up CI/CD pipelines for your projects. GitLab makes it easy to automate your build, test, and deployment processes. Let me know if you need further assistance!]]></summary></entry><entry><title type="html">Migration ILOG Solutions</title><link href="http://localhost:4000/blog/migration-ilog-solutions/" rel="alternate" type="text/html" title="Migration ILOG Solutions" /><published>2025-01-22T00:00:00+08:00</published><updated>2025-01-22T00:00:00+08:00</updated><id>http://localhost:4000/blog/migration-ilog-solutions</id><content type="html" xml:base="http://localhost:4000/blog/migration-ilog-solutions/"><![CDATA[<h3 id="detailed-plans-and-comparison-of-three-rule-migration-approaches">Detailed Plans and Comparison of Three Rule Migration Approaches</h3>
 
-<p>Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service.</p>
-
-<h3 id="step-1-download-promtail">Step 1: Download Promtail</h3>
-
-<p>The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release <a href="https://github.com/grafana/loki/releases">here</a>.</p>
-
-<p>For example, to download version 3.1.2, you can execute the following command:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip
-</code></pre></div></div>
-
-<h3 id="step-2-extract-and-move-promtail-to-a-suitable-location">Step 2: Extract and Move Promtail to a Suitable Location</h3>
-
-<p>Once the file is downloaded, extract it and move the binary to a directory included in the system’s <code class="language-plaintext highlighter-rouge">$PATH</code>, such as <code class="language-plaintext highlighter-rouge">/usr/local/bin/</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip promtail-linux-amd64.zip
-<span class="nb">mv </span>promtail-linux-amd64 /usr/local/bin/promtail
-</code></pre></div></div>
-
-<p>Next, grant execute permissions to the Promtail binary to allow it to run:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/promtail
-</code></pre></div></div>
-
-<h3 id="step-3-create-promtail-configuration-file">Step 3: Create Promtail Configuration File</h3>
-
-<p>Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/promtail
-vim /etc/promtail/promtail-config.yaml
-</code></pre></div></div>
-
-<p>Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup.</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">server</span><span class="pi">:</span>
-  <span class="na">http_listen_port</span><span class="pi">:</span> <span class="m">9080</span>
-  <span class="na">grpc_listen_port</span><span class="pi">:</span> <span class="m">0</span>
-
-<span class="na">positions</span><span class="pi">:</span>
-  <span class="na">filename</span><span class="pi">:</span> <span class="s">/tmp/positions.yaml</span>
-
-<span class="na">clients</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">url</span><span class="pi">:</span> <span class="s">http://192.168.18.58:3100/loki/api/v1/push</span>
-    <span class="na">batchsize</span><span class="pi">:</span> <span class="m">1048576</span>
-    <span class="na">batchwait</span><span class="pi">:</span> <span class="s">2s</span>
-
-<span class="na">scrape_configs</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s">your-application-name</span>
-    <span class="na">static_configs</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="s">localhost</span>
-        <span class="na">labels</span><span class="pi">:</span>
-          <span class="na">job</span><span class="pi">:</span> <span class="s">your-application-name</span>
-          <span class="na">__path__</span><span class="pi">:</span> <span class="s">/var/log/your-application-name/*log</span>
-</code></pre></div></div>
-
-<h3 id="step-4-create-systemd-service-file">Step 4: Create Systemd Service File</h3>
-
-<p>In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/promtail.service
-</code></pre></div></div>
-
-<p>Add the following content to the file:</p>
-
-<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
-<span class="py">Description</span><span class="p">=</span><span class="s">Promtail - A log collection agent for Loki</span>
-<span class="py">Documentation</span><span class="p">=</span><span class="s">https://grafana.com/docs/loki/latest/clients/promtail/</span>
-<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
-
-<span class="nn">[Service]</span>
-<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml</span>
-<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
-<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
-<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
-
-<span class="nn">[Install]</span>
-<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
-</code></pre></div></div>
-
-<h3 id="step-5-start-and-enable-promtail-service">Step 5: Start and Enable Promtail Service</h3>
-
-<p>After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
-systemctl start promtail
-systemctl <span class="nb">enable </span>promtail
-systemctl status promtail
-</code></pre></div></div>
-
-<p>The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration.</p>
+<p>This document outlines the detailed plans for three approaches to rule migration: using AI-assisted model transformation, using ANTLR for model transformation, and using manual methods combined with Python scripts for model transformation. Additionally, it provides a comparative analysis of these methods across various aspects.</p>
 
 <hr />
 
-<h2 id="conclusion">Conclusion</h2>
+<h4 id="1-ai-assisted-model-transformation">1. AI-Assisted Model Transformation</h4>
 
-<p>In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service. Step 1: Download Promtail The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here. For example, to download version 3.1.2, you can execute the following command: wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip Step 2: Extract and Move Promtail to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/. unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail Next, grant execute permissions to the Promtail binary to allow it to run: chmod +x /usr/local/bin/promtail Step 3: Create Promtail Configuration File Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows: mkdir -p /etc/promtail vim /etc/promtail/promtail-config.yaml Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup. server: http_listen_port: 9080 grpc_listen_port: 0 positions: filename: /tmp/positions.yaml clients: - url: http://192.168.18.58:3100/loki/api/v1/push batchsize: 1048576 batchwait: 2s scrape_configs: - job_name: your-application-name static_configs: - targets: - localhost labels: job: your-application-name __path__: /var/log/your-application-name/*log Step 4: Create Systemd Service File In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file. vim /etc/systemd/system/promtail.service Add the following content to the file: [Unit] Description=Promtail - A log collection agent for Loki Documentation=https://grafana.com/docs/loki/latest/clients/promtail/ After=network.target [Service] ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Promtail Service After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time. systemctl daemon-reload systemctl start promtail systemctl enable promtail systemctl status promtail The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration. Conclusion In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.]]></summary></entry><entry><title type="html">Stability Monitor Alertmanager</title><link href="http://localhost:4000/blog/stability-monitor-alertmanager/" rel="alternate" type="text/html" title="Stability Monitor Alertmanager" /><published>2025-01-14T00:00:00+08:00</published><updated>2025-01-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-alertmanager</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-alertmanager/"><![CDATA[<h2 id="introduction">Introduction</h2>
+<p><strong>Description:</strong></p>
+
+<p>This approach utilizes large language models (such as ChatGPT or T5) to transform rule or model files. These models are adept at handling structured or semi-structured data and are particularly suited for semantic mapping between different rule formats. The migration process involves collecting the original rule data (e.g., ILOG rules), extracting common patterns or templates, analyzing the target rule format requirements, and forming a comprehensive transformation map to allow the model to understand and perform the conversion.</p>
+
+<ul>
+  <li>
+    <p><strong>Testing with Prompt Engineering:</strong>
+This method designs prompts tailored to large models. For instance, one can craft specific prompts to guide the model in understanding the structure and semantic mapping of rules.</p>
+  </li>
+  <li>
+    <p><strong>Testing with Fine-tuning:</strong>
+In this approach, the existing dataset is used to fine-tune the large language model. The model learns through parameter adjustments, thereby achieving improved performance for the task.</p>
+  </li>
+</ul>
+
+<p><strong>Advantages and Disadvantages:</strong></p>
+
+<ul>
+  <li><strong>Advantages:</strong>
+    <ul>
+      <li>Rapid processing of large numbers of rules, especially when rules follow fixed patterns.</li>
+      <li>No in-depth understanding of rule syntax is required, as long as reasonable prompts are designed.</li>
+    </ul>
+  </li>
+  <li><strong>Disadvantages:</strong>
+    <ul>
+      <li>The model’s ability to handle complex logic is limited, and manual corrections may be necessary.</li>
+      <li>When dealing with high-complexity rules, the model may make errors. Additionally, the fine-tuning effect is difficult to control.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="2-using-antlr-for-model-transformation">2. Using ANTLR for Model Transformation</h4>
+
+<p><strong>Description:</strong></p>
+
+<p>ANTLR (Another Tool for Language Recognition) is a powerful syntax parsing tool that allows custom parsers to transform rule languages from one format to another. This approach is suitable for scenarios that require high precision and control over the parsing and transformation process.</p>
+
+<ul>
+  <li><strong>Implementation Steps:</strong>
+    <ol>
+      <li>
+        <p><strong>Define Rule Syntax:</strong>
+Design syntax files for both the original and target rule languages.</p>
+      </li>
+      <li>
+        <p><strong>Generate Parser:</strong>
+Use the ANTLR tool to generate parsers (supporting languages like Java, Python, etc.).</p>
+      </li>
+      <li>
+        <p><strong>Write Conversion Logic:</strong>
+Implement the rule conversion logic using the generated parsers.</p>
+      </li>
+    </ol>
+  </li>
+</ul>
+
+<p><strong>Advantages and Disadvantages:</strong></p>
+
+<ul>
+  <li><strong>Advantages:</strong>
+    <ul>
+      <li>High flexibility, allowing for fully customized parsing and transformation rules, making it suitable for complex scenarios.</li>
+      <li>High precision in parsing and conversion, ideal for migrating complex logic.</li>
+      <li>Strong scalability, with the ability to continuously adjust the parser to accommodate new rules.</li>
+    </ul>
+  </li>
+  <li><strong>Disadvantages:</strong>
+    <ul>
+      <li>A long development cycle, requiring deep understanding of both the original and target rule syntax.</li>
+      <li>High learning curve for teams unfamiliar with the grammar.</li>
+      <li>Initial development costs are significant, and maintaining the custom parsers requires expertise.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="3-manual-and-python-script-based-model-transformation">3. Manual and Python Script-Based Model Transformation</h4>
+
+<p><strong>Description:</strong></p>
+
+<p>This approach involves manually analyzing the rule file structure and writing Python scripts to transform the rules from one format to another. It is most effective for scenarios where the number of rules is small, and the structure is relatively simple.</p>
+
+<ul>
+  <li><strong>Implementation Steps:</strong>
+    <ol>
+      <li>
+        <p><strong>Rule Analysis:</strong>
+Manually analyze the original rule file format and document the structural differences between the original and target rule formats.</p>
+      </li>
+      <li>
+        <p><strong>Write Script:</strong>
+Use Python (combined with regular expressions or basic parsing libraries) to write rule extraction and transformation scripts.</p>
+
+        <p>Example:</p>
+        <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="k">def</span> <span class="nf">convert_rule</span><span class="p">(</span><span class="n">input_rule</span><span class="p">):</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="p">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s">'if (.+) then (.+);'</span><span class="p">,</span> <span class="n">input_rule</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">condition</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="n">match</span><span class="p">.</span><span class="n">groups</span><span class="p">()</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s">'rule "</span><span class="si">{</span><span class="n">action</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s">" when </span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s"> then </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s">;'</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p><strong>Batch Processing:</strong>
+Feed the rule files into the script in bulk and output the converted target rule files.</p>
+      </li>
+      <li>
+        <p><strong>Manual Verification:</strong>
+Perform manual checks on the converted results and address any inconsistencies.</p>
+      </li>
+    </ol>
+  </li>
+</ul>
+
+<p><strong>Advantages and Disadvantages:</strong></p>
+
+<ul>
+  <li><strong>Advantages:</strong>
+    <ul>
+      <li>Simple implementation with low learning costs, suitable for small-scale projects.</li>
+      <li>High flexibility, allowing rapid adjustments to the script based on rule variations.</li>
+      <li>Low initial cost, requiring no additional tools or resources.</li>
+    </ul>
+  </li>
+  <li><strong>Disadvantages:</strong>
+    <ul>
+      <li>Limited ability to handle complex rule logic, with inefficient processing for intricate rules.</li>
+      <li>Manual analysis and validation are time-consuming, limiting the scalability of this approach.</li>
+      <li>Conversion accuracy is highly dependent on script quality, and high manual intervention may be required.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h4 id="4-comparative-analysis">4. Comparative Analysis</h4>
+
+<p><strong>4.1 Suitable Scenarios Comparison:</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Suitable Scenarios</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>AI-Assisted Migration</strong></td>
+      <td>Scenarios where rule patterns are clear and semantic consistency is high. Suitable for natural language rule conversions or situations where existing large models can be leveraged.</td>
+    </tr>
+    <tr>
+      <td><strong>ANTLR Migration</strong></td>
+      <td>High-complexity rules with strict syntax and precision requirements. Ideal for large-scale or long-term rule migration needs.</td>
+    </tr>
+    <tr>
+      <td><strong>Manual and Python Script Migration</strong></td>
+      <td>Small-scale projects with a low number of rules and simple rule structures. Best suited for one-time migrations or projects lacking specialized tools.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h4 id="5-solution-selection">5. Solution Selection</h4>
+
+<ol>
+  <li>
+    <p><strong>AI-Assisted Migration:</strong>
+Based on testing, prompt-based templates provide a high degree of understanding and accuracy for model conversions. However, ChatGPT, due to security concerns, requires API access or deployment via Microsoft’s independent solution. Open-source large models, when deployed locally, do not provide satisfactory results for prompt engineering and fine-tuning. We used T5-large (770M, 770 million parameters) as the model size; unfortunately, we cannot test models with 3 billion (3B) or 11 billion (11B) parameters locally due to hardware limitations. The GPT-4 model, with parameter counts between 200 billion to 300 billion, offers potential for more powerful results.</p>
+  </li>
+  <li>
+    <p><strong>ANTLR Parser:</strong>
+The ANTLR-based solution is promising, but requires a thorough understanding of ILOG’s syntax and lexicon to create a versatile tool capable of handling various scenarios. Developing a generalized tool may prove challenging.</p>
+  </li>
+  <li>
+    <p><strong>Manual and Python Script Migration:</strong>
+This approach can be swiftly implemented based on the current syntax and lexicon. It is effective for targeted rule mapping, using hardcoded approaches for continuous processing. Uncommon cases can be added incrementally, with verification and supplementation through manual intervention and scripting.</p>
+  </li>
+</ol>
+
+<hr />
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>The choice of rule migration approach largely depends on the specific needs of the migration project, including the complexity of the rules, the scale of the migration, and the available resources. AI-assisted methods offer speed but may require significant refinement, ANTLR offers high precision but at the cost of complexity and longer development cycles, while manual and Python script-based approaches are ideal for smaller, simpler projects but may lack scalability.</p>
+
+<p>Each method offers distinct advantages and trade-offs, and careful consideration of the specific use case is required to select the most appropriate solution for efficient and accurate rule migration.</p>
+
+<hr />]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="migration" /><category term="solutions" /><category term="ILOG" /><summary type="html"><![CDATA[Detailed Plans and Comparison of Three Rule Migration Approaches This document outlines the detailed plans for three approaches to rule migration: using AI-assisted model transformation, using ANTLR for model transformation, and using manual methods combined with Python scripts for model transformation. Additionally, it provides a comparative analysis of these methods across various aspects. 1. AI-Assisted Model Transformation Description: This approach utilizes large language models (such as ChatGPT or T5) to transform rule or model files. These models are adept at handling structured or semi-structured data and are particularly suited for semantic mapping between different rule formats. The migration process involves collecting the original rule data (e.g., ILOG rules), extracting common patterns or templates, analyzing the target rule format requirements, and forming a comprehensive transformation map to allow the model to understand and perform the conversion. Testing with Prompt Engineering: This method designs prompts tailored to large models. For instance, one can craft specific prompts to guide the model in understanding the structure and semantic mapping of rules. Testing with Fine-tuning: In this approach, the existing dataset is used to fine-tune the large language model. The model learns through parameter adjustments, thereby achieving improved performance for the task. Advantages and Disadvantages: Advantages: Rapid processing of large numbers of rules, especially when rules follow fixed patterns. No in-depth understanding of rule syntax is required, as long as reasonable prompts are designed. Disadvantages: The model’s ability to handle complex logic is limited, and manual corrections may be necessary. When dealing with high-complexity rules, the model may make errors. Additionally, the fine-tuning effect is difficult to control. 2. Using ANTLR for Model Transformation Description: ANTLR (Another Tool for Language Recognition) is a powerful syntax parsing tool that allows custom parsers to transform rule languages from one format to another. This approach is suitable for scenarios that require high precision and control over the parsing and transformation process. Implementation Steps: Define Rule Syntax: Design syntax files for both the original and target rule languages. Generate Parser: Use the ANTLR tool to generate parsers (supporting languages like Java, Python, etc.). Write Conversion Logic: Implement the rule conversion logic using the generated parsers. Advantages and Disadvantages: Advantages: High flexibility, allowing for fully customized parsing and transformation rules, making it suitable for complex scenarios. High precision in parsing and conversion, ideal for migrating complex logic. Strong scalability, with the ability to continuously adjust the parser to accommodate new rules. Disadvantages: A long development cycle, requiring deep understanding of both the original and target rule syntax. High learning curve for teams unfamiliar with the grammar. Initial development costs are significant, and maintaining the custom parsers requires expertise. 3. Manual and Python Script-Based Model Transformation Description: This approach involves manually analyzing the rule file structure and writing Python scripts to transform the rules from one format to another. It is most effective for scenarios where the number of rules is small, and the structure is relatively simple. Implementation Steps: Rule Analysis: Manually analyze the original rule file format and document the structural differences between the original and target rule formats. Write Script: Use Python (combined with regular expressions or basic parsing libraries) to write rule extraction and transformation scripts. Example: import re def convert_rule(input_rule): match = re.match(r'if (.+) then (.+);', input_rule) if match: condition, action = match.groups() return f'rule "{action.strip()}" when {condition} then {action};' Batch Processing: Feed the rule files into the script in bulk and output the converted target rule files. Manual Verification: Perform manual checks on the converted results and address any inconsistencies. Advantages and Disadvantages: Advantages: Simple implementation with low learning costs, suitable for small-scale projects. High flexibility, allowing rapid adjustments to the script based on rule variations. Low initial cost, requiring no additional tools or resources. Disadvantages: Limited ability to handle complex rule logic, with inefficient processing for intricate rules. Manual analysis and validation are time-consuming, limiting the scalability of this approach. Conversion accuracy is highly dependent on script quality, and high manual intervention may be required. 4. Comparative Analysis 4.1 Suitable Scenarios Comparison: Method Suitable Scenarios AI-Assisted Migration Scenarios where rule patterns are clear and semantic consistency is high. Suitable for natural language rule conversions or situations where existing large models can be leveraged. ANTLR Migration High-complexity rules with strict syntax and precision requirements. Ideal for large-scale or long-term rule migration needs. Manual and Python Script Migration Small-scale projects with a low number of rules and simple rule structures. Best suited for one-time migrations or projects lacking specialized tools. 5. Solution Selection AI-Assisted Migration: Based on testing, prompt-based templates provide a high degree of understanding and accuracy for model conversions. However, ChatGPT, due to security concerns, requires API access or deployment via Microsoft’s independent solution. Open-source large models, when deployed locally, do not provide satisfactory results for prompt engineering and fine-tuning. We used T5-large (770M, 770 million parameters) as the model size; unfortunately, we cannot test models with 3 billion (3B) or 11 billion (11B) parameters locally due to hardware limitations. The GPT-4 model, with parameter counts between 200 billion to 300 billion, offers potential for more powerful results. ANTLR Parser: The ANTLR-based solution is promising, but requires a thorough understanding of ILOG’s syntax and lexicon to create a versatile tool capable of handling various scenarios. Developing a generalized tool may prove challenging. Manual and Python Script Migration: This approach can be swiftly implemented based on the current syntax and lexicon. It is effective for targeted rule mapping, using hardcoded approaches for continuous processing. Uncommon cases can be added incrementally, with verification and supplementation through manual intervention and scripting. Conclusion The choice of rule migration approach largely depends on the specific needs of the migration project, including the complexity of the rules, the scale of the migration, and the available resources. AI-assisted methods offer speed but may require significant refinement, ANTLR offers high precision but at the cost of complexity and longer development cycles, while manual and Python script-based approaches are ideal for smaller, simpler projects but may lack scalability. Each method offers distinct advantages and trade-offs, and careful consideration of the specific use case is required to select the most appropriate solution for efficient and accurate rule migration.]]></summary></entry><entry><title type="html">Stability Monitor Alertmanager</title><link href="http://localhost:4000/blog/stability-monitor-alertmanager/" rel="alternate" type="text/html" title="Stability Monitor Alertmanager" /><published>2025-01-14T00:00:00+08:00</published><updated>2025-01-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-alertmanager</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-alertmanager/"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Alertmanager is a tool designed to handle alerts sent by Prometheus, providing features such as deduplication, grouping, and routing of alerts to various receivers like email, Slack, or custom webhooks. This article demonstrates the process of installing and configuring Alertmanager, ensuring it operates as a service, and integrating it with Prometheus to handle alert notifications effectively.</p>
 
@@ -710,7 +814,105 @@ systemctl status alertmanager
 
 <p>In this article, we have walked through the installation and configuration of Alertmanager, as well as the setup of alerting rules in Prometheus. By following the outlined steps, you can ensure that your monitoring system is capable of detecting and notifying you about critical infrastructure issues, helping you to maintain operational reliability.</p>
 
-<p>By configuring both Prometheus and Alertmanager, you set up a robust alerting mechanism, which will notify you in a timely manner about critical problems within your infrastructure.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="alertmanager" /><summary type="html"><![CDATA[Introduction Alertmanager is a tool designed to handle alerts sent by Prometheus, providing features such as deduplication, grouping, and routing of alerts to various receivers like email, Slack, or custom webhooks. This article demonstrates the process of installing and configuring Alertmanager, ensuring it operates as a service, and integrating it with Prometheus to handle alert notifications effectively. Step 1: Download Alertmanager The first step is to download the Alertmanager binary from the official GitHub repository. You can download the latest release from Prometheus’s Alertmanager GitHub page. For example, to download version 0.24.0, run the following command: wget https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0-linux-amd64.tar.gz Step 2: Extract and Move Alertmanager to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH (e.g., /usr/local/bin/): tar -xvzf alertmanager-0.24.0-linux-amd64.tar.gz mv alertmanager-0.24.0-linux-amd64/alertmanager /usr/local/bin/ Next, grant execute permissions to the Alertmanager binary: chmod +x /usr/local/bin/alertmanager Step 3: Create Alertmanager Configuration File Alertmanager requires a configuration file (alertmanager.yml) to define how it handles incoming alerts and how they should be routed to notification receivers. Create the configuration directory and the file: mkdir -p /etc/alertmanager vim /etc/alertmanager/alertmanager.yml Here is a sample configuration file to get started: global: resolve_timeout: 5m route: group_by: ['alertname'] receiver: 'email-config' receivers: - name: 'email-config' email_configs: - to: 'your-email@example.com' from: 'alertmanager@example.com' smarthost: 'smtp.example.com:587' auth_username: 'your-username' auth_password: 'your-password' require_tls: true group_interval: 5m This configuration sets up a route that groups alerts by their alertname and sends notifications via email. You can customize this for other notification types (e.g., Slack, PagerDuty, etc.). Step 4: Create Systemd Service File To ensure that Alertmanager starts automatically at system boot and runs as a background service, create a systemd service file: vim /etc/systemd/system/alertmanager.service Add the following content to the file: [Unit] Description=Alertmanager - A tool to handle alerts sent by Prometheus Documentation=https://prometheus.io/docs/alerting/latest/alertmanager/ After=network.target [Service] ExecStart=/usr/local/bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Alertmanager Service Once the service file is created, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time: systemctl daemon-reload systemctl start alertmanager systemctl enable alertmanager systemctl status alertmanager Alertmanager will now run in the background and handle alerts according to the configuration file. Step 6: Configuring Alerting Rules in Prometheus To trigger alerts, Prometheus requires alerting rules. These rules define the conditions under which an alert should be fired. Alerting rules can be defined in the prometheus.yml configuration file or in a separate rules file. Step 6.1: Define Alerting Rules in Prometheus Create a separate file for alerting rules (e.g., alert.rules.yml), or define the rules directly in prometheus.yml. Below is an example of an alert rules file: Create a rules file: vim /etc/prometheus/alert.rules.yml Add the following alerting rules: groups: - name: example-alerts rules: - alert: HighCPUUsage expr: avg(rate(cpu_usage_seconds_total{mode="user"}[5m])) by (instance) &gt; 0.9 for: 5m labels: severity: critical annotations: summary: "High CPU usage on " description: "CPU usage is above 90% for the last 5 minutes on ." - alert: DiskSpaceLow expr: (node_filesystem_free_bytes / node_filesystem_size_bytes) * 100 &lt; 10 for: 10m labels: severity: warning annotations: summary: "Low disk space on " description: "Disk space on is below 10%." Update the prometheus.yml file to include the alert rules: rule_files: - /etc/prometheus/alert.rules.yml Step 6.2: Ensure Prometheus Sends Alerts to Alertmanager Make sure Prometheus is configured to send alerts to Alertmanager. Modify the alerting section in the prometheus.yml file: alerting: alertmanagers: - static_configs: - targets: - 'localhost:9093' Reload Prometheus to apply the changes: systemctl reload prometheus Step 7: Testing and Verifying Alerts After setting up the alerting rules, it’s important to test that the alerts are correctly triggered and routed. Verify Alertmanager Receives Alerts: Visit the Alertmanager web interface (http://&lt;alertmanager-ip&gt;:9093) to check if alerts are being received and processed. Test Alert Triggers: You can artificially trigger alert conditions (e.g., simulate high CPU usage) to test the rule. Check Notification Receivers: Ensure that the notifications are sent to the configured receivers (e.g., email, Slack). Conclusion In this article, we have walked through the installation and configuration of Alertmanager, as well as the setup of alerting rules in Prometheus. By following the outlined steps, you can ensure that your monitoring system is capable of detecting and notifying you about critical infrastructure issues, helping you to maintain operational reliability. By configuring both Prometheus and Alertmanager, you set up a robust alerting mechanism, which will notify you in a timely manner about critical problems within your infrastructure.]]></summary></entry><entry><title type="html">Stability Monitor Jaeger</title><link href="http://localhost:4000/blog/stability-monitor-jaeger/" rel="alternate" type="text/html" title="Stability Monitor Jaeger" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-jaeger</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-jaeger/"><![CDATA[<h2 id="install-jaeger">Install Jaeger</h2>
+<p>By configuring both Prometheus and Alertmanager, you set up a robust alerting mechanism, which will notify you in a timely manner about critical problems within your infrastructure.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="alertmanager" /><summary type="html"><![CDATA[Introduction Alertmanager is a tool designed to handle alerts sent by Prometheus, providing features such as deduplication, grouping, and routing of alerts to various receivers like email, Slack, or custom webhooks. This article demonstrates the process of installing and configuring Alertmanager, ensuring it operates as a service, and integrating it with Prometheus to handle alert notifications effectively. Step 1: Download Alertmanager The first step is to download the Alertmanager binary from the official GitHub repository. You can download the latest release from Prometheus’s Alertmanager GitHub page. For example, to download version 0.24.0, run the following command: wget https://github.com/prometheus/alertmanager/releases/download/v0.24.0/alertmanager-0.24.0-linux-amd64.tar.gz Step 2: Extract and Move Alertmanager to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH (e.g., /usr/local/bin/): tar -xvzf alertmanager-0.24.0-linux-amd64.tar.gz mv alertmanager-0.24.0-linux-amd64/alertmanager /usr/local/bin/ Next, grant execute permissions to the Alertmanager binary: chmod +x /usr/local/bin/alertmanager Step 3: Create Alertmanager Configuration File Alertmanager requires a configuration file (alertmanager.yml) to define how it handles incoming alerts and how they should be routed to notification receivers. Create the configuration directory and the file: mkdir -p /etc/alertmanager vim /etc/alertmanager/alertmanager.yml Here is a sample configuration file to get started: global: resolve_timeout: 5m route: group_by: ['alertname'] receiver: 'email-config' receivers: - name: 'email-config' email_configs: - to: 'your-email@example.com' from: 'alertmanager@example.com' smarthost: 'smtp.example.com:587' auth_username: 'your-username' auth_password: 'your-password' require_tls: true group_interval: 5m This configuration sets up a route that groups alerts by their alertname and sends notifications via email. You can customize this for other notification types (e.g., Slack, PagerDuty, etc.). Step 4: Create Systemd Service File To ensure that Alertmanager starts automatically at system boot and runs as a background service, create a systemd service file: vim /etc/systemd/system/alertmanager.service Add the following content to the file: [Unit] Description=Alertmanager - A tool to handle alerts sent by Prometheus Documentation=https://prometheus.io/docs/alerting/latest/alertmanager/ After=network.target [Service] ExecStart=/usr/local/bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Alertmanager Service Once the service file is created, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time: systemctl daemon-reload systemctl start alertmanager systemctl enable alertmanager systemctl status alertmanager Alertmanager will now run in the background and handle alerts according to the configuration file. Step 6: Configuring Alerting Rules in Prometheus To trigger alerts, Prometheus requires alerting rules. These rules define the conditions under which an alert should be fired. Alerting rules can be defined in the prometheus.yml configuration file or in a separate rules file. Step 6.1: Define Alerting Rules in Prometheus Create a separate file for alerting rules (e.g., alert.rules.yml), or define the rules directly in prometheus.yml. Below is an example of an alert rules file: Create a rules file: vim /etc/prometheus/alert.rules.yml Add the following alerting rules: groups: - name: example-alerts rules: - alert: HighCPUUsage expr: avg(rate(cpu_usage_seconds_total{mode="user"}[5m])) by (instance) &gt; 0.9 for: 5m labels: severity: critical annotations: summary: "High CPU usage on " description: "CPU usage is above 90% for the last 5 minutes on ." - alert: DiskSpaceLow expr: (node_filesystem_free_bytes / node_filesystem_size_bytes) * 100 &lt; 10 for: 10m labels: severity: warning annotations: summary: "Low disk space on " description: "Disk space on is below 10%." Update the prometheus.yml file to include the alert rules: rule_files: - /etc/prometheus/alert.rules.yml Step 6.2: Ensure Prometheus Sends Alerts to Alertmanager Make sure Prometheus is configured to send alerts to Alertmanager. Modify the alerting section in the prometheus.yml file: alerting: alertmanagers: - static_configs: - targets: - 'localhost:9093' Reload Prometheus to apply the changes: systemctl reload prometheus Step 7: Testing and Verifying Alerts After setting up the alerting rules, it’s important to test that the alerts are correctly triggered and routed. Verify Alertmanager Receives Alerts: Visit the Alertmanager web interface (http://&lt;alertmanager-ip&gt;:9093) to check if alerts are being received and processed. Test Alert Triggers: You can artificially trigger alert conditions (e.g., simulate high CPU usage) to test the rule. Check Notification Receivers: Ensure that the notifications are sent to the configured receivers (e.g., email, Slack). Conclusion In this article, we have walked through the installation and configuration of Alertmanager, as well as the setup of alerting rules in Prometheus. By following the outlined steps, you can ensure that your monitoring system is capable of detecting and notifying you about critical infrastructure issues, helping you to maintain operational reliability. By configuring both Prometheus and Alertmanager, you set up a robust alerting mechanism, which will notify you in a timely manner about critical problems within your infrastructure.]]></summary></entry><entry><title type="html">Stability Monitor Promtail</title><link href="http://localhost:4000/blog/stability-monitor-promtail/" rel="alternate" type="text/html" title="Stability Monitor Promtail" /><published>2025-01-14T00:00:00+08:00</published><updated>2025-01-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-promtail</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-promtail/"><![CDATA[<h2 id="introduction">Introduction</h2>
+
+<p>Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service.</p>
+
+<h3 id="step-1-download-promtail">Step 1: Download Promtail</h3>
+
+<p>The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release <a href="https://github.com/grafana/loki/releases">here</a>.</p>
+
+<p>For example, to download version 3.1.2, you can execute the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip
+</code></pre></div></div>
+
+<h3 id="step-2-extract-and-move-promtail-to-a-suitable-location">Step 2: Extract and Move Promtail to a Suitable Location</h3>
+
+<p>Once the file is downloaded, extract it and move the binary to a directory included in the system’s <code class="language-plaintext highlighter-rouge">$PATH</code>, such as <code class="language-plaintext highlighter-rouge">/usr/local/bin/</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip promtail-linux-amd64.zip
+<span class="nb">mv </span>promtail-linux-amd64 /usr/local/bin/promtail
+</code></pre></div></div>
+
+<p>Next, grant execute permissions to the Promtail binary to allow it to run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/promtail
+</code></pre></div></div>
+
+<h3 id="step-3-create-promtail-configuration-file">Step 3: Create Promtail Configuration File</h3>
+
+<p>Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/promtail
+vim /etc/promtail/promtail-config.yaml
+</code></pre></div></div>
+
+<p>Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">server</span><span class="pi">:</span>
+  <span class="na">http_listen_port</span><span class="pi">:</span> <span class="m">9080</span>
+  <span class="na">grpc_listen_port</span><span class="pi">:</span> <span class="m">0</span>
+
+<span class="na">positions</span><span class="pi">:</span>
+  <span class="na">filename</span><span class="pi">:</span> <span class="s">/tmp/positions.yaml</span>
+
+<span class="na">clients</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">url</span><span class="pi">:</span> <span class="s">http://192.168.18.58:3100/loki/api/v1/push</span>
+    <span class="na">batchsize</span><span class="pi">:</span> <span class="m">1048576</span>
+    <span class="na">batchwait</span><span class="pi">:</span> <span class="s">2s</span>
+
+<span class="na">scrape_configs</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s">your-application-name</span>
+    <span class="na">static_configs</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="s">localhost</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">job</span><span class="pi">:</span> <span class="s">your-application-name</span>
+          <span class="na">__path__</span><span class="pi">:</span> <span class="s">/var/log/your-application-name/*log</span>
+</code></pre></div></div>
+
+<h3 id="step-4-create-systemd-service-file">Step 4: Create Systemd Service File</h3>
+
+<p>In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/promtail.service
+</code></pre></div></div>
+
+<p>Add the following content to the file:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
+<span class="py">Description</span><span class="p">=</span><span class="s">Promtail - A log collection agent for Loki</span>
+<span class="py">Documentation</span><span class="p">=</span><span class="s">https://grafana.com/docs/loki/latest/clients/promtail/</span>
+<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
+
+<span class="nn">[Service]</span>
+<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml</span>
+<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
+<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
+<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
+
+<span class="nn">[Install]</span>
+<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
+</code></pre></div></div>
+
+<h3 id="step-5-start-and-enable-promtail-service">Step 5: Start and Enable Promtail Service</h3>
+
+<p>After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
+systemctl start promtail
+systemctl <span class="nb">enable </span>promtail
+systemctl status promtail
+</code></pre></div></div>
+
+<p>The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration.</p>
+
+<hr />
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service. Step 1: Download Promtail The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here. For example, to download version 3.1.2, you can execute the following command: wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip Step 2: Extract and Move Promtail to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/. unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail Next, grant execute permissions to the Promtail binary to allow it to run: chmod +x /usr/local/bin/promtail Step 3: Create Promtail Configuration File Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows: mkdir -p /etc/promtail vim /etc/promtail/promtail-config.yaml Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup. server: http_listen_port: 9080 grpc_listen_port: 0 positions: filename: /tmp/positions.yaml clients: - url: http://192.168.18.58:3100/loki/api/v1/push batchsize: 1048576 batchwait: 2s scrape_configs: - job_name: your-application-name static_configs: - targets: - localhost labels: job: your-application-name __path__: /var/log/your-application-name/*log Step 4: Create Systemd Service File In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file. vim /etc/systemd/system/promtail.service Add the following content to the file: [Unit] Description=Promtail - A log collection agent for Loki Documentation=https://grafana.com/docs/loki/latest/clients/promtail/ After=network.target [Service] ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Promtail Service After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time. systemctl daemon-reload systemctl start promtail systemctl enable promtail systemctl status promtail The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration. Conclusion In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.]]></summary></entry><entry><title type="html">Stability Monitor Jaeger</title><link href="http://localhost:4000/blog/stability-monitor-jaeger/" rel="alternate" type="text/html" title="Stability Monitor Jaeger" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-jaeger</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-jaeger/"><![CDATA[<h2 id="install-jaeger">Install Jaeger</h2>
 
 <p>To install <strong>Jaeger</strong> version <strong>1.42.0</strong> on a Linux system, follow the steps below. Jaeger is an open-source distributed tracing system, and you can install it using pre-built binaries, Docker, or through package managers. This guide will cover the installation process using pre-built binaries.</p>
 
@@ -821,7 +1023,150 @@ systemctl status jaeger
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="tracing" /><summary type="html"><![CDATA[Install Jaeger To install Jaeger version 1.42.0 on a Linux system, follow the steps below. Jaeger is an open-source distributed tracing system, and you can install it using pre-built binaries, Docker, or through package managers. This guide will cover the installation process using pre-built binaries. Step 1: Download the Jaeger Binary Go to the Jaeger GitHub releases page and find version 1.42.0. Or use wget to directly download the binary: wget https://github.com/jaegertracing/jaeger/releases/download/v1.42.0/jaeger-linux-amd64.tar.gz Once downloaded, extract the .tar.gz file: tar -xvzf jaeger-linux-amd64.tar.gz This will create a folder containing the Jaeger binaries (jaeger-agent, jaeger-collector, jaeger-query, etc.). Step 2: Move Jaeger to a System Directory Move the extracted binaries to a directory in your PATH (e.g., /usr/local/bin): mv jaeger-linux-amd64 /usr/local/bin/jaeger Ensure the binaries are executable: chmod +x /usr/local/bin/jaeger Step 3: Create a Configuration File (Optional) Create a directory for Jaeger configuration and add the jaeger-config.yaml file: mkdir -p /etc/jaeger vim /etc/jaeger/jaeger-config.yaml The content for jaeger-config.yaml: collector: http-port: 5775 grpc-port: 14250 agent: http-port: 5778 query: http-port: 16686 storage: type: cassandra cassandra: contact-points: - "localhost:9042" keyspace: jaeger timeout: 30s Step 4: Configure Data Directories Define storage directories for Jaeger: mkdir -p /var/jaeger/cassandra /var/jaeger/storage chown -R jaeger:jaeger /var/jaeger Create the Jaeger systemd service file: vim /etc/systemd/system/jaeger.service Add the following content: [Unit] Description=Jaeger Documentation=https://www.jaegertracing.io/docs/latest/ After=network.target [Service] ExecStart=/usr/local/bin/jaeger --config.file=/etc/jaeger/jaeger-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Jaeger Service Reload systemd, enable and start the Jaeger service: systemctl daemon-reload systemctl enable jaeger systemctl start jaeger systemctl status jaeger To monitor logs: journalctl -u jaeger -f Verify the Jaeger version: jaeger --version Conclusion By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.]]></summary></entry><entry><title type="html">Stability Monitor Prometheus</title><link href="http://localhost:4000/blog/stability-monitor-prometheus/" rel="alternate" type="text/html" title="Stability Monitor Prometheus" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-prometheus</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-prometheus/"><![CDATA[<h2 id="background">Background</h2>
+<p>By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="tracing" /><summary type="html"><![CDATA[Install Jaeger To install Jaeger version 1.42.0 on a Linux system, follow the steps below. Jaeger is an open-source distributed tracing system, and you can install it using pre-built binaries, Docker, or through package managers. This guide will cover the installation process using pre-built binaries. Step 1: Download the Jaeger Binary Go to the Jaeger GitHub releases page and find version 1.42.0. Or use wget to directly download the binary: wget https://github.com/jaegertracing/jaeger/releases/download/v1.42.0/jaeger-linux-amd64.tar.gz Once downloaded, extract the .tar.gz file: tar -xvzf jaeger-linux-amd64.tar.gz This will create a folder containing the Jaeger binaries (jaeger-agent, jaeger-collector, jaeger-query, etc.). Step 2: Move Jaeger to a System Directory Move the extracted binaries to a directory in your PATH (e.g., /usr/local/bin): mv jaeger-linux-amd64 /usr/local/bin/jaeger Ensure the binaries are executable: chmod +x /usr/local/bin/jaeger Step 3: Create a Configuration File (Optional) Create a directory for Jaeger configuration and add the jaeger-config.yaml file: mkdir -p /etc/jaeger vim /etc/jaeger/jaeger-config.yaml The content for jaeger-config.yaml: collector: http-port: 5775 grpc-port: 14250 agent: http-port: 5778 query: http-port: 16686 storage: type: cassandra cassandra: contact-points: - "localhost:9042" keyspace: jaeger timeout: 30s Step 4: Configure Data Directories Define storage directories for Jaeger: mkdir -p /var/jaeger/cassandra /var/jaeger/storage chown -R jaeger:jaeger /var/jaeger Create the Jaeger systemd service file: vim /etc/systemd/system/jaeger.service Add the following content: [Unit] Description=Jaeger Documentation=https://www.jaegertracing.io/docs/latest/ After=network.target [Service] ExecStart=/usr/local/bin/jaeger --config.file=/etc/jaeger/jaeger-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Jaeger Service Reload systemd, enable and start the Jaeger service: systemctl daemon-reload systemctl enable jaeger systemctl start jaeger systemctl status jaeger To monitor logs: journalctl -u jaeger -f Verify the Jaeger version: jaeger --version Conclusion By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.]]></summary></entry><entry><title type="html">Stability Monitor Loki</title><link href="http://localhost:4000/blog/stability-monitor-loki/" rel="alternate" type="text/html" title="Stability Monitor Loki" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-loki</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-loki/"><![CDATA[<h2 id="install-loki">Install Loki</h2>
+
+<p>To install <strong>Loki</strong> version <strong>3.1.2</strong> on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.</p>
+
+<h3 id="step-1-download-the-loki-binary">Step 1: Download the Loki Binary</h3>
+
+<p>Go to the <a href="https://github.com/grafana/loki/releases">Loki GitHub releases page</a> and find version <strong>3.1.2</strong>. Or use <code class="language-plaintext highlighter-rouge">wget</code> to directly download the binary:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip
+</code></pre></div></div>
+
+<p>Once downloaded, extract the <code class="language-plaintext highlighter-rouge">.zip</code> file:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip loki-linux-amd64.zip
+</code></pre></div></div>
+
+<p>This will create a folder containing the Loki binary (<code class="language-plaintext highlighter-rouge">loki-linux-amd64</code>).</p>
+
+<h3 id="step-2-move-loki-to-a-system-directory">Step 2: Move Loki to a System Directory</h3>
+
+<p>Move the extracted binary to a directory in your PATH (e.g., <code class="language-plaintext highlighter-rouge">/usr/local/bin</code>):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mv </span>loki-linux-amd64 /usr/local/bin/loki
+</code></pre></div></div>
+
+<p>Ensure the binary is executable:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/loki
+</code></pre></div></div>
+
+<h3 id="step-3-create-a-configuration-file-optional">Step 3: Create a Configuration File (Optional)</h3>
+
+<p>Create a directory for Loki configuration and add the <code class="language-plaintext highlighter-rouge">local-config.yaml</code> file:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/loki
+vim /etc/loki/local-config.yaml
+</code></pre></div></div>
+
+<p>The content for <code class="language-plaintext highlighter-rouge">local-config.yaml</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth_enabled</span><span class="pi">:</span> <span class="no">false</span>
+
+<span class="na">server</span><span class="pi">:</span>
+  <span class="na">http_listen_port</span><span class="pi">:</span> <span class="m">3100</span>
+  <span class="na">grpc_listen_port</span><span class="pi">:</span> <span class="m">9095</span>
+
+<span class="na">common</span><span class="pi">:</span>
+  <span class="na">path_prefix</span><span class="pi">:</span> <span class="s">/loki/data</span>  
+
+<span class="na">storage_config</span><span class="pi">:</span>
+  <span class="na">boltdb_shipper</span><span class="pi">:</span>
+    <span class="na">active_index_directory</span><span class="pi">:</span> <span class="s">/loki/index</span>
+    <span class="na">cache_location</span><span class="pi">:</span> <span class="s">/loki/cache</span>
+    <span class="na">resync_interval</span><span class="pi">:</span> <span class="s">10m</span>
+  <span class="na">filesystem</span><span class="pi">:</span>
+    <span class="na">directory</span><span class="pi">:</span> <span class="s">/loki/chunks</span>
+
+<span class="na">limits_config</span><span class="pi">:</span>
+  <span class="na">retention_period</span><span class="pi">:</span> <span class="s">90d</span>
+  <span class="na">allow_structured_metadata</span><span class="pi">:</span> <span class="no">false</span> 
+
+<span class="na">schema_config</span><span class="pi">:</span>
+  <span class="na">configs</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">from</span><span class="pi">:</span> <span class="s">2020-10-21</span>
+      <span class="na">store</span><span class="pi">:</span> <span class="s">boltdb-shipper</span>
+      <span class="na">object_store</span><span class="pi">:</span> <span class="s">filesystem</span>
+      <span class="na">schema</span><span class="pi">:</span> <span class="s">v13</span>
+      <span class="na">index</span><span class="pi">:</span>
+        <span class="na">prefix</span><span class="pi">:</span> <span class="s">index_</span>
+        <span class="na">period</span><span class="pi">:</span> <span class="s">24h</span>  
+
+<span class="na">compactor</span><span class="pi">:</span>
+  <span class="na">working_directory</span><span class="pi">:</span> <span class="s">/loki/compactor</span> 
+
+<span class="na">table_manager</span><span class="pi">:</span>
+  <span class="na">retention_deletes_enabled</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">retention_period</span><span class="pi">:</span> <span class="s">90d</span>
+
+<span class="na">ingester</span><span class="pi">:</span>
+  <span class="na">lifecycler</span><span class="pi">:</span>
+    <span class="na">ring</span><span class="pi">:</span>
+      <span class="na">kvstore</span><span class="pi">:</span>
+        <span class="na">store</span><span class="pi">:</span> <span class="s">memberlist</span>
+      <span class="na">replication_factor</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">chunk_target_size</span><span class="pi">:</span> <span class="s">1048576</span>  
+  <span class="na">max_chunk_age</span><span class="pi">:</span> <span class="s">1h</span> 
+
+<span class="na">memberlist</span><span class="pi">:</span>
+  <span class="na">join_members</span><span class="pi">:</span> <span class="pi">[]</span> 
+</code></pre></div></div>
+
+<h3 id="step-4-configure-log-file-storage">Step 4: Configure Log File Storage</h3>
+
+<p>Define storage directories for Loki logs:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor
+<span class="nb">chown</span> <span class="nt">-R</span> loki:loki /var/loki
+</code></pre></div></div>
+
+<p>Create the Loki systemd service file:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/loki.service
+</code></pre></div></div>
+
+<p>Add the following content:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
+<span class="py">Description</span><span class="p">=</span><span class="s">Loki</span>
+<span class="py">Documentation</span><span class="p">=</span><span class="s">https://grafana.com/docs/loki/latest/</span>
+<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
+
+<span class="nn">[Service]</span>
+<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml</span>
+<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
+<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
+<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
+
+<span class="nn">[Install]</span>
+<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
+</code></pre></div></div>
+
+<h3 id="step-5-start-loki-service">Step 5: Start Loki Service</h3>
+
+<p>Reload systemd, enable and start the Loki service:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
+systemctl <span class="nb">enable </span>loki
+systemctl start loki
+systemctl status loki
+</code></pre></div></div>
+
+<p>To monitor logs:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> loki <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p>Verify the Loki version:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>loki <span class="nt">--version</span>
+</code></pre></div></div>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Install Loki To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide. Step 1: Download the Loki Binary Go to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary: wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip Once downloaded, extract the .zip file: unzip loki-linux-amd64.zip This will create a folder containing the Loki binary (loki-linux-amd64). Step 2: Move Loki to a System Directory Move the extracted binary to a directory in your PATH (e.g., /usr/local/bin): mv loki-linux-amd64 /usr/local/bin/loki Ensure the binary is executable: chmod +x /usr/local/bin/loki Step 3: Create a Configuration File (Optional) Create a directory for Loki configuration and add the local-config.yaml file: mkdir -p /etc/loki vim /etc/loki/local-config.yaml The content for local-config.yaml: auth_enabled: false server: http_listen_port: 3100 grpc_listen_port: 9095 common: path_prefix: /loki/data storage_config: boltdb_shipper: active_index_directory: /loki/index cache_location: /loki/cache resync_interval: 10m filesystem: directory: /loki/chunks limits_config: retention_period: 90d allow_structured_metadata: false schema_config: configs: - from: 2020-10-21 store: boltdb-shipper object_store: filesystem schema: v13 index: prefix: index_ period: 24h compactor: working_directory: /loki/compactor table_manager: retention_deletes_enabled: true retention_period: 90d ingester: lifecycler: ring: kvstore: store: memberlist replication_factor: 1 chunk_target_size: 1048576 max_chunk_age: 1h memberlist: join_members: [] Step 4: Configure Log File Storage Define storage directories for Loki logs: mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor chown -R loki:loki /var/loki Create the Loki systemd service file: vim /etc/systemd/system/loki.service Add the following content: [Unit] Description=Loki Documentation=https://grafana.com/docs/loki/latest/ After=network.target [Service] ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Loki Service Reload systemd, enable and start the Loki service: systemctl daemon-reload systemctl enable loki systemctl start loki systemctl status loki To monitor logs: journalctl -u loki -f Verify the Loki version: loki --version Conclusion By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.]]></summary></entry><entry><title type="html">Stability Monitor Prometheus</title><link href="http://localhost:4000/blog/stability-monitor-prometheus/" rel="alternate" type="text/html" title="Stability Monitor Prometheus" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-prometheus</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-prometheus/"><![CDATA[<h2 id="background">Background</h2>
 <p>A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects:</p>
 <table>
   <thead>
@@ -1070,150 +1415,7 @@ mindmap
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
-</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Background A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) Best Practices for Selection Small and medium-sized companies can quickly build a monitoring system that suits their business characteristics. Prometheus has already become the standard for real-time monitoring. We can quickly set up our own monitoring system based on Prometheus: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter, Redis Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) System Architecture Design graph TD; A[Prometheus] --&gt; B[Exporters] A --&gt; C[Blackbox Exporter] A --&gt; D[Alertmanager] B --&gt; E[Grafana] C --&gt; E D --&gt; E F[Loki] --&gt; G[Promtail/Fluent Bit] G --&gt; E H[OpenTelemetry] --&gt; I[Jaeger] I --&gt; E Defining Refined Monitoring Metrics JVM Monitoring JVM monitoring is used to track important JVM metrics, including GC (Garbage Collection) instant metrics, heap memory metrics, non-heap memory metrics, metaspace metrics, direct buffer metrics, JVM thread count, etc. This section introduces JVM monitoring and how to view JVM monitoring metrics. JVM monitoring can track the following metrics: GC (Garbage Collection) instant and cumulative details FullGC count YoungGC count FullGC duration YoungGC duration Heap Memory Details Total heap memory Old generation heap memory size Young generation Survivor area size Young generation Eden area size Metaspace Metaspace size Non-Heap Memory Maximum non-heap memory size Used non-heap memory size Direct Buffer Total DirectBuffer size (bytes) Used DirectBuffer size (bytes) JVM Thread Count Total number of threads Number of deadlocked threads Number of newly created threads Number of blocked threads Number of runnable threads Number of terminated threads Number of threads in timed wait Number of threads in waiting state mindmap root((Java Process Memory Usage)) JVM Memory Heap Memory Young Generation Old Generation Non-Heap Memory Metaspace Compressed Class Space Virtual Machine Thread Stack Native Thread Stack Code Cache Direct Buffers Non-JVM Memory Native Runtime Libraries JNI Native Code Host Monitoring Host monitoring tracks various metrics such as CPU, memory, disk, load, network traffic, and network packet metrics. This section introduces host monitoring and how to view host monitoring metrics. Host monitoring can track the following metrics: CPU Total CPU usage System CPU usage User CPU usage CPU usage waiting for I/O completion Physical Memory Total system memory Free system memory Used system memory Memory in PageCache Memory in BufferCache Disk Total system disk size Free system disk size Used system disk size Load System load average Network Traffic Network received bytes Network sent bytes Network Packets Number of received packets per minute Number of sent packets per minute Number of network errors per minute Number of dropped packets per minute SQL Call Analysis View SQL call analysis to understand SQL call patterns in applications. Error Code Monitoring For core business systems, such as payment systems, error code monitoring is essential. Here’s how to install Prometheus step by step in English. If you use the docker you can use this to setup, this is the easy way. springboot-promethenus-grafana. Install Article list Install Loki with Prometheus Install Promtail with Prometheus]]></summary></entry><entry><title type="html">Stability Monitor Loki</title><link href="http://localhost:4000/blog/stability-monitor-loki/" rel="alternate" type="text/html" title="Stability Monitor Loki" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-loki</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-loki/"><![CDATA[<h2 id="install-loki">Install Loki</h2>
-
-<p>To install <strong>Loki</strong> version <strong>3.1.2</strong> on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.</p>
-
-<h3 id="step-1-download-the-loki-binary">Step 1: Download the Loki Binary</h3>
-
-<p>Go to the <a href="https://github.com/grafana/loki/releases">Loki GitHub releases page</a> and find version <strong>3.1.2</strong>. Or use <code class="language-plaintext highlighter-rouge">wget</code> to directly download the binary:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip
-</code></pre></div></div>
-
-<p>Once downloaded, extract the <code class="language-plaintext highlighter-rouge">.zip</code> file:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip loki-linux-amd64.zip
-</code></pre></div></div>
-
-<p>This will create a folder containing the Loki binary (<code class="language-plaintext highlighter-rouge">loki-linux-amd64</code>).</p>
-
-<h3 id="step-2-move-loki-to-a-system-directory">Step 2: Move Loki to a System Directory</h3>
-
-<p>Move the extracted binary to a directory in your PATH (e.g., <code class="language-plaintext highlighter-rouge">/usr/local/bin</code>):</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mv </span>loki-linux-amd64 /usr/local/bin/loki
-</code></pre></div></div>
-
-<p>Ensure the binary is executable:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/loki
-</code></pre></div></div>
-
-<h3 id="step-3-create-a-configuration-file-optional">Step 3: Create a Configuration File (Optional)</h3>
-
-<p>Create a directory for Loki configuration and add the <code class="language-plaintext highlighter-rouge">local-config.yaml</code> file:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/loki
-vim /etc/loki/local-config.yaml
-</code></pre></div></div>
-
-<p>The content for <code class="language-plaintext highlighter-rouge">local-config.yaml</code>:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">auth_enabled</span><span class="pi">:</span> <span class="no">false</span>
-
-<span class="na">server</span><span class="pi">:</span>
-  <span class="na">http_listen_port</span><span class="pi">:</span> <span class="m">3100</span>
-  <span class="na">grpc_listen_port</span><span class="pi">:</span> <span class="m">9095</span>
-
-<span class="na">common</span><span class="pi">:</span>
-  <span class="na">path_prefix</span><span class="pi">:</span> <span class="s">/loki/data</span>  
-
-<span class="na">storage_config</span><span class="pi">:</span>
-  <span class="na">boltdb_shipper</span><span class="pi">:</span>
-    <span class="na">active_index_directory</span><span class="pi">:</span> <span class="s">/loki/index</span>
-    <span class="na">cache_location</span><span class="pi">:</span> <span class="s">/loki/cache</span>
-    <span class="na">resync_interval</span><span class="pi">:</span> <span class="s">10m</span>
-  <span class="na">filesystem</span><span class="pi">:</span>
-    <span class="na">directory</span><span class="pi">:</span> <span class="s">/loki/chunks</span>
-
-<span class="na">limits_config</span><span class="pi">:</span>
-  <span class="na">retention_period</span><span class="pi">:</span> <span class="s">90d</span>
-  <span class="na">allow_structured_metadata</span><span class="pi">:</span> <span class="no">false</span> 
-
-<span class="na">schema_config</span><span class="pi">:</span>
-  <span class="na">configs</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">from</span><span class="pi">:</span> <span class="s">2020-10-21</span>
-      <span class="na">store</span><span class="pi">:</span> <span class="s">boltdb-shipper</span>
-      <span class="na">object_store</span><span class="pi">:</span> <span class="s">filesystem</span>
-      <span class="na">schema</span><span class="pi">:</span> <span class="s">v13</span>
-      <span class="na">index</span><span class="pi">:</span>
-        <span class="na">prefix</span><span class="pi">:</span> <span class="s">index_</span>
-        <span class="na">period</span><span class="pi">:</span> <span class="s">24h</span>  
-
-<span class="na">compactor</span><span class="pi">:</span>
-  <span class="na">working_directory</span><span class="pi">:</span> <span class="s">/loki/compactor</span> 
-
-<span class="na">table_manager</span><span class="pi">:</span>
-  <span class="na">retention_deletes_enabled</span><span class="pi">:</span> <span class="no">true</span>
-  <span class="na">retention_period</span><span class="pi">:</span> <span class="s">90d</span>
-
-<span class="na">ingester</span><span class="pi">:</span>
-  <span class="na">lifecycler</span><span class="pi">:</span>
-    <span class="na">ring</span><span class="pi">:</span>
-      <span class="na">kvstore</span><span class="pi">:</span>
-        <span class="na">store</span><span class="pi">:</span> <span class="s">memberlist</span>
-      <span class="na">replication_factor</span><span class="pi">:</span> <span class="m">1</span>
-  <span class="na">chunk_target_size</span><span class="pi">:</span> <span class="s">1048576</span>  
-  <span class="na">max_chunk_age</span><span class="pi">:</span> <span class="s">1h</span> 
-
-<span class="na">memberlist</span><span class="pi">:</span>
-  <span class="na">join_members</span><span class="pi">:</span> <span class="pi">[]</span> 
-</code></pre></div></div>
-
-<h3 id="step-4-configure-log-file-storage">Step 4: Configure Log File Storage</h3>
-
-<p>Define storage directories for Loki logs:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor
-<span class="nb">chown</span> <span class="nt">-R</span> loki:loki /var/loki
-</code></pre></div></div>
-
-<p>Create the Loki systemd service file:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/loki.service
-</code></pre></div></div>
-
-<p>Add the following content:</p>
-
-<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
-<span class="py">Description</span><span class="p">=</span><span class="s">Loki</span>
-<span class="py">Documentation</span><span class="p">=</span><span class="s">https://grafana.com/docs/loki/latest/</span>
-<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
-
-<span class="nn">[Service]</span>
-<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml</span>
-<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
-<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
-<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
-
-<span class="nn">[Install]</span>
-<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
-</code></pre></div></div>
-
-<h3 id="step-5-start-loki-service">Step 5: Start Loki Service</h3>
-
-<p>Reload systemd, enable and start the Loki service:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
-systemctl <span class="nb">enable </span>loki
-systemctl start loki
-systemctl status loki
-</code></pre></div></div>
-
-<p>To monitor logs:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> loki <span class="nt">-f</span>
-</code></pre></div></div>
-
-<p>Verify the Loki version:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>loki <span class="nt">--version</span>
-</code></pre></div></div>
-
-<h2 id="conclusion">Conclusion</h2>
-
-<p>By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Install Loki To install Loki version 3.1.2 on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide. Step 1: Download the Loki Binary Go to the Loki GitHub releases page and find version 3.1.2. Or use wget to directly download the binary: wget https://github.com/grafana/loki/releases/download/v3.1.2/loki-linux-amd64.zip Once downloaded, extract the .zip file: unzip loki-linux-amd64.zip This will create a folder containing the Loki binary (loki-linux-amd64). Step 2: Move Loki to a System Directory Move the extracted binary to a directory in your PATH (e.g., /usr/local/bin): mv loki-linux-amd64 /usr/local/bin/loki Ensure the binary is executable: chmod +x /usr/local/bin/loki Step 3: Create a Configuration File (Optional) Create a directory for Loki configuration and add the local-config.yaml file: mkdir -p /etc/loki vim /etc/loki/local-config.yaml The content for local-config.yaml: auth_enabled: false server: http_listen_port: 3100 grpc_listen_port: 9095 common: path_prefix: /loki/data storage_config: boltdb_shipper: active_index_directory: /loki/index cache_location: /loki/cache resync_interval: 10m filesystem: directory: /loki/chunks limits_config: retention_period: 90d allow_structured_metadata: false schema_config: configs: - from: 2020-10-21 store: boltdb-shipper object_store: filesystem schema: v13 index: prefix: index_ period: 24h compactor: working_directory: /loki/compactor table_manager: retention_deletes_enabled: true retention_period: 90d ingester: lifecycler: ring: kvstore: store: memberlist replication_factor: 1 chunk_target_size: 1048576 max_chunk_age: 1h memberlist: join_members: [] Step 4: Configure Log File Storage Define storage directories for Loki logs: mkdir -p /var/loki/chunks /var/loki/index /var/loki/cache /var/loki/compactor chown -R loki:loki /var/loki Create the Loki systemd service file: vim /etc/systemd/system/loki.service Add the following content: [Unit] Description=Loki Documentation=https://grafana.com/docs/loki/latest/ After=network.target [Service] ExecStart=/usr/local/bin/loki -config.file=/etc/loki/local-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Loki Service Reload systemd, enable and start the Loki service: systemctl daemon-reload systemctl enable loki systemctl start loki systemctl status loki To monitor logs: journalctl -u loki -f Verify the Loki version: loki --version Conclusion By following the above steps, you should have Loki installed and running with the necessary configurations for log aggregation. You can now proceed to integrate Loki with other components like Promtail, Grafana, etc., for a complete logging solution.]]></summary></entry><entry><title type="html">Distribute Design Kafka</title><link href="http://localhost:4000/blog/distribute-design-kafka/" rel="alternate" type="text/html" title="Distribute Design Kafka" /><published>2018-07-11T00:00:00+08:00</published><updated>2018-07-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/distribute-design-kafka</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-kafka/"><![CDATA[<h2 id="introduction">Introduction</h2>
+</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Background A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) Best Practices for Selection Small and medium-sized companies can quickly build a monitoring system that suits their business characteristics. Prometheus has already become the standard for real-time monitoring. We can quickly set up our own monitoring system based on Prometheus: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter, Redis Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) System Architecture Design graph TD; A[Prometheus] --&gt; B[Exporters] A --&gt; C[Blackbox Exporter] A --&gt; D[Alertmanager] B --&gt; E[Grafana] C --&gt; E D --&gt; E F[Loki] --&gt; G[Promtail/Fluent Bit] G --&gt; E H[OpenTelemetry] --&gt; I[Jaeger] I --&gt; E Defining Refined Monitoring Metrics JVM Monitoring JVM monitoring is used to track important JVM metrics, including GC (Garbage Collection) instant metrics, heap memory metrics, non-heap memory metrics, metaspace metrics, direct buffer metrics, JVM thread count, etc. This section introduces JVM monitoring and how to view JVM monitoring metrics. JVM monitoring can track the following metrics: GC (Garbage Collection) instant and cumulative details FullGC count YoungGC count FullGC duration YoungGC duration Heap Memory Details Total heap memory Old generation heap memory size Young generation Survivor area size Young generation Eden area size Metaspace Metaspace size Non-Heap Memory Maximum non-heap memory size Used non-heap memory size Direct Buffer Total DirectBuffer size (bytes) Used DirectBuffer size (bytes) JVM Thread Count Total number of threads Number of deadlocked threads Number of newly created threads Number of blocked threads Number of runnable threads Number of terminated threads Number of threads in timed wait Number of threads in waiting state mindmap root((Java Process Memory Usage)) JVM Memory Heap Memory Young Generation Old Generation Non-Heap Memory Metaspace Compressed Class Space Virtual Machine Thread Stack Native Thread Stack Code Cache Direct Buffers Non-JVM Memory Native Runtime Libraries JNI Native Code Host Monitoring Host monitoring tracks various metrics such as CPU, memory, disk, load, network traffic, and network packet metrics. This section introduces host monitoring and how to view host monitoring metrics. Host monitoring can track the following metrics: CPU Total CPU usage System CPU usage User CPU usage CPU usage waiting for I/O completion Physical Memory Total system memory Free system memory Used system memory Memory in PageCache Memory in BufferCache Disk Total system disk size Free system disk size Used system disk size Load System load average Network Traffic Network received bytes Network sent bytes Network Packets Number of received packets per minute Number of sent packets per minute Number of network errors per minute Number of dropped packets per minute SQL Call Analysis View SQL call analysis to understand SQL call patterns in applications. Error Code Monitoring For core business systems, such as payment systems, error code monitoring is essential. Here’s how to install Prometheus step by step in English. If you use the docker you can use this to setup, this is the easy way. springboot-promethenus-grafana. Install Article list Install Loki with Prometheus Install Promtail with Prometheus]]></summary></entry><entry><title type="html">Distribute Design Kafka</title><link href="http://localhost:4000/blog/distribute-design-kafka/" rel="alternate" type="text/html" title="Distribute Design Kafka" /><published>2018-07-11T00:00:00+08:00</published><updated>2018-07-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/distribute-design-kafka</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-kafka/"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark.</p>
 
@@ -1588,17 +1790,4 @@ graph TD
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
-</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="distribute" /><category term="redis" /><summary type="html"><![CDATA[Introduction Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems. This article explores Redis’s internal architecture, its approach to data persistence and replication, as well as various deployment architectures and best practices. Additionally, we will discuss Redis’s performance optimization for handling hot data and its ideal use cases in large-scale distributed systems. Key Terminologies Term Explanation Node A Redis instance in a Redis cluster or standalone setup. Key-Value Store Redis stores data in a key-value format, where each key maps to a value. Publisher A client that sends messages to a Redis channel. Subscriber A client that listens to messages from a Redis channel. Replication Redis replication allows data to be copied to multiple nodes for fault tolerance. Master Node The primary node in a replication setup, responsible for data writes. Replica Node A secondary node in a replication setup that copies data from the master node. Persistence Redis offers different persistence options, such as snapshots and append-only files (AOF). Redis Storage Mechanism Redis’s design is optimized for high performance by storing data in memory, but it also supports persistence to ensure data durability. Redis provides several options for data persistence and replication to ensure that data remains safe even during node failures. Key-Value Store Model Redis stores all data as key-value pairs. This simple model is highly efficient for quick lookups, making Redis ideal for caching and real-time systems. Data Persistence in Redis Redis provides two primary persistence mechanisms to ensure durability: Snapshotting (RDB): Redis periodically saves the dataset to disk in the form of snapshots (RDB files). This allows quick restarts but may lead to data loss if the server crashes between snapshots. Append-Only File (AOF): Redis logs every write operation received by the server to an append-only file. This ensures that even if Redis crashes, it can recover the exact state from the logs, albeit at a performance cost. Redis Data Structures Redis supports a wide range of data types, including: Strings: Simple key-value pairs (e.g., session data). Lists: Ordered collections of strings, ideal for queues or message buffers. Sets: Unordered collections of unique strings, useful for tasks like membership checking. Hashes: A map of field-value pairs, akin to a dictionary. Sorted Sets: Like sets, but with an associated score, allowing ordering by score (used for leaderboards, etc.). Memory Management Redis employs an in-memory storage model, meaning all data is held in RAM. While this provides extreme performance benefits, it also limits the amount of data that can be handled. Redis handles memory pressure through eviction policies, such as: LRU (Least Recently Used): Evicts the least recently accessed keys when the memory limit is reached. TTL (Time To Live): Keys can have an expiration time, and Redis will automatically remove expired keys. No-eviction: When memory is full, Redis returns errors for write operations. Redis Internal Architecture Redis’s internal architecture can be broken down into key components that ensure high availability, reliability, and scalability: Master-Slave Replication Redis uses a master-slave replication model to ensure data redundancy. The master node is responsible for handling all write operations, while the slave nodes asynchronously replicate data from the master. This replication ensures that data is always available, even if the master node fails. graph TD A[Publisher] --&gt; B[Redis Master Node] B --&gt; C[Replica 1] B --&gt; D[Replica 2] C --&gt; E[Write Sync] D --&gt; E[Write Sync] Redis Sentinel for High Availability Redis Sentinel provides high availability and automatic failover. It monitors the health of Redis instances, and if the master node fails, Sentinel will automatically promote one of the replica nodes to become the new master. graph TD A[Sentinel] --&gt; B[Master Node] B --&gt; C[Replica 1] B --&gt; D[Replica 2] C --&gt; E[Failover Process] D --&gt; E[Failover Process] Redis Cluster for Horizontal Scaling Redis Cluster is a distributed implementation of Redis that partitions data across multiple nodes. Each node in the cluster holds a portion of the data and can act as a master or replica. This allows Redis to scale horizontally by adding more nodes to handle increased load and larger datasets. graph TD A[Redis Client] --&gt; B[Cluster Node 1] B --&gt; C[Cluster Node 2] C --&gt; D[Cluster Node 3] D --&gt; E[Cluster Node N] Handling Hot Data Hot data refers to frequently accessed data that must be served with minimal latency. Redis excels at managing hot data due to its in-memory design and support for complex data structures. Techniques for Optimizing Hot Data Access Data Sharding: Redis Cluster allows data to be partitioned (sharded) across multiple nodes, ensuring that hot data resides on the appropriate node with minimal impact on performance. Caching: Redis is widely used as a cache for frequently accessed data. By caching hot data in Redis, applications can reduce the load on primary databases and improve response times. Memory Optimizations: Using data types like hashes, which store multiple fields in a single key, can reduce memory usage when dealing with large datasets with frequent access patterns. Deployment Architectures Redis offers three primary deployment architectures to suit different operational needs: 1. Standalone Redis Instance A simple, single Redis instance is suitable for small-scale applications or as a local cache for a single application. However, this architecture doesn’t provide fault tolerance or horizontal scaling. 2. Master-Slave Replication In this architecture, a Redis master node is paired with one or more replica nodes. The master handles all write operations, while the replicas asynchronously copy the data. This architecture offers redundancy, allowing reads to be distributed among replicas. 3. Redis Cluster Redis Cluster is a more advanced architecture where data is partitioned across multiple Redis nodes, allowing horizontal scaling. Redis Cluster automatically distributes data and handles failover, making it suitable for large-scale distributed applications. Use Cases for Redis Redis is suitable for various use cases due to its high performance and flexibility: Caching: Redis is commonly used as a cache for web applications to store frequently accessed data, reducing load on databases and improving response times. Session Management: Redis can store session data for web applications, ensuring quick access to user-specific information. Real-Time Analytics: Redis’s support for data structures like sorted sets makes it ideal for real-time analytics and tracking use cases (e.g., leaderboards). Pub/Sub Messaging: Redis’s Pub/Sub capabilities are widely used for building real-time messaging systems and event-driven architectures. Best Practices for Redis Persistence Options: Choose the appropriate persistence model based on your use case. If durability is crucial, use AOF for better recovery options. If performance is more important, use RDB snapshots. Memory Management: Monitor memory usage and set proper eviction policies (LRU, TTL) to ensure Redis doesn’t run out of memory. Sharding and Clustering: Use Redis Cluster to distribute large datasets across multiple nodes for scalability and high availability. Monitoring and Alerts: Implement monitoring tools like Redis’s INFO command or third-party tools to keep track of Redis’s performance metrics (e.g., memory usage, commands per second). Security: Use password protection and encrypted connections (e.g., TLS) to secure Redis instances, especially in production environments. Conclusion Redis is a powerful, fast, and flexible data store that can be used in various distributed systems. Its design focuses on simplicity and performance, with in-memory storage and sophisticated replication and clustering mechanisms to ensure reliability, scalability, and fault tolerance. By understanding Redis’s underlying architecture and following best practices, you can build highly efficient and resilient distributed systems. Redis’s ability to handle hot data, combined with its flexible deployment architectures, makes it an excellent choice for caching, real-time analytics, messaging, and many other use cases.]]></summary></entry><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/blog/welcome-to-jekyll/" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2010-04-19T03:34:30+08:00</published><updated>2010-04-19T03:34:30+08:00</updated><id>http://localhost:4000/blog/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/blog/welcome-to-jekyll/"><![CDATA[<p>You’ll find this post in your <code class="language-plaintext highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code class="language-plaintext highlighter-rouge">jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
-
-<p>To add new posts, simply add a file in the <code class="language-plaintext highlighter-rouge">_posts</code> directory that follows the convention <code class="language-plaintext highlighter-rouge">YYYY-MM-DD-name-of-post.ext</code> and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.</p>
-
-<p>Jekyll also offers powerful support for code snippets:</p>
-
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-  <span class="nb">puts</span> <span class="s2">"Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
-<span class="k">end</span>
-<span class="n">print_hi</span><span class="p">(</span><span class="s1">'Tom'</span><span class="p">)</span>
-<span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span>
-</code></pre></div></div>
-
-<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="Jekyll" /><summary type="html"><![CDATA[You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.]]></summary></entry></feed>
+</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="distribute" /><category term="redis" /><summary type="html"><![CDATA[Introduction Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems. This article explores Redis’s internal architecture, its approach to data persistence and replication, as well as various deployment architectures and best practices. Additionally, we will discuss Redis’s performance optimization for handling hot data and its ideal use cases in large-scale distributed systems. Key Terminologies Term Explanation Node A Redis instance in a Redis cluster or standalone setup. Key-Value Store Redis stores data in a key-value format, where each key maps to a value. Publisher A client that sends messages to a Redis channel. Subscriber A client that listens to messages from a Redis channel. Replication Redis replication allows data to be copied to multiple nodes for fault tolerance. Master Node The primary node in a replication setup, responsible for data writes. Replica Node A secondary node in a replication setup that copies data from the master node. Persistence Redis offers different persistence options, such as snapshots and append-only files (AOF). Redis Storage Mechanism Redis’s design is optimized for high performance by storing data in memory, but it also supports persistence to ensure data durability. Redis provides several options for data persistence and replication to ensure that data remains safe even during node failures. Key-Value Store Model Redis stores all data as key-value pairs. This simple model is highly efficient for quick lookups, making Redis ideal for caching and real-time systems. Data Persistence in Redis Redis provides two primary persistence mechanisms to ensure durability: Snapshotting (RDB): Redis periodically saves the dataset to disk in the form of snapshots (RDB files). This allows quick restarts but may lead to data loss if the server crashes between snapshots. Append-Only File (AOF): Redis logs every write operation received by the server to an append-only file. This ensures that even if Redis crashes, it can recover the exact state from the logs, albeit at a performance cost. Redis Data Structures Redis supports a wide range of data types, including: Strings: Simple key-value pairs (e.g., session data). Lists: Ordered collections of strings, ideal for queues or message buffers. Sets: Unordered collections of unique strings, useful for tasks like membership checking. Hashes: A map of field-value pairs, akin to a dictionary. Sorted Sets: Like sets, but with an associated score, allowing ordering by score (used for leaderboards, etc.). Memory Management Redis employs an in-memory storage model, meaning all data is held in RAM. While this provides extreme performance benefits, it also limits the amount of data that can be handled. Redis handles memory pressure through eviction policies, such as: LRU (Least Recently Used): Evicts the least recently accessed keys when the memory limit is reached. TTL (Time To Live): Keys can have an expiration time, and Redis will automatically remove expired keys. No-eviction: When memory is full, Redis returns errors for write operations. Redis Internal Architecture Redis’s internal architecture can be broken down into key components that ensure high availability, reliability, and scalability: Master-Slave Replication Redis uses a master-slave replication model to ensure data redundancy. The master node is responsible for handling all write operations, while the slave nodes asynchronously replicate data from the master. This replication ensures that data is always available, even if the master node fails. graph TD A[Publisher] --&gt; B[Redis Master Node] B --&gt; C[Replica 1] B --&gt; D[Replica 2] C --&gt; E[Write Sync] D --&gt; E[Write Sync] Redis Sentinel for High Availability Redis Sentinel provides high availability and automatic failover. It monitors the health of Redis instances, and if the master node fails, Sentinel will automatically promote one of the replica nodes to become the new master. graph TD A[Sentinel] --&gt; B[Master Node] B --&gt; C[Replica 1] B --&gt; D[Replica 2] C --&gt; E[Failover Process] D --&gt; E[Failover Process] Redis Cluster for Horizontal Scaling Redis Cluster is a distributed implementation of Redis that partitions data across multiple nodes. Each node in the cluster holds a portion of the data and can act as a master or replica. This allows Redis to scale horizontally by adding more nodes to handle increased load and larger datasets. graph TD A[Redis Client] --&gt; B[Cluster Node 1] B --&gt; C[Cluster Node 2] C --&gt; D[Cluster Node 3] D --&gt; E[Cluster Node N] Handling Hot Data Hot data refers to frequently accessed data that must be served with minimal latency. Redis excels at managing hot data due to its in-memory design and support for complex data structures. Techniques for Optimizing Hot Data Access Data Sharding: Redis Cluster allows data to be partitioned (sharded) across multiple nodes, ensuring that hot data resides on the appropriate node with minimal impact on performance. Caching: Redis is widely used as a cache for frequently accessed data. By caching hot data in Redis, applications can reduce the load on primary databases and improve response times. Memory Optimizations: Using data types like hashes, which store multiple fields in a single key, can reduce memory usage when dealing with large datasets with frequent access patterns. Deployment Architectures Redis offers three primary deployment architectures to suit different operational needs: 1. Standalone Redis Instance A simple, single Redis instance is suitable for small-scale applications or as a local cache for a single application. However, this architecture doesn’t provide fault tolerance or horizontal scaling. 2. Master-Slave Replication In this architecture, a Redis master node is paired with one or more replica nodes. The master handles all write operations, while the replicas asynchronously copy the data. This architecture offers redundancy, allowing reads to be distributed among replicas. 3. Redis Cluster Redis Cluster is a more advanced architecture where data is partitioned across multiple Redis nodes, allowing horizontal scaling. Redis Cluster automatically distributes data and handles failover, making it suitable for large-scale distributed applications. Use Cases for Redis Redis is suitable for various use cases due to its high performance and flexibility: Caching: Redis is commonly used as a cache for web applications to store frequently accessed data, reducing load on databases and improving response times. Session Management: Redis can store session data for web applications, ensuring quick access to user-specific information. Real-Time Analytics: Redis’s support for data structures like sorted sets makes it ideal for real-time analytics and tracking use cases (e.g., leaderboards). Pub/Sub Messaging: Redis’s Pub/Sub capabilities are widely used for building real-time messaging systems and event-driven architectures. Best Practices for Redis Persistence Options: Choose the appropriate persistence model based on your use case. If durability is crucial, use AOF for better recovery options. If performance is more important, use RDB snapshots. Memory Management: Monitor memory usage and set proper eviction policies (LRU, TTL) to ensure Redis doesn’t run out of memory. Sharding and Clustering: Use Redis Cluster to distribute large datasets across multiple nodes for scalability and high availability. Monitoring and Alerts: Implement monitoring tools like Redis’s INFO command or third-party tools to keep track of Redis’s performance metrics (e.g., memory usage, commands per second). Security: Use password protection and encrypted connections (e.g., TLS) to secure Redis instances, especially in production environments. Conclusion Redis is a powerful, fast, and flexible data store that can be used in various distributed systems. Its design focuses on simplicity and performance, with in-memory storage and sophisticated replication and clustering mechanisms to ensure reliability, scalability, and fault tolerance. By understanding Redis’s underlying architecture and following best practices, you can build highly efficient and resilient distributed systems. Redis’s ability to handle hot data, combined with its flexible deployment architectures, makes it an excellent choice for caching, real-time analytics, messaging, and many other use cases.]]></summary></entry></feed>

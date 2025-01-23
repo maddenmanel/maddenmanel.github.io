@@ -47,6 +47,12 @@ var store = [{
         "url": "/blog/stability-monitor-promtail/",
         "teaser": null
       },{
+        "title": "Migration ILOG Solutions",
+        "excerpt":"Detailed Plans and Comparison of Three Rule Migration Approaches This document outlines the detailed plans for three approaches to rule migration: using AI-assisted model transformation, using ANTLR for model transformation, and using manual methods combined with Python scripts for model transformation. Additionally, it provides a comparative analysis of these methods...","categories": ["Blog"],
+        "tags": ["migration","solutions","ILOG"],
+        "url": "/blog/migration-ilog-solutions/",
+        "teaser": null
+      },{
         "title": "DevOps CI/CD GitLab",
         "excerpt":"Introduction GitLab is a powerful DevOps platform that provides a complete CI/CD pipeline for automating the build, test, and deployment of applications. In this guide, we’ll walk you through the steps to install GitLab on macOS using Docker and configure it for CI/CD workflows. Prerequisites Before proceeding, ensure you have...","categories": ["Blog"],
         "tags": ["devOps","gitlab","CI/CD"],
