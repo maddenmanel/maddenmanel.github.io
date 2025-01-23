@@ -1,7 +1,7 @@
 var store = [{
         "title": "Welcome to Jekyll!",
         "excerpt":"You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when...","categories": ["Blog"],
-        "tags": ["Jekyll","update"],
+        "tags": ["Jekyll"],
         "url": "/blog/welcome-to-jekyll/",
         "teaser": null
       },{
@@ -15,6 +15,12 @@ var store = [{
         "excerpt":"Introduction Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems. This article explores Redis’s internal architecture, its approach to data persistence...","categories": ["Blog"],
         "tags": ["distribute","redis"],
         "url": "/blog/distribute-design-redis/",
+        "teaser": null
+      },{
+        "title": "Stability Monitor Jaeger",
+        "excerpt":"Install Jaeger To install Jaeger version 1.42.0 on a Linux system, follow the steps below. Jaeger is an open-source distributed tracing system, and you can install it using pre-built binaries, Docker, or through package managers. This guide will cover the installation process using pre-built binaries. Step 1: Download the Jaeger...","categories": ["Blog"],
+        "tags": ["monitor","tracing"],
+        "url": "/blog/stability-monitor-jaeger/",
         "teaser": null
       },{
         "title": "Stability Monitor Loki",
@@ -39,5 +45,17 @@ var store = [{
         "excerpt":"Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously...","categories": ["Blog"],
         "tags": ["monitor","stability"],
         "url": "/blog/stability-monitor-promtail/",
+        "teaser": null
+      },{
+        "title": "DevOps CI/CD GitLab",
+        "excerpt":"Introduction GitLab is a powerful DevOps platform that provides a complete CI/CD pipeline for automating the build, test, and deployment of applications. In this guide, we’ll walk you through the steps to install GitLab on macOS using Docker and configure it for CI/CD workflows. Prerequisites Before proceeding, ensure you have...","categories": ["Blog"],
+        "tags": ["devOps","gitlab","CI/CD"],
+        "url": "/blog/devops-cicd-gitlab/",
+        "teaser": null
+      },{
+        "title": "Devops CI/CD Jenkins",
+        "excerpt":"Introduction Jenkins is a popular open-source automation server that facilitates continuous integration and continuous delivery (CI/CD). It helps automate the building, testing, and deployment of applications. This guide provides detailed steps to install Jenkins on macOS using Docker, configure a basic pipeline, and introduce approval processes for SQL script execution...","categories": ["Blog"],
+        "tags": ["devOps","jenkins","CI/CD"],
+        "url": "/blog/devops-cicd-jenkins/",
         "teaser": null
       }]

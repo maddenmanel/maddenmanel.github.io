@@ -2,7 +2,6 @@
 permalink: /about/
 title: "About"
 ---
+:wave: Hi, I’m Madden Zhang, a graduate of Beijing University of Electronic Science and Technology, where I obtained a Bachelor’s degree in Electronic Information Engineering. With 13 years of professional experience, I previously served as an architect at JD.com. Currently, I work at an InsurTech company, focusing on the design and development of risk control engines.
 
-Tempor velit sint sunt ipsum tempor enim ad qui ullamco. Est dolore anim ad velit duis dolore minim sunt aliquip amet commodo labore. Ut eu pariatur aute ea aute excepteur laborum. Esse ea esse excepteur minim mollit qui cillum excepteur ex dolore magna. Labore deserunt fugiat incididunt incididunt sint ea. Consequat dolore aute laboris quis proident quis non et est consectetur ex eiusmod sit culpa.
-
-Cupidatat ea do et in excepteur in. Ad nostrud ut est esse eu duis ea sunt eiusmod. Aliquip tempor veniam sint elit fugiat. Velit incididunt laboris amet incididunt labore dolore irure velit excepteur commodo deserunt laborum. Consectetur eu fugiat veniam veniam Lorem labore magna eiusmod. Ea occaecat reprehenderit pariatur consectetur minim labore ut aliquip.
+My expertise primarily lies in the development of large-scale distributed systems for e-commerce platforms and rule engine systems. I have extensive experience in core payment and settlement systems, as well as in system optimization and stability enhancement. I am passionate about sharing knowledge and contributing to the field.

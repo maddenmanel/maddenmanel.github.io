@@ -1,0 +1,921 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.26.2 by Michael Rose
+  Copyright 2013-2024 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Devops CI/CD Jenkins - Madden’s Blog</title>
+<meta name="description" content="Introduction  Jenkins is a popular open-source automation server that facilitates continuous integration and continuous delivery (CI/CD). It helps automate the building, testing, and deployment of applications. This guide provides detailed steps to install Jenkins on macOS using Docker, configure a basic pipeline, and introduce approval processes for SQL script execution and release deployment.  Using Docker simplifies the installation process and ensures that Jenkins is isolated in a container, avoiding dependency conflicts with the host system. After installation, we will configure Jenkins for building, testing, and deploying applications while introducing a simple approval process.    Prerequisites  Before proceeding, ensure you have the following:     macOS machine with an internet connection.   Docker installed on your system. If not, download it from Docker and install it.   Jenkins user credentials for logging into the Jenkins UI.     Step 1: Install Docker  First, ensure Docker is installed on your macOS system. If you haven’t done it yet, download Docker Desktop for macOS from the official website. Once downloaded, follow the installation steps.  To verify the installation, run:  docker --version   This should return the Docker version installed.    Step 2: Pull the Jenkins Docker Image  Now that Docker is installed, we can pull the official Jenkins image. Open your terminal and run the following command:  docker pull jenkins/jenkins:lts   This will pull the Long-Term Support (LTS) version of Jenkins, which is stable and recommended for production environments.    Step 3: Run Jenkins Using Docker  Once the image is downloaded, you can run Jenkins in a Docker container. Execute the following command to run Jenkins:  docker run -d -p 8080:8080 -p 50000:50000 --name jenkins jenkins/jenkins:lts   Explanation:     -d: Run the container in detached mode.   -p 8080:8080: Map port 8080 on the container to port 8080 on your host, which allows you to access Jenkins UI at http://localhost:8080.   -p 50000:50000: Expose the port 50000 for communication between Jenkins and its agents.   --name jenkins: Name the container jenkins for easy reference.     Step 4: Access Jenkins Web Interface  To access Jenkins, open your web browser and navigate to:  http://localhost:8080   On your first visit, Jenkins will ask for an unlock key. To retrieve it, execute the following command:  docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword   Copy the output (the password), and paste it into the Jenkins unlock screen to proceed with the initial setup.    Step 5: Set Up Jenkins  Once Jenkins is unlocked, follow the setup wizard:     Install suggested plugins: Jenkins will suggest a set of commonly used plugins. Click on “Install suggested plugins.”   Create an admin user: After plugins are installed, create a user with admin privileges by following the prompts. This is your primary user for accessing Jenkins.   Jenkins Setup Complete: After creating the admin user, Jenkins will show a “Setup is Complete” message.     Step 6: Configure Jenkins Pipeline with SQL and Release Approval  Jenkins allows you to automate tasks through Pipelines, which define your build, test, and deployment workflows. To get started, we’ll configure a simple pipeline and introduce an approval process before executing SQL scripts and releasing deployments.  a) Install Required Plugins  To enable pipeline support and approval steps, you need the following plugins:     Pipeline: For creating Jenkins pipelines.   Input Step Plugin: To introduce manual approval in the pipeline.   To install these:     Go to Manage Jenkins &gt; Manage Plugins.   Under the Available tab, search and install the Pipeline and Input Step Plugin.   b) Create a New Pipeline     On the Jenkins dashboard, click on New Item.   Enter a name for your project (e.g., “MyFirstPipeline”).   Choose Pipeline and click OK.   In the configuration screen, scroll down to the Pipeline section and enter the following script:   pipeline {     agent any      environment {         // 这里可以设置一些全局变量或常用参数，如数据库连接等         DB_HOST = &#39;your_db_host&#39;         DB_USER = &#39;your_db_user&#39;         DB_PASS = &#39;your_db_password&#39;     }      stages {         stage(&#39;Checkout&#39;) {             steps {                 // 检出代码库，假设你使用Git                 checkout scm             }         }          stage(&#39;SQL Approval&#39;) {             steps {                 // 在SQL审批阶段进行人工审批，审批人员可以填写SQL审批意见                 script {                     def approval = input message: &#39;SQL脚本审批&#39;,                                            parameters: [                                               string(defaultValue: &#39;&#39;, description: &#39;请输入SQL审批意见&#39;, name: &#39;sql_approval_comments&#39;)                                           ]                     // 将审批意见存储或使用                     echo &quot;SQL审批意见: ${approval[&#39;sql_approval_comments&#39;]}&quot;                 }             }         }          stage(&#39;Run SQL Scripts&#39;) {             steps {                 // 在SQL审批通过后执行SQL脚本                 script {                     echo &#39;执行SQL脚本...&#39;                     // 这里假设你用sh步骤来执行SQL脚本，也可以使用数据库相关插件                     sh &#39;&#39;&#39;                     mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} -e &quot;source ./your_sql_script.sql&quot;                     &#39;&#39;&#39;                 }             }         }          stage(&#39;Release Approval&#39;) {             steps {                 // 在上线前进行审批，审批人可以填写上线内容                 script {                     def releaseApproval = input message: &#39;是否批准上线？&#39;,                                                  parameters: [                                                      string(defaultValue: &#39;&#39;, description: &#39;请输入上线内容&#39;, name: &#39;release_notes&#39;),                                                      string(defaultValue: &#39;&#39;, description: &#39;请输入上线审批意见&#39;, name: &#39;release_approval_comments&#39;)                                                  ]                     // 获取上线内容和审批意见                     echo &quot;上线内容: ${releaseApproval[&#39;release_notes&#39;]}&quot;                     echo &quot;上线审批意见: ${releaseApproval[&#39;release_approval_comments&#39;]}&quot;                 }             }         }          stage(&#39;Deploy&#39;) {             steps {                 // 上线操作，假设部署应用                 script {                     echo &#39;执行部署操作...&#39;                     sh &#39;&#39;&#39;                     ./deploy.sh  # 替换为实际的部署脚本或命令                     &#39;&#39;&#39;                 }             }         }     }      post {         always {             // 这里可以定义清理工作或通知等             echo &#39;Pipeline 执行完毕&#39;         }          success {             echo &#39;Pipeline 执行成功&#39;         }          failure {             echo &#39;Pipeline 执行失败&#39;         }     } }   c) Save and Run the Pipeline     After entering the pipeline script, click Save.   Trigger the pipeline by clicking Build Now.   The pipeline will:    Checkout the code from your version control system (assuming it’s linked).   SQL Approval: Wait for manual approval and SQL comments before executing SQL scripts.   Run SQL Scripts: Execute SQL scripts only after SQL approval.   Release Approval: Wait for manual approval of the release, where the release notes and approval comments are entered.   Deploy: Once all approvals are granted, the deployment will proceed.     Step 7: Monitor Jenkins Logs and Jobs  To monitor Jenkins logs and ensure the server is running smoothly, use the following command:  docker logs -f jenkins   This will display Jenkins logs in real-time. To view the build job logs, go to the Build History section in your Jenkins project page.    Step 8: Automating Jenkins Restart (Optional)  To ensure that Jenkins restarts automatically after a system reboot, you can set up Docker’s restart policy. Stop the container and run the following command to restart it automatically on failure or reboot:  docker update --restart unless-stopped jenkins     Step 9: Configure Backups (Optional)  It’s important to regularly back up your Jenkins data. To back up your Jenkins instance and its configuration, follow these steps:          Stop the Jenkins container:      docker stop jenkins                Create a backup of Jenkins data:      docker cp jenkins:/var/jenkins_home /path/to/backup/folder                Restart the Jenkins container:      docker start jenkins             Conclusion  By following this guide, you have successfully installed Jenkins on your macOS using Docker, set up a basic CI/CD pipeline with SQL and release approval processes. You can now automate your builds, tests, and deployments, and track the approval steps">
+
+
+  <meta name="author" content="Madden Zhang">
+  
+  <meta property="article:author" content="Madden Zhang">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Madden's Blog">
+<meta property="og:title" content="Devops CI/CD Jenkins">
+<meta property="og:url" content="http://localhost:4000/blog/devops-cicd-jenkins/">
+
+
+  <meta property="og:description" content="Introduction  Jenkins is a popular open-source automation server that facilitates continuous integration and continuous delivery (CI/CD). It helps automate the building, testing, and deployment of applications. This guide provides detailed steps to install Jenkins on macOS using Docker, configure a basic pipeline, and introduce approval processes for SQL script execution and release deployment.  Using Docker simplifies the installation process and ensures that Jenkins is isolated in a container, avoiding dependency conflicts with the host system. After installation, we will configure Jenkins for building, testing, and deploying applications while introducing a simple approval process.    Prerequisites  Before proceeding, ensure you have the following:     macOS machine with an internet connection.   Docker installed on your system. If not, download it from Docker and install it.   Jenkins user credentials for logging into the Jenkins UI.     Step 1: Install Docker  First, ensure Docker is installed on your macOS system. If you haven’t done it yet, download Docker Desktop for macOS from the official website. Once downloaded, follow the installation steps.  To verify the installation, run:  docker --version   This should return the Docker version installed.    Step 2: Pull the Jenkins Docker Image  Now that Docker is installed, we can pull the official Jenkins image. Open your terminal and run the following command:  docker pull jenkins/jenkins:lts   This will pull the Long-Term Support (LTS) version of Jenkins, which is stable and recommended for production environments.    Step 3: Run Jenkins Using Docker  Once the image is downloaded, you can run Jenkins in a Docker container. Execute the following command to run Jenkins:  docker run -d -p 8080:8080 -p 50000:50000 --name jenkins jenkins/jenkins:lts   Explanation:     -d: Run the container in detached mode.   -p 8080:8080: Map port 8080 on the container to port 8080 on your host, which allows you to access Jenkins UI at http://localhost:8080.   -p 50000:50000: Expose the port 50000 for communication between Jenkins and its agents.   --name jenkins: Name the container jenkins for easy reference.     Step 4: Access Jenkins Web Interface  To access Jenkins, open your web browser and navigate to:  http://localhost:8080   On your first visit, Jenkins will ask for an unlock key. To retrieve it, execute the following command:  docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword   Copy the output (the password), and paste it into the Jenkins unlock screen to proceed with the initial setup.    Step 5: Set Up Jenkins  Once Jenkins is unlocked, follow the setup wizard:     Install suggested plugins: Jenkins will suggest a set of commonly used plugins. Click on “Install suggested plugins.”   Create an admin user: After plugins are installed, create a user with admin privileges by following the prompts. This is your primary user for accessing Jenkins.   Jenkins Setup Complete: After creating the admin user, Jenkins will show a “Setup is Complete” message.     Step 6: Configure Jenkins Pipeline with SQL and Release Approval  Jenkins allows you to automate tasks through Pipelines, which define your build, test, and deployment workflows. To get started, we’ll configure a simple pipeline and introduce an approval process before executing SQL scripts and releasing deployments.  a) Install Required Plugins  To enable pipeline support and approval steps, you need the following plugins:     Pipeline: For creating Jenkins pipelines.   Input Step Plugin: To introduce manual approval in the pipeline.   To install these:     Go to Manage Jenkins &gt; Manage Plugins.   Under the Available tab, search and install the Pipeline and Input Step Plugin.   b) Create a New Pipeline     On the Jenkins dashboard, click on New Item.   Enter a name for your project (e.g., “MyFirstPipeline”).   Choose Pipeline and click OK.   In the configuration screen, scroll down to the Pipeline section and enter the following script:   pipeline {     agent any      environment {         // 这里可以设置一些全局变量或常用参数，如数据库连接等         DB_HOST = &#39;your_db_host&#39;         DB_USER = &#39;your_db_user&#39;         DB_PASS = &#39;your_db_password&#39;     }      stages {         stage(&#39;Checkout&#39;) {             steps {                 // 检出代码库，假设你使用Git                 checkout scm             }         }          stage(&#39;SQL Approval&#39;) {             steps {                 // 在SQL审批阶段进行人工审批，审批人员可以填写SQL审批意见                 script {                     def approval = input message: &#39;SQL脚本审批&#39;,                                            parameters: [                                               string(defaultValue: &#39;&#39;, description: &#39;请输入SQL审批意见&#39;, name: &#39;sql_approval_comments&#39;)                                           ]                     // 将审批意见存储或使用                     echo &quot;SQL审批意见: ${approval[&#39;sql_approval_comments&#39;]}&quot;                 }             }         }          stage(&#39;Run SQL Scripts&#39;) {             steps {                 // 在SQL审批通过后执行SQL脚本                 script {                     echo &#39;执行SQL脚本...&#39;                     // 这里假设你用sh步骤来执行SQL脚本，也可以使用数据库相关插件                     sh &#39;&#39;&#39;                     mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} -e &quot;source ./your_sql_script.sql&quot;                     &#39;&#39;&#39;                 }             }         }          stage(&#39;Release Approval&#39;) {             steps {                 // 在上线前进行审批，审批人可以填写上线内容                 script {                     def releaseApproval = input message: &#39;是否批准上线？&#39;,                                                  parameters: [                                                      string(defaultValue: &#39;&#39;, description: &#39;请输入上线内容&#39;, name: &#39;release_notes&#39;),                                                      string(defaultValue: &#39;&#39;, description: &#39;请输入上线审批意见&#39;, name: &#39;release_approval_comments&#39;)                                                  ]                     // 获取上线内容和审批意见                     echo &quot;上线内容: ${releaseApproval[&#39;release_notes&#39;]}&quot;                     echo &quot;上线审批意见: ${releaseApproval[&#39;release_approval_comments&#39;]}&quot;                 }             }         }          stage(&#39;Deploy&#39;) {             steps {                 // 上线操作，假设部署应用                 script {                     echo &#39;执行部署操作...&#39;                     sh &#39;&#39;&#39;                     ./deploy.sh  # 替换为实际的部署脚本或命令                     &#39;&#39;&#39;                 }             }         }     }      post {         always {             // 这里可以定义清理工作或通知等             echo &#39;Pipeline 执行完毕&#39;         }          success {             echo &#39;Pipeline 执行成功&#39;         }          failure {             echo &#39;Pipeline 执行失败&#39;         }     } }   c) Save and Run the Pipeline     After entering the pipeline script, click Save.   Trigger the pipeline by clicking Build Now.   The pipeline will:    Checkout the code from your version control system (assuming it’s linked).   SQL Approval: Wait for manual approval and SQL comments before executing SQL scripts.   Run SQL Scripts: Execute SQL scripts only after SQL approval.   Release Approval: Wait for manual approval of the release, where the release notes and approval comments are entered.   Deploy: Once all approvals are granted, the deployment will proceed.     Step 7: Monitor Jenkins Logs and Jobs  To monitor Jenkins logs and ensure the server is running smoothly, use the following command:  docker logs -f jenkins   This will display Jenkins logs in real-time. To view the build job logs, go to the Build History section in your Jenkins project page.    Step 8: Automating Jenkins Restart (Optional)  To ensure that Jenkins restarts automatically after a system reboot, you can set up Docker’s restart policy. Stop the container and run the following command to restart it automatically on failure or reboot:  docker update --restart unless-stopped jenkins     Step 9: Configure Backups (Optional)  It’s important to regularly back up your Jenkins data. To back up your Jenkins instance and its configuration, follow these steps:          Stop the Jenkins container:      docker stop jenkins                Create a backup of Jenkins data:      docker cp jenkins:/var/jenkins_home /path/to/backup/folder                Restart the Jenkins container:      docker start jenkins             Conclusion  By following this guide, you have successfully installed Jenkins on your macOS using Docker, set up a basic CI/CD pipeline with SQL and release approval processes. You can now automate your builds, tests, and deployments, and track the approval steps">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2025-01-23T00:00:00+08:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/blog/devops-cicd-jenkins/">
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Madden's Blog Feed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  window.enable_copy_code_button = true;
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single" dir="ltr">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Madden's Blog
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a
+                href="/posts/"
+                
+                
+              >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/categories/"
+                
+                
+              >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/tags/"
+                
+                
+              >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/about/"
+                
+                
+              >About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/bio-photo.jpg" alt="Madden Zhang" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Madden Zhang</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>A slightly stubborn programmer.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://maddenmanel.github.io/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Website</span></a></li>
+          
+        
+          
+            <li><a href="https://x.com/MaddenZhang" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/maddenmanel" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://www.instagram.com/zhang.xuegang/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Devops CI/CD Jenkins">
+    <meta itemprop="description" content="IntroductionJenkins is a popular open-source automation server that facilitates continuous integration and continuous delivery (CI/CD). It helps automate the building, testing, and deployment of applications. This guide provides detailed steps to install Jenkins on macOS using Docker, configure a basic pipeline, and introduce approval processes for SQL script execution and release deployment.Using Docker simplifies the installation process and ensures that Jenkins is isolated in a container, avoiding dependency conflicts with the host system. After installation, we will configure Jenkins for building, testing, and deploying applications while introducing a simple approval process.PrerequisitesBefore proceeding, ensure you have the following:  macOS machine with an internet connection.  Docker installed on your system. If not, download it from Docker and install it.  Jenkins user credentials for logging into the Jenkins UI.Step 1: Install DockerFirst, ensure Docker is installed on your macOS system. If you haven’t done it yet, download Docker Desktop for macOS from the official website. Once downloaded, follow the installation steps.To verify the installation, run:docker --versionThis should return the Docker version installed.Step 2: Pull the Jenkins Docker ImageNow that Docker is installed, we can pull the official Jenkins image. Open your terminal and run the following command:docker pull jenkins/jenkins:ltsThis will pull the Long-Term Support (LTS) version of Jenkins, which is stable and recommended for production environments.Step 3: Run Jenkins Using DockerOnce the image is downloaded, you can run Jenkins in a Docker container. Execute the following command to run Jenkins:docker run -d -p 8080:8080 -p 50000:50000 --name jenkins jenkins/jenkins:ltsExplanation:  -d: Run the container in detached mode.  -p 8080:8080: Map port 8080 on the container to port 8080 on your host, which allows you to access Jenkins UI at http://localhost:8080.  -p 50000:50000: Expose the port 50000 for communication between Jenkins and its agents.  --name jenkins: Name the container jenkins for easy reference.Step 4: Access Jenkins Web InterfaceTo access Jenkins, open your web browser and navigate to:http://localhost:8080On your first visit, Jenkins will ask for an unlock key. To retrieve it, execute the following command:docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPasswordCopy the output (the password), and paste it into the Jenkins unlock screen to proceed with the initial setup.Step 5: Set Up JenkinsOnce Jenkins is unlocked, follow the setup wizard:  Install suggested plugins: Jenkins will suggest a set of commonly used plugins. Click on “Install suggested plugins.”  Create an admin user: After plugins are installed, create a user with admin privileges by following the prompts. This is your primary user for accessing Jenkins.  Jenkins Setup Complete: After creating the admin user, Jenkins will show a “Setup is Complete” message.Step 6: Configure Jenkins Pipeline with SQL and Release ApprovalJenkins allows you to automate tasks through Pipelines, which define your build, test, and deployment workflows. To get started, we’ll configure a simple pipeline and introduce an approval process before executing SQL scripts and releasing deployments.a) Install Required PluginsTo enable pipeline support and approval steps, you need the following plugins:  Pipeline: For creating Jenkins pipelines.  Input Step Plugin: To introduce manual approval in the pipeline.To install these:  Go to Manage Jenkins &gt; Manage Plugins.  Under the Available tab, search and install the Pipeline and Input Step Plugin.b) Create a New Pipeline  On the Jenkins dashboard, click on New Item.  Enter a name for your project (e.g., “MyFirstPipeline”).  Choose Pipeline and click OK.  In the configuration screen, scroll down to the Pipeline section and enter the following script:pipeline {    agent any    environment {        // 这里可以设置一些全局变量或常用参数，如数据库连接等        DB_HOST = &#39;your_db_host&#39;        DB_USER = &#39;your_db_user&#39;        DB_PASS = &#39;your_db_password&#39;    }    stages {        stage(&#39;Checkout&#39;) {            steps {                // 检出代码库，假设你使用Git                checkout scm            }        }        stage(&#39;SQL Approval&#39;) {            steps {                // 在SQL审批阶段进行人工审批，审批人员可以填写SQL审批意见                script {                    def approval = input message: &#39;SQL脚本审批&#39;,                                           parameters: [                                              string(defaultValue: &#39;&#39;, description: &#39;请输入SQL审批意见&#39;, name: &#39;sql_approval_comments&#39;)                                          ]                    // 将审批意见存储或使用                    echo &quot;SQL审批意见: ${approval[&#39;sql_approval_comments&#39;]}&quot;                }            }        }        stage(&#39;Run SQL Scripts&#39;) {            steps {                // 在SQL审批通过后执行SQL脚本                script {                    echo &#39;执行SQL脚本...&#39;                    // 这里假设你用sh步骤来执行SQL脚本，也可以使用数据库相关插件                    sh &#39;&#39;&#39;                    mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} -e &quot;source ./your_sql_script.sql&quot;                    &#39;&#39;&#39;                }            }        }        stage(&#39;Release Approval&#39;) {            steps {                // 在上线前进行审批，审批人可以填写上线内容                script {                    def releaseApproval = input message: &#39;是否批准上线？&#39;,                                                 parameters: [                                                     string(defaultValue: &#39;&#39;, description: &#39;请输入上线内容&#39;, name: &#39;release_notes&#39;),                                                     string(defaultValue: &#39;&#39;, description: &#39;请输入上线审批意见&#39;, name: &#39;release_approval_comments&#39;)                                                 ]                    // 获取上线内容和审批意见                    echo &quot;上线内容: ${releaseApproval[&#39;release_notes&#39;]}&quot;                    echo &quot;上线审批意见: ${releaseApproval[&#39;release_approval_comments&#39;]}&quot;                }            }        }        stage(&#39;Deploy&#39;) {            steps {                // 上线操作，假设部署应用                script {                    echo &#39;执行部署操作...&#39;                    sh &#39;&#39;&#39;                    ./deploy.sh  # 替换为实际的部署脚本或命令                    &#39;&#39;&#39;                }            }        }    }    post {        always {            // 这里可以定义清理工作或通知等            echo &#39;Pipeline 执行完毕&#39;        }        success {            echo &#39;Pipeline 执行成功&#39;        }        failure {            echo &#39;Pipeline 执行失败&#39;        }    }}c) Save and Run the Pipeline  After entering the pipeline script, click Save.  Trigger the pipeline by clicking Build Now.The pipeline will:  Checkout the code from your version control system (assuming it’s linked).  SQL Approval: Wait for manual approval and SQL comments before executing SQL scripts.  Run SQL Scripts: Execute SQL scripts only after SQL approval.  Release Approval: Wait for manual approval of the release, where the release notes and approval comments are entered.  Deploy: Once all approvals are granted, the deployment will proceed.Step 7: Monitor Jenkins Logs and JobsTo monitor Jenkins logs and ensure the server is running smoothly, use the following command:docker logs -f jenkinsThis will display Jenkins logs in real-time. To view the build job logs, go to the Build History section in your Jenkins project page.Step 8: Automating Jenkins Restart (Optional)To ensure that Jenkins restarts automatically after a system reboot, you can set up Docker’s restart policy. Stop the container and run the following command to restart it automatically on failure or reboot:docker update --restart unless-stopped jenkinsStep 9: Configure Backups (Optional)It’s important to regularly back up your Jenkins data. To back up your Jenkins instance and its configuration, follow these steps:      Stop the Jenkins container:    docker stop jenkins            Create a backup of Jenkins data:    docker cp jenkins:/var/jenkins_home /path/to/backup/folder            Restart the Jenkins container:    docker start jenkins      ConclusionBy following this guide, you have successfully installed Jenkins on your macOS using Docker, set up a basic CI/CD pipeline with SQL and release approval processes. You can now automate your builds, tests, and deployments, and track the approval steps">
+    <meta itemprop="datePublished" content="2025-01-23T00:00:00+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">
+            <a href="http://localhost:4000/blog/devops-cicd-jenkins/" itemprop="url">Devops CI/CD Jenkins
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#introduction">Introduction</a></li><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#step-1-install-docker">Step 1: Install Docker</a></li><li><a href="#step-2-pull-the-jenkins-docker-image">Step 2: Pull the Jenkins Docker Image</a></li><li><a href="#step-3-run-jenkins-using-docker">Step 3: Run Jenkins Using Docker</a><ul><li><a href="#explanation">Explanation:</a></li></ul></li><li><a href="#step-4-access-jenkins-web-interface">Step 4: Access Jenkins Web Interface</a></li><li><a href="#step-5-set-up-jenkins">Step 5: Set Up Jenkins</a></li><li><a href="#step-6-configure-jenkins-pipeline-with-sql-and-release-approval">Step 6: Configure Jenkins Pipeline with SQL and Release Approval</a><ul><li><a href="#a-install-required-plugins">a) Install Required Plugins</a></li><li><a href="#b-create-a-new-pipeline">b) Create a New Pipeline</a></li><li><a href="#c-save-and-run-the-pipeline">c) Save and Run the Pipeline</a></li></ul></li><li><a href="#step-7-monitor-jenkins-logs-and-jobs">Step 7: Monitor Jenkins Logs and Jobs</a></li><li><a href="#step-8-automating-jenkins-restart-optional">Step 8: Automating Jenkins Restart (Optional)</a></li><li><a href="#step-9-configure-backups-optional">Step 9: Configure Backups (Optional)</a></li><li><a href="#conclusion">Conclusion</a></li></ul>
+            </nav>
+          </aside>
+        
+        <h2 id="introduction">Introduction</h2>
+
+<p>Jenkins is a popular open-source automation server that facilitates continuous integration and continuous delivery (CI/CD). It helps automate the building, testing, and deployment of applications. This guide provides detailed steps to install Jenkins on <strong>macOS</strong> using <strong>Docker</strong>, configure a basic pipeline, and introduce approval processes for SQL script execution and release deployment.</p>
+
+<p>Using Docker simplifies the installation process and ensures that Jenkins is isolated in a container, avoiding dependency conflicts with the host system. After installation, we will configure Jenkins for building, testing, and deploying applications while introducing a simple approval process.</p>
+
+<hr />
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>Before proceeding, ensure you have the following:</p>
+
+<ul>
+  <li><strong>macOS</strong> machine with an internet connection.</li>
+  <li><strong>Docker</strong> installed on your system. If not, download it from <a href="https://www.docker.com/products/docker-desktop">Docker</a> and install it.</li>
+  <li><strong>Jenkins user credentials</strong> for logging into the Jenkins UI.</li>
+</ul>
+
+<hr />
+
+<h2 id="step-1-install-docker">Step 1: Install Docker</h2>
+
+<p>First, ensure Docker is installed on your <strong>macOS</strong> system. If you haven’t done it yet, download Docker Desktop for macOS from the <a href="https://www.docker.com/products/docker-desktop">official website</a>. Once downloaded, follow the installation steps.</p>
+
+<p>To verify the installation, run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nt">--version</span>
+</code></pre></div></div>
+
+<p>This should return the Docker version installed.</p>
+
+<hr />
+
+<h2 id="step-2-pull-the-jenkins-docker-image">Step 2: Pull the Jenkins Docker Image</h2>
+
+<p>Now that Docker is installed, we can pull the official Jenkins image. Open your terminal and run the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull jenkins/jenkins:lts
+</code></pre></div></div>
+
+<p>This will pull the <strong>Long-Term Support (LTS)</strong> version of Jenkins, which is stable and recommended for production environments.</p>
+
+<hr />
+
+<h2 id="step-3-run-jenkins-using-docker">Step 3: Run Jenkins Using Docker</h2>
+
+<p>Once the image is downloaded, you can run Jenkins in a Docker container. Execute the following command to run Jenkins:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-d</span> <span class="nt">-p</span> 8080:8080 <span class="nt">-p</span> 50000:50000 <span class="nt">--name</span> jenkins jenkins/jenkins:lts
+</code></pre></div></div>
+
+<h3 id="explanation">Explanation:</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">-d</code>: Run the container in detached mode.</li>
+  <li><code class="language-plaintext highlighter-rouge">-p 8080:8080</code>: Map port <code class="language-plaintext highlighter-rouge">8080</code> on the container to port <code class="language-plaintext highlighter-rouge">8080</code> on your host, which allows you to access Jenkins UI at <code class="language-plaintext highlighter-rouge">http://localhost:8080</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">-p 50000:50000</code>: Expose the port <code class="language-plaintext highlighter-rouge">50000</code> for communication between Jenkins and its agents.</li>
+  <li><code class="language-plaintext highlighter-rouge">--name jenkins</code>: Name the container <code class="language-plaintext highlighter-rouge">jenkins</code> for easy reference.</li>
+</ul>
+
+<hr />
+
+<h2 id="step-4-access-jenkins-web-interface">Step 4: Access Jenkins Web Interface</h2>
+
+<p>To access Jenkins, open your web browser and navigate to:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://localhost:8080
+</code></pre></div></div>
+
+<p>On your first visit, Jenkins will ask for an <strong>unlock key</strong>. To retrieve it, execute the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">exec</span> <span class="nt">-it</span> jenkins <span class="nb">cat</span> /var/jenkins_home/secrets/initialAdminPassword
+</code></pre></div></div>
+
+<p>Copy the output (the password), and paste it into the Jenkins unlock screen to proceed with the initial setup.</p>
+
+<hr />
+
+<h2 id="step-5-set-up-jenkins">Step 5: Set Up Jenkins</h2>
+
+<p>Once Jenkins is unlocked, follow the setup wizard:</p>
+
+<ol>
+  <li><strong>Install suggested plugins</strong>: Jenkins will suggest a set of commonly used plugins. Click on “Install suggested plugins.”</li>
+  <li><strong>Create an admin user</strong>: After plugins are installed, create a user with admin privileges by following the prompts. This is your primary user for accessing Jenkins.</li>
+  <li><strong>Jenkins Setup Complete</strong>: After creating the admin user, Jenkins will show a “Setup is Complete” message.</li>
+</ol>
+
+<hr />
+
+<h2 id="step-6-configure-jenkins-pipeline-with-sql-and-release-approval">Step 6: Configure Jenkins Pipeline with SQL and Release Approval</h2>
+
+<p>Jenkins allows you to automate tasks through <strong>Pipelines</strong>, which define your build, test, and deployment workflows. To get started, we’ll configure a simple pipeline and introduce an <strong>approval process</strong> before executing SQL scripts and releasing deployments.</p>
+
+<h3 id="a-install-required-plugins">a) Install Required Plugins</h3>
+
+<p>To enable pipeline support and approval steps, you need the following plugins:</p>
+
+<ol>
+  <li><strong>Pipeline</strong>: For creating Jenkins pipelines.</li>
+  <li><strong>Input Step Plugin</strong>: To introduce manual approval in the pipeline.</li>
+</ol>
+
+<p>To install these:</p>
+
+<ol>
+  <li>Go to <code class="language-plaintext highlighter-rouge">Manage Jenkins</code> &gt; <code class="language-plaintext highlighter-rouge">Manage Plugins</code>.</li>
+  <li>Under the <strong>Available</strong> tab, search and install the <strong>Pipeline</strong> and <strong>Input Step Plugin</strong>.</li>
+</ol>
+
+<h3 id="b-create-a-new-pipeline">b) Create a New Pipeline</h3>
+
+<ol>
+  <li>On the Jenkins dashboard, click on <strong>New Item</strong>.</li>
+  <li>Enter a name for your project (e.g., “MyFirstPipeline”).</li>
+  <li>Choose <strong>Pipeline</strong> and click <strong>OK</strong>.</li>
+  <li>In the configuration screen, scroll down to the <strong>Pipeline</strong> section and enter the following script:</li>
+</ol>
+
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pipeline</span> <span class="o">{</span>
+    <span class="n">agent</span> <span class="n">any</span>
+
+    <span class="n">environment</span> <span class="o">{</span>
+        <span class="c1">// 这里可以设置一些全局变量或常用参数，如数据库连接等</span>
+        <span class="n">DB_HOST</span> <span class="o">=</span> <span class="s1">'your_db_host'</span>
+        <span class="n">DB_USER</span> <span class="o">=</span> <span class="s1">'your_db_user'</span>
+        <span class="n">DB_PASS</span> <span class="o">=</span> <span class="s1">'your_db_password'</span>
+    <span class="o">}</span>
+
+    <span class="n">stages</span> <span class="o">{</span>
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'Checkout'</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">steps</span> <span class="o">{</span>
+                <span class="c1">// 检出代码库，假设你使用Git</span>
+                <span class="n">checkout</span> <span class="n">scm</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'SQL Approval'</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">steps</span> <span class="o">{</span>
+                <span class="c1">// 在SQL审批阶段进行人工审批，审批人员可以填写SQL审批意见</span>
+                <span class="n">script</span> <span class="o">{</span>
+                    <span class="kt">def</span> <span class="n">approval</span> <span class="o">=</span> <span class="n">input</span> <span class="nl">message:</span> <span class="s1">'SQL脚本审批'</span><span class="o">,</span> 
+                                          <span class="nl">parameters:</span> <span class="o">[</span>
+                                              <span class="n">string</span><span class="o">(</span><span class="nl">defaultValue:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">description:</span> <span class="s1">'请输入SQL审批意见'</span><span class="o">,</span> <span class="nl">name:</span> <span class="s1">'sql_approval_comments'</span><span class="o">)</span>
+                                          <span class="o">]</span>
+                    <span class="c1">// 将审批意见存储或使用</span>
+                    <span class="n">echo</span> <span class="s2">"SQL审批意见: ${approval['sql_approval_comments']}"</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'Run SQL Scripts'</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">steps</span> <span class="o">{</span>
+                <span class="c1">// 在SQL审批通过后执行SQL脚本</span>
+                <span class="n">script</span> <span class="o">{</span>
+                    <span class="n">echo</span> <span class="s1">'执行SQL脚本...'</span>
+                    <span class="c1">// 这里假设你用sh步骤来执行SQL脚本，也可以使用数据库相关插件</span>
+                    <span class="n">sh</span> <span class="s1">'''
+                    mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} -e "source ./your_sql_script.sql"
+                    '''</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'Release Approval'</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">steps</span> <span class="o">{</span>
+                <span class="c1">// 在上线前进行审批，审批人可以填写上线内容</span>
+                <span class="n">script</span> <span class="o">{</span>
+                    <span class="kt">def</span> <span class="n">releaseApproval</span> <span class="o">=</span> <span class="n">input</span> <span class="nl">message:</span> <span class="s1">'是否批准上线？'</span><span class="o">,</span>
+                                                 <span class="nl">parameters:</span> <span class="o">[</span>
+                                                     <span class="n">string</span><span class="o">(</span><span class="nl">defaultValue:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">description:</span> <span class="s1">'请输入上线内容'</span><span class="o">,</span> <span class="nl">name:</span> <span class="s1">'release_notes'</span><span class="o">),</span>
+                                                     <span class="n">string</span><span class="o">(</span><span class="nl">defaultValue:</span> <span class="s1">''</span><span class="o">,</span> <span class="nl">description:</span> <span class="s1">'请输入上线审批意见'</span><span class="o">,</span> <span class="nl">name:</span> <span class="s1">'release_approval_comments'</span><span class="o">)</span>
+                                                 <span class="o">]</span>
+                    <span class="c1">// 获取上线内容和审批意见</span>
+                    <span class="n">echo</span> <span class="s2">"上线内容: ${releaseApproval['release_notes']}"</span>
+                    <span class="n">echo</span> <span class="s2">"上线审批意见: ${releaseApproval['release_approval_comments']}"</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="n">stage</span><span class="o">(</span><span class="s1">'Deploy'</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">steps</span> <span class="o">{</span>
+                <span class="c1">// 上线操作，假设部署应用</span>
+                <span class="n">script</span> <span class="o">{</span>
+                    <span class="n">echo</span> <span class="s1">'执行部署操作...'</span>
+                    <span class="n">sh</span> <span class="s1">'''
+                    ./deploy.sh  # 替换为实际的部署脚本或命令
+                    '''</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="n">post</span> <span class="o">{</span>
+        <span class="n">always</span> <span class="o">{</span>
+            <span class="c1">// 这里可以定义清理工作或通知等</span>
+            <span class="n">echo</span> <span class="s1">'Pipeline 执行完毕'</span>
+        <span class="o">}</span>
+
+        <span class="n">success</span> <span class="o">{</span>
+            <span class="n">echo</span> <span class="s1">'Pipeline 执行成功'</span>
+        <span class="o">}</span>
+
+        <span class="n">failure</span> <span class="o">{</span>
+            <span class="n">echo</span> <span class="s1">'Pipeline 执行失败'</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="c-save-and-run-the-pipeline">c) Save and Run the Pipeline</h3>
+
+<ul>
+  <li>After entering the pipeline script, click <strong>Save</strong>.</li>
+  <li>Trigger the pipeline by clicking <strong>Build Now</strong>.</li>
+</ul>
+
+<p>The pipeline will:</p>
+<ol>
+  <li><strong>Checkout</strong> the code from your version control system (assuming it’s linked).</li>
+  <li><strong>SQL Approval</strong>: Wait for manual approval and SQL comments before executing SQL scripts.</li>
+  <li><strong>Run SQL Scripts</strong>: Execute SQL scripts only after SQL approval.</li>
+  <li><strong>Release Approval</strong>: Wait for manual approval of the release, where the release notes and approval comments are entered.</li>
+  <li><strong>Deploy</strong>: Once all approvals are granted, the deployment will proceed.</li>
+</ol>
+
+<hr />
+
+<h2 id="step-7-monitor-jenkins-logs-and-jobs">Step 7: Monitor Jenkins Logs and Jobs</h2>
+
+<p>To monitor Jenkins logs and ensure the server is running smoothly, use the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker logs <span class="nt">-f</span> jenkins
+</code></pre></div></div>
+
+<p>This will display Jenkins logs in real-time. To view the build job logs, go to the <strong>Build History</strong> section in your Jenkins project page.</p>
+
+<hr />
+
+<h2 id="step-8-automating-jenkins-restart-optional">Step 8: Automating Jenkins Restart (Optional)</h2>
+
+<p>To ensure that Jenkins restarts automatically after a system reboot, you can set up Docker’s restart policy. Stop the container and run the following command to restart it automatically on failure or reboot:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker update <span class="nt">--restart</span> unless-stopped jenkins
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="step-9-configure-backups-optional">Step 9: Configure Backups (Optional)</h2>
+
+<p>It’s important to regularly back up your Jenkins data. To back up your Jenkins instance and its configuration, follow these steps:</p>
+
+<ol>
+  <li>
+    <p><strong>Stop the Jenkins container</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker stop jenkins
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Create a backup of Jenkins data</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">cp </span>jenkins:/var/jenkins_home /path/to/backup/folder
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Restart the Jenkins container</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker start jenkins
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>By following this guide, you have successfully installed Jenkins on your <strong>macOS</strong> using Docker, set up a basic <strong>CI/CD pipeline</strong> with SQL and release approval processes. You can now automate your builds, tests, and deployments, and track the approval steps</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#ci-cd" class="page__taxonomy-item p-category" rel="tag">CI/CD</a><span class="sep">, </span>
+    
+      <a href="/tags/#devops" class="page__taxonomy-item p-category" rel="tag">devOps</a><span class="sep">, </span>
+    
+      <a href="/tags/#jenkins" class="page__taxonomy-item p-category" rel="tag">jenkins</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#blog" class="page__taxonomy-item p-category" rel="tag">Blog</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2025-01-23T00:00:00+08:00">January 23, 2025</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  <h4 class="page__share-title">Share on</h4>
+
+  <a href="https://twitter.com/intent/tweet?text=Devops+CI%2FCD+Jenkins%20http%3A%2F%2Flocalhost%3A4000%2Fblog%2Fdevops-cicd-jenkins%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fblog%2Fdevops-cicd-jenkins%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/blog/devops-cicd-jenkins/" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/devops-cicd-gitlab/" class="pagination--pager" title="DevOps CI/CD GitLab">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    
+<div class="page__related">
+  
+  <h2 class="page__related-title">You May Also Enjoy</h2>
+  <div class="grid__wrapper">
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/devops-cicd-gitlab/" rel="permalink">DevOps CI/CD GitLab
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Introduction
+
+GitLab is a powerful DevOps platform that provides a complete CI/CD pipeline for automating the build, test, and deployment of applications. In...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-promtail/" rel="permalink">Stability Monitor Promtail
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Introduction
+
+Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk thr...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-alertmanager/" rel="permalink">Stability Monitor Alertmanager
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Introduction
+
+Alertmanager is a tool designed to handle alerts sent by Prometheus, providing features such as deduplication, grouping, and routing of alerts ...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-prometheus/" rel="permalink">Stability Monitor Prometheus
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Background
+A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams t...</p>
+  </article>
+</div>
+
+    
+  </div>
+</div>
+
+  
+  
+</div>
+
+      
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2025 <a href="http://localhost:4000">Madden's Blog</a>. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
