@@ -1,4 +1,166 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-01-23T22:37:52+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Madden’s Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>Madden Zhang</name></author><entry><title type="html">Devops CI/CD Jenkins</title><link href="http://localhost:4000/blog/devops-cicd-jenkins/" rel="alternate" type="text/html" title="Devops CI/CD Jenkins" /><published>2025-01-23T00:00:00+08:00</published><updated>2025-01-23T00:00:00+08:00</updated><id>http://localhost:4000/blog/devops-cicd-jenkins</id><content type="html" xml:base="http://localhost:4000/blog/devops-cicd-jenkins/"><![CDATA[<h2 id="introduction">Introduction</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-01-24T16:44:34+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Madden’s Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>Madden Zhang</name></author><entry><title type="html">DevOps CI/CD GitLab</title><link href="http://localhost:4000/blog/devops-cicd-gitlab/" rel="alternate" type="text/html" title="DevOps CI/CD GitLab" /><published>2025-01-23T00:00:00+08:00</published><updated>2025-01-23T00:00:00+08:00</updated><id>http://localhost:4000/blog/devops-cicd-gitlab</id><content type="html" xml:base="http://localhost:4000/blog/devops-cicd-gitlab/"><![CDATA[<h2 id="introduction">Introduction</h2>
+
+<p>GitLab is a powerful DevOps platform that provides a complete CI/CD pipeline for automating the build, test, and deployment of applications. In this guide, we’ll walk you through the steps to install <strong>GitLab</strong> on <strong>macOS</strong> using <strong>Docker</strong> and configure it for CI/CD workflows.</p>
+
+<hr />
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>Before proceeding, ensure you have the following:</p>
+
+<ul>
+  <li><strong>macOS</strong> machine with an internet connection.</li>
+  <li><strong>Docker</strong> installed on your system. If not, download it from <a href="https://www.docker.com/products/docker-desktop">Docker</a> and install it.</li>
+  <li><strong>GitLab user credentials</strong> for accessing the GitLab UI.</li>
+</ul>
+
+<hr />
+
+<h2 id="step-1-install-docker">Step 1: Install Docker</h2>
+
+<p>First, ensure Docker is installed on your <strong>macOS</strong> system. If you haven’t done it yet, download Docker Desktop for macOS from the <a href="https://www.docker.com/products/docker-desktop">official website</a>. Once downloaded, follow the installation steps.</p>
+
+<p>To verify the installation, run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nt">--version</span>
+</code></pre></div></div>
+
+<p>This should return the Docker version installed.</p>
+
+<hr />
+
+<h2 id="step-2-pull-the-gitlab-docker-image">Step 2: Pull the GitLab Docker Image</h2>
+
+<p>To install <strong>GitLab</strong> using Docker, run the following command to pull the official GitLab Community Edition image:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull gitlab/gitlab-ce:latest
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="step-3-run-gitlab-using-docker">Step 3: Run GitLab Using Docker</h2>
+
+<p>Once the image is downloaded, you can run GitLab in a Docker container. Execute the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-d</span> <span class="nt">-p</span> 80:80 <span class="nt">-p</span> 443:443 <span class="nt">-p</span> 22:22 <span class="nt">--name</span> gitlab <span class="nt">--restart</span> always <span class="se">\</span>
+<span class="nt">-v</span> /your/host/path/to/gitlab/config:/etc/gitlab <span class="se">\</span>
+<span class="nt">-v</span> /your/host/path/to/gitlab/data:/var/opt/gitlab <span class="se">\</span>
+<span class="nt">-v</span> /your/host/path/to/gitlab/logs:/var/log/gitlab <span class="se">\</span>
+gitlab/gitlab-ce:latest
+</code></pre></div></div>
+
+<h3 id="explanation">Explanation:</h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">-p 80:80 -p 443:443 -p 22:22</code>: Maps the required ports for HTTP, HTTPS, and SSH.</li>
+  <li><code class="language-plaintext highlighter-rouge">--name gitlab</code>: Names the container <code class="language-plaintext highlighter-rouge">gitlab</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">--restart always</code>: Ensures GitLab restarts automatically if the container or Docker daemon restarts.</li>
+  <li><code class="language-plaintext highlighter-rouge">-v /your/host/path</code>: Mounts host directories to the container for persistent data.</li>
+</ul>
+
+<p>Replace <code class="language-plaintext highlighter-rouge">/your/host/path</code> with the actual paths on your machine where GitLab data, logs, and configuration will be stored.</p>
+
+<hr />
+
+<h2 id="step-4-access-gitlab-web-interface">Step 4: Access GitLab Web Interface</h2>
+
+<p>Once GitLab is running, open your web browser and navigate to:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://localhost
+</code></pre></div></div>
+
+<p>You should see the GitLab setup page. Follow the instructions to set up an admin password and configure your GitLab instance.</p>
+
+<hr />
+
+<h2 id="step-5-configure-gitlab-for-cicd">Step 5: Configure GitLab for CI/CD</h2>
+
+<p>GitLab offers built-in CI/CD features to automate the build, test, and deployment of your code. To configure GitLab CI/CD:</p>
+
+<ol>
+  <li><strong>Create a <code class="language-plaintext highlighter-rouge">.gitlab-ci.yml</code> file</strong> in the root of your repository. This file defines the CI/CD pipeline for your project.</li>
+</ol>
+
+<p>Example <code class="language-plaintext highlighter-rouge">.gitlab-ci.yml</code> for a simple Node.js application:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">stages</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">build</span>
+  <span class="pi">-</span> <span class="s">test</span>
+  <span class="pi">-</span> <span class="s">deploy</span>
+
+<span class="na">build</span><span class="pi">:</span>
+  <span class="na">stage</span><span class="pi">:</span> <span class="s">build</span>
+  <span class="na">script</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">npm install</span>
+
+<span class="na">test</span><span class="pi">:</span>
+  <span class="na">stage</span><span class="pi">:</span> <span class="s">test</span>
+  <span class="na">script</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">npm test</span>
+
+<span class="na">deploy</span><span class="pi">:</span>
+  <span class="na">stage</span><span class="pi">:</span> <span class="s">deploy</span>
+  <span class="na">script</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">./deploy.sh</span>
+</code></pre></div></div>
+
+<ol>
+  <li><strong>Push your repository to GitLab</strong>. GitLab will automatically detect the <code class="language-plaintext highlighter-rouge">.gitlab-ci.yml</code> file and trigger the pipeline based on the defined stages.</li>
+</ol>
+
+<hr />
+
+<h2 id="step-6-monitor-gitlab-logs">Step 6: Monitor GitLab Logs</h2>
+
+<p>To monitor the logs of the GitLab container, you can use the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker logs <span class="nt">-f</span> gitlab
+</code></pre></div></div>
+
+<p>This will show real-time logs for the GitLab container.</p>
+
+<hr />
+
+<h2 id="step-7-automating-gitlab-restart-optional">Step 7: Automating GitLab Restart (Optional)</h2>
+
+<p>To ensure GitLab restarts automatically after a system reboot, you can set up Docker’s restart policy. Run the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker update <span class="nt">--restart</span> unless-stopped gitlab
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="step-8-backup-gitlab-optional">Step 8: Backup GitLab (Optional)</h2>
+
+<p>It’s important to back up your GitLab data regularly. Follow these steps to back it up:</p>
+
+<ol>
+  <li>
+    <p><strong>Stop GitLab container</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker stop gitlab
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Backup GitLab data</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">cp </span>gitlab:/var/opt/gitlab /path/to/gitlab/backup/folder
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Restart GitLab container</strong>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker start gitlab
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<hr />
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>By following this guide, you have successfully installed <strong>GitLab</strong> on <strong>macOS</strong> using Docker and set up <strong>CI/CD pipelines</strong> for your projects. GitLab makes it easy to automate your build, test, and deployment processes.</p>
+
+<p>Let me know if you need further assistance!</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="devOps" /><category term="gitlab" /><category term="CI/CD" /><summary type="html"><![CDATA[Introduction GitLab is a powerful DevOps platform that provides a complete CI/CD pipeline for automating the build, test, and deployment of applications. In this guide, we’ll walk you through the steps to install GitLab on macOS using Docker and configure it for CI/CD workflows. Prerequisites Before proceeding, ensure you have the following: macOS machine with an internet connection. Docker installed on your system. If not, download it from Docker and install it. GitLab user credentials for accessing the GitLab UI. Step 1: Install Docker First, ensure Docker is installed on your macOS system. If you haven’t done it yet, download Docker Desktop for macOS from the official website. Once downloaded, follow the installation steps. To verify the installation, run: docker --version This should return the Docker version installed. Step 2: Pull the GitLab Docker Image To install GitLab using Docker, run the following command to pull the official GitLab Community Edition image: docker pull gitlab/gitlab-ce:latest Step 3: Run GitLab Using Docker Once the image is downloaded, you can run GitLab in a Docker container. Execute the following command: docker run -d -p 80:80 -p 443:443 -p 22:22 --name gitlab --restart always \ -v /your/host/path/to/gitlab/config:/etc/gitlab \ -v /your/host/path/to/gitlab/data:/var/opt/gitlab \ -v /your/host/path/to/gitlab/logs:/var/log/gitlab \ gitlab/gitlab-ce:latest Explanation: -p 80:80 -p 443:443 -p 22:22: Maps the required ports for HTTP, HTTPS, and SSH. --name gitlab: Names the container gitlab. --restart always: Ensures GitLab restarts automatically if the container or Docker daemon restarts. -v /your/host/path: Mounts host directories to the container for persistent data. Replace /your/host/path with the actual paths on your machine where GitLab data, logs, and configuration will be stored. Step 4: Access GitLab Web Interface Once GitLab is running, open your web browser and navigate to: http://localhost You should see the GitLab setup page. Follow the instructions to set up an admin password and configure your GitLab instance. Step 5: Configure GitLab for CI/CD GitLab offers built-in CI/CD features to automate the build, test, and deployment of your code. To configure GitLab CI/CD: Create a .gitlab-ci.yml file in the root of your repository. This file defines the CI/CD pipeline for your project. Example .gitlab-ci.yml for a simple Node.js application: stages: - build - test - deploy build: stage: build script: - npm install test: stage: test script: - npm test deploy: stage: deploy script: - ./deploy.sh Push your repository to GitLab. GitLab will automatically detect the .gitlab-ci.yml file and trigger the pipeline based on the defined stages. Step 6: Monitor GitLab Logs To monitor the logs of the GitLab container, you can use the following command: docker logs -f gitlab This will show real-time logs for the GitLab container. Step 7: Automating GitLab Restart (Optional) To ensure GitLab restarts automatically after a system reboot, you can set up Docker’s restart policy. Run the following command: docker update --restart unless-stopped gitlab Step 8: Backup GitLab (Optional) It’s important to back up your GitLab data regularly. Follow these steps to back it up: Stop GitLab container: docker stop gitlab Backup GitLab data: docker cp gitlab:/var/opt/gitlab /path/to/gitlab/backup/folder Restart GitLab container: docker start gitlab Conclusion By following this guide, you have successfully installed GitLab on macOS using Docker and set up CI/CD pipelines for your projects. GitLab makes it easy to automate your build, test, and deployment processes. Let me know if you need further assistance!]]></summary></entry><entry><title type="html">Devops CI/CD Jenkins</title><link href="http://localhost:4000/blog/devops-cicd-jenkins/" rel="alternate" type="text/html" title="Devops CI/CD Jenkins" /><published>2025-01-23T00:00:00+08:00</published><updated>2025-01-23T00:00:00+08:00</updated><id>http://localhost:4000/blog/devops-cicd-jenkins</id><content type="html" xml:base="http://localhost:4000/blog/devops-cicd-jenkins/"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Jenkins is a popular open-source automation server that facilitates continuous integration and continuous delivery (CI/CD). It helps automate the building, testing, and deployment of applications. This guide provides detailed steps to install Jenkins on <strong>macOS</strong> using <strong>Docker</strong>, configure a basic pipeline, and introduce approval processes for SQL script execution and release deployment.</p>
 
@@ -275,169 +437,7 @@
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>By following this guide, you have successfully installed Jenkins on your <strong>macOS</strong> using Docker, set up a basic <strong>CI/CD pipeline</strong> with SQL and release approval processes. You can now automate your builds, tests, and deployments, and track the approval steps</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="devOps" /><category term="jenkins" /><category term="CI/CD" /><summary type="html"><![CDATA[Introduction Jenkins is a popular open-source automation server that facilitates continuous integration and continuous delivery (CI/CD). It helps automate the building, testing, and deployment of applications. This guide provides detailed steps to install Jenkins on macOS using Docker, configure a basic pipeline, and introduce approval processes for SQL script execution and release deployment. Using Docker simplifies the installation process and ensures that Jenkins is isolated in a container, avoiding dependency conflicts with the host system. After installation, we will configure Jenkins for building, testing, and deploying applications while introducing a simple approval process. Prerequisites Before proceeding, ensure you have the following: macOS machine with an internet connection. Docker installed on your system. If not, download it from Docker and install it. Jenkins user credentials for logging into the Jenkins UI. Step 1: Install Docker First, ensure Docker is installed on your macOS system. If you haven’t done it yet, download Docker Desktop for macOS from the official website. Once downloaded, follow the installation steps. To verify the installation, run: docker --version This should return the Docker version installed. Step 2: Pull the Jenkins Docker Image Now that Docker is installed, we can pull the official Jenkins image. Open your terminal and run the following command: docker pull jenkins/jenkins:lts This will pull the Long-Term Support (LTS) version of Jenkins, which is stable and recommended for production environments. Step 3: Run Jenkins Using Docker Once the image is downloaded, you can run Jenkins in a Docker container. Execute the following command to run Jenkins: docker run -d -p 8080:8080 -p 50000:50000 --name jenkins jenkins/jenkins:lts Explanation: -d: Run the container in detached mode. -p 8080:8080: Map port 8080 on the container to port 8080 on your host, which allows you to access Jenkins UI at http://localhost:8080. -p 50000:50000: Expose the port 50000 for communication between Jenkins and its agents. --name jenkins: Name the container jenkins for easy reference. Step 4: Access Jenkins Web Interface To access Jenkins, open your web browser and navigate to: http://localhost:8080 On your first visit, Jenkins will ask for an unlock key. To retrieve it, execute the following command: docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword Copy the output (the password), and paste it into the Jenkins unlock screen to proceed with the initial setup. Step 5: Set Up Jenkins Once Jenkins is unlocked, follow the setup wizard: Install suggested plugins: Jenkins will suggest a set of commonly used plugins. Click on “Install suggested plugins.” Create an admin user: After plugins are installed, create a user with admin privileges by following the prompts. This is your primary user for accessing Jenkins. Jenkins Setup Complete: After creating the admin user, Jenkins will show a “Setup is Complete” message. Step 6: Configure Jenkins Pipeline with SQL and Release Approval Jenkins allows you to automate tasks through Pipelines, which define your build, test, and deployment workflows. To get started, we’ll configure a simple pipeline and introduce an approval process before executing SQL scripts and releasing deployments. a) Install Required Plugins To enable pipeline support and approval steps, you need the following plugins: Pipeline: For creating Jenkins pipelines. Input Step Plugin: To introduce manual approval in the pipeline. To install these: Go to Manage Jenkins &gt; Manage Plugins. Under the Available tab, search and install the Pipeline and Input Step Plugin. b) Create a New Pipeline On the Jenkins dashboard, click on New Item. Enter a name for your project (e.g., “MyFirstPipeline”). Choose Pipeline and click OK. In the configuration screen, scroll down to the Pipeline section and enter the following script: pipeline { agent any environment { // 这里可以设置一些全局变量或常用参数，如数据库连接等 DB_HOST = 'your_db_host' DB_USER = 'your_db_user' DB_PASS = 'your_db_password' } stages { stage('Checkout') { steps { // 检出代码库，假设你使用Git checkout scm } } stage('SQL Approval') { steps { // 在SQL审批阶段进行人工审批，审批人员可以填写SQL审批意见 script { def approval = input message: 'SQL脚本审批', parameters: [ string(defaultValue: '', description: '请输入SQL审批意见', name: 'sql_approval_comments') ] // 将审批意见存储或使用 echo "SQL审批意见: ${approval['sql_approval_comments']}" } } } stage('Run SQL Scripts') { steps { // 在SQL审批通过后执行SQL脚本 script { echo '执行SQL脚本...' // 这里假设你用sh步骤来执行SQL脚本，也可以使用数据库相关插件 sh ''' mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} -e "source ./your_sql_script.sql" ''' } } } stage('Release Approval') { steps { // 在上线前进行审批，审批人可以填写上线内容 script { def releaseApproval = input message: '是否批准上线？', parameters: [ string(defaultValue: '', description: '请输入上线内容', name: 'release_notes'), string(defaultValue: '', description: '请输入上线审批意见', name: 'release_approval_comments') ] // 获取上线内容和审批意见 echo "上线内容: ${releaseApproval['release_notes']}" echo "上线审批意见: ${releaseApproval['release_approval_comments']}" } } } stage('Deploy') { steps { // 上线操作，假设部署应用 script { echo '执行部署操作...' sh ''' ./deploy.sh # 替换为实际的部署脚本或命令 ''' } } } } post { always { // 这里可以定义清理工作或通知等 echo 'Pipeline 执行完毕' } success { echo 'Pipeline 执行成功' } failure { echo 'Pipeline 执行失败' } } } c) Save and Run the Pipeline After entering the pipeline script, click Save. Trigger the pipeline by clicking Build Now. The pipeline will: Checkout the code from your version control system (assuming it’s linked). SQL Approval: Wait for manual approval and SQL comments before executing SQL scripts. Run SQL Scripts: Execute SQL scripts only after SQL approval. Release Approval: Wait for manual approval of the release, where the release notes and approval comments are entered. Deploy: Once all approvals are granted, the deployment will proceed. Step 7: Monitor Jenkins Logs and Jobs To monitor Jenkins logs and ensure the server is running smoothly, use the following command: docker logs -f jenkins This will display Jenkins logs in real-time. To view the build job logs, go to the Build History section in your Jenkins project page. Step 8: Automating Jenkins Restart (Optional) To ensure that Jenkins restarts automatically after a system reboot, you can set up Docker’s restart policy. Stop the container and run the following command to restart it automatically on failure or reboot: docker update --restart unless-stopped jenkins Step 9: Configure Backups (Optional) It’s important to regularly back up your Jenkins data. To back up your Jenkins instance and its configuration, follow these steps: Stop the Jenkins container: docker stop jenkins Create a backup of Jenkins data: docker cp jenkins:/var/jenkins_home /path/to/backup/folder Restart the Jenkins container: docker start jenkins Conclusion By following this guide, you have successfully installed Jenkins on your macOS using Docker, set up a basic CI/CD pipeline with SQL and release approval processes. You can now automate your builds, tests, and deployments, and track the approval steps]]></summary></entry><entry><title type="html">DevOps CI/CD GitLab</title><link href="http://localhost:4000/blog/devops-cicd-gitlab/" rel="alternate" type="text/html" title="DevOps CI/CD GitLab" /><published>2025-01-23T00:00:00+08:00</published><updated>2025-01-23T00:00:00+08:00</updated><id>http://localhost:4000/blog/devops-cicd-gitlab</id><content type="html" xml:base="http://localhost:4000/blog/devops-cicd-gitlab/"><![CDATA[<h2 id="introduction">Introduction</h2>
-
-<p>GitLab is a powerful DevOps platform that provides a complete CI/CD pipeline for automating the build, test, and deployment of applications. In this guide, we’ll walk you through the steps to install <strong>GitLab</strong> on <strong>macOS</strong> using <strong>Docker</strong> and configure it for CI/CD workflows.</p>
-
-<hr />
-
-<h2 id="prerequisites">Prerequisites</h2>
-
-<p>Before proceeding, ensure you have the following:</p>
-
-<ul>
-  <li><strong>macOS</strong> machine with an internet connection.</li>
-  <li><strong>Docker</strong> installed on your system. If not, download it from <a href="https://www.docker.com/products/docker-desktop">Docker</a> and install it.</li>
-  <li><strong>GitLab user credentials</strong> for accessing the GitLab UI.</li>
-</ul>
-
-<hr />
-
-<h2 id="step-1-install-docker">Step 1: Install Docker</h2>
-
-<p>First, ensure Docker is installed on your <strong>macOS</strong> system. If you haven’t done it yet, download Docker Desktop for macOS from the <a href="https://www.docker.com/products/docker-desktop">official website</a>. Once downloaded, follow the installation steps.</p>
-
-<p>To verify the installation, run:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nt">--version</span>
-</code></pre></div></div>
-
-<p>This should return the Docker version installed.</p>
-
-<hr />
-
-<h2 id="step-2-pull-the-gitlab-docker-image">Step 2: Pull the GitLab Docker Image</h2>
-
-<p>To install <strong>GitLab</strong> using Docker, run the following command to pull the official GitLab Community Edition image:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull gitlab/gitlab-ce:latest
-</code></pre></div></div>
-
-<hr />
-
-<h2 id="step-3-run-gitlab-using-docker">Step 3: Run GitLab Using Docker</h2>
-
-<p>Once the image is downloaded, you can run GitLab in a Docker container. Execute the following command:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-d</span> <span class="nt">-p</span> 80:80 <span class="nt">-p</span> 443:443 <span class="nt">-p</span> 22:22 <span class="nt">--name</span> gitlab <span class="nt">--restart</span> always <span class="se">\</span>
-<span class="nt">-v</span> /your/host/path/to/gitlab/config:/etc/gitlab <span class="se">\</span>
-<span class="nt">-v</span> /your/host/path/to/gitlab/data:/var/opt/gitlab <span class="se">\</span>
-<span class="nt">-v</span> /your/host/path/to/gitlab/logs:/var/log/gitlab <span class="se">\</span>
-gitlab/gitlab-ce:latest
-</code></pre></div></div>
-
-<h3 id="explanation">Explanation:</h3>
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">-p 80:80 -p 443:443 -p 22:22</code>: Maps the required ports for HTTP, HTTPS, and SSH.</li>
-  <li><code class="language-plaintext highlighter-rouge">--name gitlab</code>: Names the container <code class="language-plaintext highlighter-rouge">gitlab</code>.</li>
-  <li><code class="language-plaintext highlighter-rouge">--restart always</code>: Ensures GitLab restarts automatically if the container or Docker daemon restarts.</li>
-  <li><code class="language-plaintext highlighter-rouge">-v /your/host/path</code>: Mounts host directories to the container for persistent data.</li>
-</ul>
-
-<p>Replace <code class="language-plaintext highlighter-rouge">/your/host/path</code> with the actual paths on your machine where GitLab data, logs, and configuration will be stored.</p>
-
-<hr />
-
-<h2 id="step-4-access-gitlab-web-interface">Step 4: Access GitLab Web Interface</h2>
-
-<p>Once GitLab is running, open your web browser and navigate to:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://localhost
-</code></pre></div></div>
-
-<p>You should see the GitLab setup page. Follow the instructions to set up an admin password and configure your GitLab instance.</p>
-
-<hr />
-
-<h2 id="step-5-configure-gitlab-for-cicd">Step 5: Configure GitLab for CI/CD</h2>
-
-<p>GitLab offers built-in CI/CD features to automate the build, test, and deployment of your code. To configure GitLab CI/CD:</p>
-
-<ol>
-  <li><strong>Create a <code class="language-plaintext highlighter-rouge">.gitlab-ci.yml</code> file</strong> in the root of your repository. This file defines the CI/CD pipeline for your project.</li>
-</ol>
-
-<p>Example <code class="language-plaintext highlighter-rouge">.gitlab-ci.yml</code> for a simple Node.js application:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">stages</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="s">build</span>
-  <span class="pi">-</span> <span class="s">test</span>
-  <span class="pi">-</span> <span class="s">deploy</span>
-
-<span class="na">build</span><span class="pi">:</span>
-  <span class="na">stage</span><span class="pi">:</span> <span class="s">build</span>
-  <span class="na">script</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">npm install</span>
-
-<span class="na">test</span><span class="pi">:</span>
-  <span class="na">stage</span><span class="pi">:</span> <span class="s">test</span>
-  <span class="na">script</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">npm test</span>
-
-<span class="na">deploy</span><span class="pi">:</span>
-  <span class="na">stage</span><span class="pi">:</span> <span class="s">deploy</span>
-  <span class="na">script</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">./deploy.sh</span>
-</code></pre></div></div>
-
-<ol>
-  <li><strong>Push your repository to GitLab</strong>. GitLab will automatically detect the <code class="language-plaintext highlighter-rouge">.gitlab-ci.yml</code> file and trigger the pipeline based on the defined stages.</li>
-</ol>
-
-<hr />
-
-<h2 id="step-6-monitor-gitlab-logs">Step 6: Monitor GitLab Logs</h2>
-
-<p>To monitor the logs of the GitLab container, you can use the following command:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker logs <span class="nt">-f</span> gitlab
-</code></pre></div></div>
-
-<p>This will show real-time logs for the GitLab container.</p>
-
-<hr />
-
-<h2 id="step-7-automating-gitlab-restart-optional">Step 7: Automating GitLab Restart (Optional)</h2>
-
-<p>To ensure GitLab restarts automatically after a system reboot, you can set up Docker’s restart policy. Run the following command:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker update <span class="nt">--restart</span> unless-stopped gitlab
-</code></pre></div></div>
-
-<hr />
-
-<h2 id="step-8-backup-gitlab-optional">Step 8: Backup GitLab (Optional)</h2>
-
-<p>It’s important to back up your GitLab data regularly. Follow these steps to back it up:</p>
-
-<ol>
-  <li>
-    <p><strong>Stop GitLab container</strong>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker stop gitlab
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p><strong>Backup GitLab data</strong>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker <span class="nb">cp </span>gitlab:/var/opt/gitlab /path/to/gitlab/backup/folder
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p><strong>Restart GitLab container</strong>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker start gitlab
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<hr />
-
-<h2 id="conclusion">Conclusion</h2>
-
-<p>By following this guide, you have successfully installed <strong>GitLab</strong> on <strong>macOS</strong> using Docker and set up <strong>CI/CD pipelines</strong> for your projects. GitLab makes it easy to automate your build, test, and deployment processes.</p>
-
-<p>Let me know if you need further assistance!</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="devOps" /><category term="gitlab" /><category term="CI/CD" /><summary type="html"><![CDATA[Introduction GitLab is a powerful DevOps platform that provides a complete CI/CD pipeline for automating the build, test, and deployment of applications. In this guide, we’ll walk you through the steps to install GitLab on macOS using Docker and configure it for CI/CD workflows. Prerequisites Before proceeding, ensure you have the following: macOS machine with an internet connection. Docker installed on your system. If not, download it from Docker and install it. GitLab user credentials for accessing the GitLab UI. Step 1: Install Docker First, ensure Docker is installed on your macOS system. If you haven’t done it yet, download Docker Desktop for macOS from the official website. Once downloaded, follow the installation steps. To verify the installation, run: docker --version This should return the Docker version installed. Step 2: Pull the GitLab Docker Image To install GitLab using Docker, run the following command to pull the official GitLab Community Edition image: docker pull gitlab/gitlab-ce:latest Step 3: Run GitLab Using Docker Once the image is downloaded, you can run GitLab in a Docker container. Execute the following command: docker run -d -p 80:80 -p 443:443 -p 22:22 --name gitlab --restart always \ -v /your/host/path/to/gitlab/config:/etc/gitlab \ -v /your/host/path/to/gitlab/data:/var/opt/gitlab \ -v /your/host/path/to/gitlab/logs:/var/log/gitlab \ gitlab/gitlab-ce:latest Explanation: -p 80:80 -p 443:443 -p 22:22: Maps the required ports for HTTP, HTTPS, and SSH. --name gitlab: Names the container gitlab. --restart always: Ensures GitLab restarts automatically if the container or Docker daemon restarts. -v /your/host/path: Mounts host directories to the container for persistent data. Replace /your/host/path with the actual paths on your machine where GitLab data, logs, and configuration will be stored. Step 4: Access GitLab Web Interface Once GitLab is running, open your web browser and navigate to: http://localhost You should see the GitLab setup page. Follow the instructions to set up an admin password and configure your GitLab instance. Step 5: Configure GitLab for CI/CD GitLab offers built-in CI/CD features to automate the build, test, and deployment of your code. To configure GitLab CI/CD: Create a .gitlab-ci.yml file in the root of your repository. This file defines the CI/CD pipeline for your project. Example .gitlab-ci.yml for a simple Node.js application: stages: - build - test - deploy build: stage: build script: - npm install test: stage: test script: - npm test deploy: stage: deploy script: - ./deploy.sh Push your repository to GitLab. GitLab will automatically detect the .gitlab-ci.yml file and trigger the pipeline based on the defined stages. Step 6: Monitor GitLab Logs To monitor the logs of the GitLab container, you can use the following command: docker logs -f gitlab This will show real-time logs for the GitLab container. Step 7: Automating GitLab Restart (Optional) To ensure GitLab restarts automatically after a system reboot, you can set up Docker’s restart policy. Run the following command: docker update --restart unless-stopped gitlab Step 8: Backup GitLab (Optional) It’s important to back up your GitLab data regularly. Follow these steps to back it up: Stop GitLab container: docker stop gitlab Backup GitLab data: docker cp gitlab:/var/opt/gitlab /path/to/gitlab/backup/folder Restart GitLab container: docker start gitlab Conclusion By following this guide, you have successfully installed GitLab on macOS using Docker and set up CI/CD pipelines for your projects. GitLab makes it easy to automate your build, test, and deployment processes. Let me know if you need further assistance!]]></summary></entry><entry><title type="html">Migration ILOG Solutions</title><link href="http://localhost:4000/blog/migration-ilog-solutions/" rel="alternate" type="text/html" title="Migration ILOG Solutions" /><published>2025-01-22T00:00:00+08:00</published><updated>2025-01-22T00:00:00+08:00</updated><id>http://localhost:4000/blog/migration-ilog-solutions</id><content type="html" xml:base="http://localhost:4000/blog/migration-ilog-solutions/"><![CDATA[<h3 id="detailed-plans-and-comparison-of-three-rule-migration-approaches">Detailed Plans and Comparison of Three Rule Migration Approaches</h3>
+<p>By following this guide, you have successfully installed Jenkins on your <strong>macOS</strong> using Docker, set up a basic <strong>CI/CD pipeline</strong> with SQL and release approval processes. You can now automate your builds, tests, and deployments, and track the approval steps</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="devOps" /><category term="jenkins" /><category term="CI/CD" /><summary type="html"><![CDATA[Introduction Jenkins is a popular open-source automation server that facilitates continuous integration and continuous delivery (CI/CD). It helps automate the building, testing, and deployment of applications. This guide provides detailed steps to install Jenkins on macOS using Docker, configure a basic pipeline, and introduce approval processes for SQL script execution and release deployment. Using Docker simplifies the installation process and ensures that Jenkins is isolated in a container, avoiding dependency conflicts with the host system. After installation, we will configure Jenkins for building, testing, and deploying applications while introducing a simple approval process. Prerequisites Before proceeding, ensure you have the following: macOS machine with an internet connection. Docker installed on your system. If not, download it from Docker and install it. Jenkins user credentials for logging into the Jenkins UI. Step 1: Install Docker First, ensure Docker is installed on your macOS system. If you haven’t done it yet, download Docker Desktop for macOS from the official website. Once downloaded, follow the installation steps. To verify the installation, run: docker --version This should return the Docker version installed. Step 2: Pull the Jenkins Docker Image Now that Docker is installed, we can pull the official Jenkins image. Open your terminal and run the following command: docker pull jenkins/jenkins:lts This will pull the Long-Term Support (LTS) version of Jenkins, which is stable and recommended for production environments. Step 3: Run Jenkins Using Docker Once the image is downloaded, you can run Jenkins in a Docker container. Execute the following command to run Jenkins: docker run -d -p 8080:8080 -p 50000:50000 --name jenkins jenkins/jenkins:lts Explanation: -d: Run the container in detached mode. -p 8080:8080: Map port 8080 on the container to port 8080 on your host, which allows you to access Jenkins UI at http://localhost:8080. -p 50000:50000: Expose the port 50000 for communication between Jenkins and its agents. --name jenkins: Name the container jenkins for easy reference. Step 4: Access Jenkins Web Interface To access Jenkins, open your web browser and navigate to: http://localhost:8080 On your first visit, Jenkins will ask for an unlock key. To retrieve it, execute the following command: docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword Copy the output (the password), and paste it into the Jenkins unlock screen to proceed with the initial setup. Step 5: Set Up Jenkins Once Jenkins is unlocked, follow the setup wizard: Install suggested plugins: Jenkins will suggest a set of commonly used plugins. Click on “Install suggested plugins.” Create an admin user: After plugins are installed, create a user with admin privileges by following the prompts. This is your primary user for accessing Jenkins. Jenkins Setup Complete: After creating the admin user, Jenkins will show a “Setup is Complete” message. Step 6: Configure Jenkins Pipeline with SQL and Release Approval Jenkins allows you to automate tasks through Pipelines, which define your build, test, and deployment workflows. To get started, we’ll configure a simple pipeline and introduce an approval process before executing SQL scripts and releasing deployments. a) Install Required Plugins To enable pipeline support and approval steps, you need the following plugins: Pipeline: For creating Jenkins pipelines. Input Step Plugin: To introduce manual approval in the pipeline. To install these: Go to Manage Jenkins &gt; Manage Plugins. Under the Available tab, search and install the Pipeline and Input Step Plugin. b) Create a New Pipeline On the Jenkins dashboard, click on New Item. Enter a name for your project (e.g., “MyFirstPipeline”). Choose Pipeline and click OK. In the configuration screen, scroll down to the Pipeline section and enter the following script: pipeline { agent any environment { // 这里可以设置一些全局变量或常用参数，如数据库连接等 DB_HOST = 'your_db_host' DB_USER = 'your_db_user' DB_PASS = 'your_db_password' } stages { stage('Checkout') { steps { // 检出代码库，假设你使用Git checkout scm } } stage('SQL Approval') { steps { // 在SQL审批阶段进行人工审批，审批人员可以填写SQL审批意见 script { def approval = input message: 'SQL脚本审批', parameters: [ string(defaultValue: '', description: '请输入SQL审批意见', name: 'sql_approval_comments') ] // 将审批意见存储或使用 echo "SQL审批意见: ${approval['sql_approval_comments']}" } } } stage('Run SQL Scripts') { steps { // 在SQL审批通过后执行SQL脚本 script { echo '执行SQL脚本...' // 这里假设你用sh步骤来执行SQL脚本，也可以使用数据库相关插件 sh ''' mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} -e "source ./your_sql_script.sql" ''' } } } stage('Release Approval') { steps { // 在上线前进行审批，审批人可以填写上线内容 script { def releaseApproval = input message: '是否批准上线？', parameters: [ string(defaultValue: '', description: '请输入上线内容', name: 'release_notes'), string(defaultValue: '', description: '请输入上线审批意见', name: 'release_approval_comments') ] // 获取上线内容和审批意见 echo "上线内容: ${releaseApproval['release_notes']}" echo "上线审批意见: ${releaseApproval['release_approval_comments']}" } } } stage('Deploy') { steps { // 上线操作，假设部署应用 script { echo '执行部署操作...' sh ''' ./deploy.sh # 替换为实际的部署脚本或命令 ''' } } } } post { always { // 这里可以定义清理工作或通知等 echo 'Pipeline 执行完毕' } success { echo 'Pipeline 执行成功' } failure { echo 'Pipeline 执行失败' } } } c) Save and Run the Pipeline After entering the pipeline script, click Save. Trigger the pipeline by clicking Build Now. The pipeline will: Checkout the code from your version control system (assuming it’s linked). SQL Approval: Wait for manual approval and SQL comments before executing SQL scripts. Run SQL Scripts: Execute SQL scripts only after SQL approval. Release Approval: Wait for manual approval of the release, where the release notes and approval comments are entered. Deploy: Once all approvals are granted, the deployment will proceed. Step 7: Monitor Jenkins Logs and Jobs To monitor Jenkins logs and ensure the server is running smoothly, use the following command: docker logs -f jenkins This will display Jenkins logs in real-time. To view the build job logs, go to the Build History section in your Jenkins project page. Step 8: Automating Jenkins Restart (Optional) To ensure that Jenkins restarts automatically after a system reboot, you can set up Docker’s restart policy. Stop the container and run the following command to restart it automatically on failure or reboot: docker update --restart unless-stopped jenkins Step 9: Configure Backups (Optional) It’s important to regularly back up your Jenkins data. To back up your Jenkins instance and its configuration, follow these steps: Stop the Jenkins container: docker stop jenkins Create a backup of Jenkins data: docker cp jenkins:/var/jenkins_home /path/to/backup/folder Restart the Jenkins container: docker start jenkins Conclusion By following this guide, you have successfully installed Jenkins on your macOS using Docker, set up a basic CI/CD pipeline with SQL and release approval processes. You can now automate your builds, tests, and deployments, and track the approval steps]]></summary></entry><entry><title type="html">Migration ILOG Solutions</title><link href="http://localhost:4000/blog/migration-ilog-solutions/" rel="alternate" type="text/html" title="Migration ILOG Solutions" /><published>2025-01-22T00:00:00+08:00</published><updated>2025-01-22T00:00:00+08:00</updated><id>http://localhost:4000/blog/migration-ilog-solutions</id><content type="html" xml:base="http://localhost:4000/blog/migration-ilog-solutions/"><![CDATA[<h3 id="detailed-plans-and-comparison-of-three-rule-migration-approaches">Detailed Plans and Comparison of Three Rule Migration Approaches</h3>
 
 <p>This document outlines the detailed plans for three approaches to rule migration: using AI-assisted model transformation, using ANTLR for model transformation, and using manual methods combined with Python scripts for model transformation. Additionally, it provides a comparative analysis of these methods across various aspects.</p>
 
@@ -912,118 +912,7 @@ systemctl status promtail
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service. Step 1: Download Promtail The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here. For example, to download version 3.1.2, you can execute the following command: wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip Step 2: Extract and Move Promtail to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/. unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail Next, grant execute permissions to the Promtail binary to allow it to run: chmod +x /usr/local/bin/promtail Step 3: Create Promtail Configuration File Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows: mkdir -p /etc/promtail vim /etc/promtail/promtail-config.yaml Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup. server: http_listen_port: 9080 grpc_listen_port: 0 positions: filename: /tmp/positions.yaml clients: - url: http://192.168.18.58:3100/loki/api/v1/push batchsize: 1048576 batchwait: 2s scrape_configs: - job_name: your-application-name static_configs: - targets: - localhost labels: job: your-application-name __path__: /var/log/your-application-name/*log Step 4: Create Systemd Service File In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file. vim /etc/systemd/system/promtail.service Add the following content to the file: [Unit] Description=Promtail - A log collection agent for Loki Documentation=https://grafana.com/docs/loki/latest/clients/promtail/ After=network.target [Service] ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Promtail Service After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time. systemctl daemon-reload systemctl start promtail systemctl enable promtail systemctl status promtail The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration. Conclusion In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.]]></summary></entry><entry><title type="html">Stability Monitor Jaeger</title><link href="http://localhost:4000/blog/stability-monitor-jaeger/" rel="alternate" type="text/html" title="Stability Monitor Jaeger" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-jaeger</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-jaeger/"><![CDATA[<h2 id="install-jaeger">Install Jaeger</h2>
-
-<p>To install <strong>Jaeger</strong> version <strong>1.42.0</strong> on a Linux system, follow the steps below. Jaeger is an open-source distributed tracing system, and you can install it using pre-built binaries, Docker, or through package managers. This guide will cover the installation process using pre-built binaries.</p>
-
-<h3 id="step-1-download-the-jaeger-binary">Step 1: Download the Jaeger Binary</h3>
-
-<p>Go to the <a href="https://github.com/jaegertracing/jaeger/releases">Jaeger GitHub releases page</a> and find version <strong>1.42.0</strong>. Or use <code class="language-plaintext highlighter-rouge">wget</code> to directly download the binary:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/jaegertracing/jaeger/releases/download/v1.42.0/jaeger-linux-amd64.tar.gz
-</code></pre></div></div>
-
-<p>Once downloaded, extract the <code class="language-plaintext highlighter-rouge">.tar.gz</code> file:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tar</span> <span class="nt">-xvzf</span> jaeger-linux-amd64.tar.gz
-</code></pre></div></div>
-
-<p>This will create a folder containing the Jaeger binaries (<code class="language-plaintext highlighter-rouge">jaeger-agent</code>, <code class="language-plaintext highlighter-rouge">jaeger-collector</code>, <code class="language-plaintext highlighter-rouge">jaeger-query</code>, etc.).</p>
-
-<h3 id="step-2-move-jaeger-to-a-system-directory">Step 2: Move Jaeger to a System Directory</h3>
-
-<p>Move the extracted binaries to a directory in your PATH (e.g., <code class="language-plaintext highlighter-rouge">/usr/local/bin</code>):</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mv </span>jaeger-linux-amd64 /usr/local/bin/jaeger
-</code></pre></div></div>
-
-<p>Ensure the binaries are executable:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/jaeger
-</code></pre></div></div>
-
-<h3 id="step-3-create-a-configuration-file-optional">Step 3: Create a Configuration File (Optional)</h3>
-
-<p>Create a directory for Jaeger configuration and add the <code class="language-plaintext highlighter-rouge">jaeger-config.yaml</code> file:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/jaeger
-vim /etc/jaeger/jaeger-config.yaml
-</code></pre></div></div>
-
-<p>The content for <code class="language-plaintext highlighter-rouge">jaeger-config.yaml</code>:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">collector</span><span class="pi">:</span>
-  <span class="na">http-port</span><span class="pi">:</span> <span class="m">5775</span>
-  <span class="na">grpc-port</span><span class="pi">:</span> <span class="m">14250</span>
-
-<span class="na">agent</span><span class="pi">:</span>
-  <span class="na">http-port</span><span class="pi">:</span> <span class="m">5778</span>
-
-<span class="na">query</span><span class="pi">:</span>
-  <span class="na">http-port</span><span class="pi">:</span> <span class="m">16686</span>
-
-<span class="na">storage</span><span class="pi">:</span>
-  <span class="na">type</span><span class="pi">:</span> <span class="s">cassandra</span>
-  <span class="na">cassandra</span><span class="pi">:</span>
-    <span class="na">contact-points</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">localhost:9042"</span>
-    <span class="na">keyspace</span><span class="pi">:</span> <span class="s">jaeger</span>
-    <span class="na">timeout</span><span class="pi">:</span> <span class="s">30s</span>
-</code></pre></div></div>
-
-<h3 id="step-4-configure-data-directories">Step 4: Configure Data Directories</h3>
-
-<p>Define storage directories for Jaeger:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /var/jaeger/cassandra /var/jaeger/storage
-<span class="nb">chown</span> <span class="nt">-R</span> jaeger:jaeger /var/jaeger
-</code></pre></div></div>
-
-<p>Create the Jaeger systemd service file:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/jaeger.service
-</code></pre></div></div>
-
-<p>Add the following content:</p>
-
-<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
-<span class="py">Description</span><span class="p">=</span><span class="s">Jaeger</span>
-<span class="py">Documentation</span><span class="p">=</span><span class="s">https://www.jaegertracing.io/docs/latest/</span>
-<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
-
-<span class="nn">[Service]</span>
-<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/jaeger --config.file=/etc/jaeger/jaeger-config.yaml</span>
-<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
-<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
-<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
-
-<span class="nn">[Install]</span>
-<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
-</code></pre></div></div>
-
-<h3 id="step-5-start-jaeger-service">Step 5: Start Jaeger Service</h3>
-
-<p>Reload systemd, enable and start the Jaeger service:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
-systemctl <span class="nb">enable </span>jaeger
-systemctl start jaeger
-systemctl status jaeger
-</code></pre></div></div>
-
-<p>To monitor logs:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> jaeger <span class="nt">-f</span>
-</code></pre></div></div>
-
-<p>Verify the Jaeger version:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jaeger <span class="nt">--version</span>
-</code></pre></div></div>
-
-<h2 id="conclusion">Conclusion</h2>
-
-<p>By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="tracing" /><summary type="html"><![CDATA[Install Jaeger To install Jaeger version 1.42.0 on a Linux system, follow the steps below. Jaeger is an open-source distributed tracing system, and you can install it using pre-built binaries, Docker, or through package managers. This guide will cover the installation process using pre-built binaries. Step 1: Download the Jaeger Binary Go to the Jaeger GitHub releases page and find version 1.42.0. Or use wget to directly download the binary: wget https://github.com/jaegertracing/jaeger/releases/download/v1.42.0/jaeger-linux-amd64.tar.gz Once downloaded, extract the .tar.gz file: tar -xvzf jaeger-linux-amd64.tar.gz This will create a folder containing the Jaeger binaries (jaeger-agent, jaeger-collector, jaeger-query, etc.). Step 2: Move Jaeger to a System Directory Move the extracted binaries to a directory in your PATH (e.g., /usr/local/bin): mv jaeger-linux-amd64 /usr/local/bin/jaeger Ensure the binaries are executable: chmod +x /usr/local/bin/jaeger Step 3: Create a Configuration File (Optional) Create a directory for Jaeger configuration and add the jaeger-config.yaml file: mkdir -p /etc/jaeger vim /etc/jaeger/jaeger-config.yaml The content for jaeger-config.yaml: collector: http-port: 5775 grpc-port: 14250 agent: http-port: 5778 query: http-port: 16686 storage: type: cassandra cassandra: contact-points: - "localhost:9042" keyspace: jaeger timeout: 30s Step 4: Configure Data Directories Define storage directories for Jaeger: mkdir -p /var/jaeger/cassandra /var/jaeger/storage chown -R jaeger:jaeger /var/jaeger Create the Jaeger systemd service file: vim /etc/systemd/system/jaeger.service Add the following content: [Unit] Description=Jaeger Documentation=https://www.jaegertracing.io/docs/latest/ After=network.target [Service] ExecStart=/usr/local/bin/jaeger --config.file=/etc/jaeger/jaeger-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Jaeger Service Reload systemd, enable and start the Jaeger service: systemctl daemon-reload systemctl enable jaeger systemctl start jaeger systemctl status jaeger To monitor logs: journalctl -u jaeger -f Verify the Jaeger version: jaeger --version Conclusion By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.]]></summary></entry><entry><title type="html">Stability Monitor Loki</title><link href="http://localhost:4000/blog/stability-monitor-loki/" rel="alternate" type="text/html" title="Stability Monitor Loki" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-loki</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-loki/"><![CDATA[<h2 id="install-loki">Install Loki</h2>
+<p>In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Introduction Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk through the installation process of Promtail, which includes downloading the necessary files, setting up configuration, and creating a service to ensure Promtail runs continuously as a background service. Step 1: Download Promtail The first step is to download the Promtail binary from the official GitHub repository. You can find the latest release here. For example, to download version 3.1.2, you can execute the following command: wget https://github.com/grafana/loki/releases/download/v2.8.0/promtail-linux-amd64.zip Step 2: Extract and Move Promtail to a Suitable Location Once the file is downloaded, extract it and move the binary to a directory included in the system’s $PATH, such as /usr/local/bin/. unzip promtail-linux-amd64.zip mv promtail-linux-amd64 /usr/local/bin/promtail Next, grant execute permissions to the Promtail binary to allow it to run: chmod +x /usr/local/bin/promtail Step 3: Create Promtail Configuration File Promtail requires a configuration file that defines how logs will be collected, where they will be sent, and other parameters. Create the configuration directory and the file as follows: mkdir -p /etc/promtail vim /etc/promtail/promtail-config.yaml Below is a sample configuration file you can use, which specifies the Promtail server settings, position tracking, Loki client configuration, and the log scraping setup. server: http_listen_port: 9080 grpc_listen_port: 0 positions: filename: /tmp/positions.yaml clients: - url: http://192.168.18.58:3100/loki/api/v1/push batchsize: 1048576 batchwait: 2s scrape_configs: - job_name: your-application-name static_configs: - targets: - localhost labels: job: your-application-name __path__: /var/log/your-application-name/*log Step 4: Create Systemd Service File In order to ensure that Promtail starts automatically during system boot and runs as a background service, we need to create a systemd service file. vim /etc/systemd/system/promtail.service Add the following content to the file: [Unit] Description=Promtail - A log collection agent for Loki Documentation=https://grafana.com/docs/loki/latest/clients/promtail/ After=network.target [Service] ExecStart=/usr/local/bin/promtail -config.file=/etc/promtail/promtail-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start and Enable Promtail Service After creating the systemd service file, reload the systemd manager to register the new service and start it. Additionally, enable it to start automatically at boot time. systemctl daemon-reload systemctl start promtail systemctl enable promtail systemctl status promtail The service will now run in the background, collecting and forwarding logs to Loki according to the specified configuration. Conclusion In this article, we have outlined the necessary steps to install and configure Promtail. By following these procedures, you will have a fully functional Promtail agent collecting logs and sending them to Loki, ready for real-time log monitoring.]]></summary></entry><entry><title type="html">Stability Monitor Loki</title><link href="http://localhost:4000/blog/stability-monitor-loki/" rel="alternate" type="text/html" title="Stability Monitor Loki" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-loki</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-loki/"><![CDATA[<h2 id="install-loki">Install Loki</h2>
 
 <p>To install <strong>Loki</strong> version <strong>3.1.2</strong> on a Linux system, follow the steps below. Loki is an open-source log aggregation system developed by Grafana Labs, and you can install it using either pre-built binaries, Docker, or through package managers. We’ll use pre-built binaries for this guide.</p>
 
@@ -1415,7 +1304,118 @@ mindmap
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
-</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Background A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) Best Practices for Selection Small and medium-sized companies can quickly build a monitoring system that suits their business characteristics. Prometheus has already become the standard for real-time monitoring. We can quickly set up our own monitoring system based on Prometheus: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter, Redis Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) System Architecture Design graph TD; A[Prometheus] --&gt; B[Exporters] A --&gt; C[Blackbox Exporter] A --&gt; D[Alertmanager] B --&gt; E[Grafana] C --&gt; E D --&gt; E F[Loki] --&gt; G[Promtail/Fluent Bit] G --&gt; E H[OpenTelemetry] --&gt; I[Jaeger] I --&gt; E Defining Refined Monitoring Metrics JVM Monitoring JVM monitoring is used to track important JVM metrics, including GC (Garbage Collection) instant metrics, heap memory metrics, non-heap memory metrics, metaspace metrics, direct buffer metrics, JVM thread count, etc. This section introduces JVM monitoring and how to view JVM monitoring metrics. JVM monitoring can track the following metrics: GC (Garbage Collection) instant and cumulative details FullGC count YoungGC count FullGC duration YoungGC duration Heap Memory Details Total heap memory Old generation heap memory size Young generation Survivor area size Young generation Eden area size Metaspace Metaspace size Non-Heap Memory Maximum non-heap memory size Used non-heap memory size Direct Buffer Total DirectBuffer size (bytes) Used DirectBuffer size (bytes) JVM Thread Count Total number of threads Number of deadlocked threads Number of newly created threads Number of blocked threads Number of runnable threads Number of terminated threads Number of threads in timed wait Number of threads in waiting state mindmap root((Java Process Memory Usage)) JVM Memory Heap Memory Young Generation Old Generation Non-Heap Memory Metaspace Compressed Class Space Virtual Machine Thread Stack Native Thread Stack Code Cache Direct Buffers Non-JVM Memory Native Runtime Libraries JNI Native Code Host Monitoring Host monitoring tracks various metrics such as CPU, memory, disk, load, network traffic, and network packet metrics. This section introduces host monitoring and how to view host monitoring metrics. Host monitoring can track the following metrics: CPU Total CPU usage System CPU usage User CPU usage CPU usage waiting for I/O completion Physical Memory Total system memory Free system memory Used system memory Memory in PageCache Memory in BufferCache Disk Total system disk size Free system disk size Used system disk size Load System load average Network Traffic Network received bytes Network sent bytes Network Packets Number of received packets per minute Number of sent packets per minute Number of network errors per minute Number of dropped packets per minute SQL Call Analysis View SQL call analysis to understand SQL call patterns in applications. Error Code Monitoring For core business systems, such as payment systems, error code monitoring is essential. Here’s how to install Prometheus step by step in English. If you use the docker you can use this to setup, this is the easy way. springboot-promethenus-grafana. Install Article list Install Loki with Prometheus Install Promtail with Prometheus]]></summary></entry><entry><title type="html">Distribute Design Kafka</title><link href="http://localhost:4000/blog/distribute-design-kafka/" rel="alternate" type="text/html" title="Distribute Design Kafka" /><published>2018-07-11T00:00:00+08:00</published><updated>2018-07-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/distribute-design-kafka</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-kafka/"><![CDATA[<h2 id="introduction">Introduction</h2>
+</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="stability" /><summary type="html"><![CDATA[Background A significant part of system stability is supported by monitoring. Large companies usually have well-established monitoring and operations teams to build the monitoring infrastructure. From a layered perspective, monitoring generally includes the following aspects: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) Best Practices for Selection Small and medium-sized companies can quickly build a monitoring system that suits their business characteristics. Prometheus has already become the standard for real-time monitoring. We can quickly set up our own monitoring system based on Prometheus: Monitoring Dimension Middleware Selection Reason for Selection Metric Monitoring Prometheus + Grafana Supports multiple Exporters, rich ecosystem, easy to configure alerts and visualizations Log Monitoring Loki + Promtail/Fluent Bit Lightweight log aggregation solution, seamlessly integrates with Grafana Distributed Tracing OpenTelemetry + Jaeger Open standard for distributed tracing, supports multiple languages Database Monitoring Exporter (e.g., MySQL Exporter, Redis Exporter) Prometheus maintained by official or community, supports mainstream databases Network Monitoring Blackbox Exporter Supports multi-protocol health checks like HTTP, TCP Alerting and Notification Alertmanager Supports multi-channel notifications (email, Slack, Webhook, SMS, etc.) System Architecture Design graph TD; A[Prometheus] --&gt; B[Exporters] A --&gt; C[Blackbox Exporter] A --&gt; D[Alertmanager] B --&gt; E[Grafana] C --&gt; E D --&gt; E F[Loki] --&gt; G[Promtail/Fluent Bit] G --&gt; E H[OpenTelemetry] --&gt; I[Jaeger] I --&gt; E Defining Refined Monitoring Metrics JVM Monitoring JVM monitoring is used to track important JVM metrics, including GC (Garbage Collection) instant metrics, heap memory metrics, non-heap memory metrics, metaspace metrics, direct buffer metrics, JVM thread count, etc. This section introduces JVM monitoring and how to view JVM monitoring metrics. JVM monitoring can track the following metrics: GC (Garbage Collection) instant and cumulative details FullGC count YoungGC count FullGC duration YoungGC duration Heap Memory Details Total heap memory Old generation heap memory size Young generation Survivor area size Young generation Eden area size Metaspace Metaspace size Non-Heap Memory Maximum non-heap memory size Used non-heap memory size Direct Buffer Total DirectBuffer size (bytes) Used DirectBuffer size (bytes) JVM Thread Count Total number of threads Number of deadlocked threads Number of newly created threads Number of blocked threads Number of runnable threads Number of terminated threads Number of threads in timed wait Number of threads in waiting state mindmap root((Java Process Memory Usage)) JVM Memory Heap Memory Young Generation Old Generation Non-Heap Memory Metaspace Compressed Class Space Virtual Machine Thread Stack Native Thread Stack Code Cache Direct Buffers Non-JVM Memory Native Runtime Libraries JNI Native Code Host Monitoring Host monitoring tracks various metrics such as CPU, memory, disk, load, network traffic, and network packet metrics. This section introduces host monitoring and how to view host monitoring metrics. Host monitoring can track the following metrics: CPU Total CPU usage System CPU usage User CPU usage CPU usage waiting for I/O completion Physical Memory Total system memory Free system memory Used system memory Memory in PageCache Memory in BufferCache Disk Total system disk size Free system disk size Used system disk size Load System load average Network Traffic Network received bytes Network sent bytes Network Packets Number of received packets per minute Number of sent packets per minute Number of network errors per minute Number of dropped packets per minute SQL Call Analysis View SQL call analysis to understand SQL call patterns in applications. Error Code Monitoring For core business systems, such as payment systems, error code monitoring is essential. Here’s how to install Prometheus step by step in English. If you use the docker you can use this to setup, this is the easy way. springboot-promethenus-grafana. Install Article list Install Loki with Prometheus Install Promtail with Prometheus]]></summary></entry><entry><title type="html">Stability Monitor Jaeger</title><link href="http://localhost:4000/blog/stability-monitor-jaeger/" rel="alternate" type="text/html" title="Stability Monitor Jaeger" /><published>2025-01-11T00:00:00+08:00</published><updated>2025-01-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/stability-monitor-jaeger</id><content type="html" xml:base="http://localhost:4000/blog/stability-monitor-jaeger/"><![CDATA[<h2 id="install-jaeger">Install Jaeger</h2>
+
+<p>To install <strong>Jaeger</strong> version <strong>1.42.0</strong> on a Linux system, follow the steps below. Jaeger is an open-source distributed tracing system, and you can install it using pre-built binaries, Docker, or through package managers. This guide will cover the installation process using pre-built binaries.</p>
+
+<h3 id="step-1-download-the-jaeger-binary">Step 1: Download the Jaeger Binary</h3>
+
+<p>Go to the <a href="https://github.com/jaegertracing/jaeger/releases">Jaeger GitHub releases page</a> and find version <strong>1.42.0</strong>. Or use <code class="language-plaintext highlighter-rouge">wget</code> to directly download the binary:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/jaegertracing/jaeger/releases/download/v1.42.0/jaeger-linux-amd64.tar.gz
+</code></pre></div></div>
+
+<p>Once downloaded, extract the <code class="language-plaintext highlighter-rouge">.tar.gz</code> file:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tar</span> <span class="nt">-xvzf</span> jaeger-linux-amd64.tar.gz
+</code></pre></div></div>
+
+<p>This will create a folder containing the Jaeger binaries (<code class="language-plaintext highlighter-rouge">jaeger-agent</code>, <code class="language-plaintext highlighter-rouge">jaeger-collector</code>, <code class="language-plaintext highlighter-rouge">jaeger-query</code>, etc.).</p>
+
+<h3 id="step-2-move-jaeger-to-a-system-directory">Step 2: Move Jaeger to a System Directory</h3>
+
+<p>Move the extracted binaries to a directory in your PATH (e.g., <code class="language-plaintext highlighter-rouge">/usr/local/bin</code>):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mv </span>jaeger-linux-amd64 /usr/local/bin/jaeger
+</code></pre></div></div>
+
+<p>Ensure the binaries are executable:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/jaeger
+</code></pre></div></div>
+
+<h3 id="step-3-create-a-configuration-file-optional">Step 3: Create a Configuration File (Optional)</h3>
+
+<p>Create a directory for Jaeger configuration and add the <code class="language-plaintext highlighter-rouge">jaeger-config.yaml</code> file:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /etc/jaeger
+vim /etc/jaeger/jaeger-config.yaml
+</code></pre></div></div>
+
+<p>The content for <code class="language-plaintext highlighter-rouge">jaeger-config.yaml</code>:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">collector</span><span class="pi">:</span>
+  <span class="na">http-port</span><span class="pi">:</span> <span class="m">5775</span>
+  <span class="na">grpc-port</span><span class="pi">:</span> <span class="m">14250</span>
+
+<span class="na">agent</span><span class="pi">:</span>
+  <span class="na">http-port</span><span class="pi">:</span> <span class="m">5778</span>
+
+<span class="na">query</span><span class="pi">:</span>
+  <span class="na">http-port</span><span class="pi">:</span> <span class="m">16686</span>
+
+<span class="na">storage</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">cassandra</span>
+  <span class="na">cassandra</span><span class="pi">:</span>
+    <span class="na">contact-points</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">localhost:9042"</span>
+    <span class="na">keyspace</span><span class="pi">:</span> <span class="s">jaeger</span>
+    <span class="na">timeout</span><span class="pi">:</span> <span class="s">30s</span>
+</code></pre></div></div>
+
+<h3 id="step-4-configure-data-directories">Step 4: Configure Data Directories</h3>
+
+<p>Define storage directories for Jaeger:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> /var/jaeger/cassandra /var/jaeger/storage
+<span class="nb">chown</span> <span class="nt">-R</span> jaeger:jaeger /var/jaeger
+</code></pre></div></div>
+
+<p>Create the Jaeger systemd service file:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/systemd/system/jaeger.service
+</code></pre></div></div>
+
+<p>Add the following content:</p>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[Unit]</span>
+<span class="py">Description</span><span class="p">=</span><span class="s">Jaeger</span>
+<span class="py">Documentation</span><span class="p">=</span><span class="s">https://www.jaegertracing.io/docs/latest/</span>
+<span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
+
+<span class="nn">[Service]</span>
+<span class="py">ExecStart</span><span class="p">=</span><span class="s">/usr/local/bin/jaeger --config.file=/etc/jaeger/jaeger-config.yaml</span>
+<span class="py">Restart</span><span class="p">=</span><span class="s">on-failure</span>
+<span class="py">User</span><span class="p">=</span><span class="s">delian</span>
+<span class="py">Group</span><span class="p">=</span><span class="s">delian</span>
+
+<span class="nn">[Install]</span>
+<span class="py">WantedBy</span><span class="p">=</span><span class="s">multi-user.target</span>
+</code></pre></div></div>
+
+<h3 id="step-5-start-jaeger-service">Step 5: Start Jaeger Service</h3>
+
+<p>Reload systemd, enable and start the Jaeger service:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
+systemctl <span class="nb">enable </span>jaeger
+systemctl start jaeger
+systemctl status jaeger
+</code></pre></div></div>
+
+<p>To monitor logs:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> jaeger <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p>Verify the Jaeger version:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jaeger <span class="nt">--version</span>
+</code></pre></div></div>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="tracing" /><summary type="html"><![CDATA[Install Jaeger To install Jaeger version 1.42.0 on a Linux system, follow the steps below. Jaeger is an open-source distributed tracing system, and you can install it using pre-built binaries, Docker, or through package managers. This guide will cover the installation process using pre-built binaries. Step 1: Download the Jaeger Binary Go to the Jaeger GitHub releases page and find version 1.42.0. Or use wget to directly download the binary: wget https://github.com/jaegertracing/jaeger/releases/download/v1.42.0/jaeger-linux-amd64.tar.gz Once downloaded, extract the .tar.gz file: tar -xvzf jaeger-linux-amd64.tar.gz This will create a folder containing the Jaeger binaries (jaeger-agent, jaeger-collector, jaeger-query, etc.). Step 2: Move Jaeger to a System Directory Move the extracted binaries to a directory in your PATH (e.g., /usr/local/bin): mv jaeger-linux-amd64 /usr/local/bin/jaeger Ensure the binaries are executable: chmod +x /usr/local/bin/jaeger Step 3: Create a Configuration File (Optional) Create a directory for Jaeger configuration and add the jaeger-config.yaml file: mkdir -p /etc/jaeger vim /etc/jaeger/jaeger-config.yaml The content for jaeger-config.yaml: collector: http-port: 5775 grpc-port: 14250 agent: http-port: 5778 query: http-port: 16686 storage: type: cassandra cassandra: contact-points: - "localhost:9042" keyspace: jaeger timeout: 30s Step 4: Configure Data Directories Define storage directories for Jaeger: mkdir -p /var/jaeger/cassandra /var/jaeger/storage chown -R jaeger:jaeger /var/jaeger Create the Jaeger systemd service file: vim /etc/systemd/system/jaeger.service Add the following content: [Unit] Description=Jaeger Documentation=https://www.jaegertracing.io/docs/latest/ After=network.target [Service] ExecStart=/usr/local/bin/jaeger --config.file=/etc/jaeger/jaeger-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Jaeger Service Reload systemd, enable and start the Jaeger service: systemctl daemon-reload systemctl enable jaeger systemctl start jaeger systemctl status jaeger To monitor logs: journalctl -u jaeger -f Verify the Jaeger version: jaeger --version Conclusion By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.]]></summary></entry><entry><title type="html">Distribute Design Kafka</title><link href="http://localhost:4000/blog/distribute-design-kafka/" rel="alternate" type="text/html" title="Distribute Design Kafka" /><published>2018-07-11T00:00:00+08:00</published><updated>2018-07-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/distribute-design-kafka</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-kafka/"><![CDATA[<h2 id="introduction">Introduction</h2>
 
 <p>Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark.</p>
 

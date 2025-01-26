@@ -11,6 +11,12 @@ var store = [{
         "url": "/blog/distribute-design-kafka/",
         "teaser": null
       },{
+        "title": "Distributed Design MySQL",
+        "excerpt":"Introduction MySQL, an open-source relational database management system, is widely used in various applications due to its reliability, flexibility, and ease of use. It is often the go-to database solution for distributed systems, powering everything from small applications to large-scale enterprise solutions. This article delves into the internal architecture of...","categories": ["Blog"],
+        "tags": ["distribute","mysql"],
+        "url": "/blog/distribute-design-mysql/",
+        "teaser": null
+      },{
         "title": "Distribute Design Redis",
         "excerpt":"Introduction Redis, originally developed by Salvatore Sanfilippo, is an open-source, in-memory key-value store known for its speed, versatility, and high availability. It is widely used for caching, real-time analytics, pub/sub messaging, and as a NoSQL database in distributed systems. This article explores Redis’s internal architecture, its approach to data persistence...","categories": ["Blog"],
         "tags": ["distribute","redis"],
