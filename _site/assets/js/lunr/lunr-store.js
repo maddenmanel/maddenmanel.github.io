@@ -70,4 +70,10 @@ var store = [{
         "tags": ["devOps","jenkins","CI/CD"],
         "url": "/blog/devops-cicd-jenkins/",
         "teaser": null
+      },{
+        "title": "My Efficient Tools for Development as a Developer",
+        "excerpt":"Abstract In this article, I will introduce a range of tools that enhance the productivity of software developers. These tools span across multiple domains such as code editors, version control, debugging, project management, and more. I will not only highlight these tools but also explain how to configure them and...","categories": ["Blog"],
+        "tags": ["Tools","Software","Efficiency"],
+        "url": "/blog/efficient-development-tools/",
+        "teaser": null
       }]

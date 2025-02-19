@@ -1,0 +1,926 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.26.2 by Michael Rose
+  Copyright 2013-2024 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>My Efficient Tools for Development as a Developer - Madden’s Blog</title>
+<meta name="description" content="Abstract  In this article, I will introduce a range of tools that enhance the productivity of software developers. These tools span across multiple domains such as code editors, version control, debugging, project management, and more. I will not only highlight these tools but also explain how to configure them and introduce key plugins that optimize the development process.    1. Text Editors &amp; Integrated Development Environments (IDEs)  1.1 VS Code  Overview: Visual Studio Code (VS Code) is a popular, lightweight, and powerful code editor developed by Microsoft. It supports numerous programming languages and comes with built-in Git integration.  Configuration:    Install VS Code: Download the installer from VS Code’s official site.   Extensions:            Prettier: Auto-format code to maintain consistent style.       ESLint: Linting tool for JavaScript to catch syntax and style errors.       GitLens: Enhances Git integration, providing inline blame and history.           Plugins:    Live Server: Launch a local development server with a live reload feature for static or dynamic pages.   Debugger for Chrome: Attach the VS Code debugger to Chrome for front-end debugging.     1.2 JetBrains IntelliJ IDEA  Overview: IntelliJ IDEA is a robust and full-featured IDE, especially popular for Java development, but also supports a wide range of other languages such as Kotlin, Python, and JavaScript.  Configuration:    Install IntelliJ IDEA: Download from the JetBrains website.   Plugins:            Lombok Plugin: Supports the Lombok annotation library for Java.       Spring Boot: For Spring Boot framework development.       Database Navigator: Allows database management and direct queries from the IDE.           Plugins:    CheckStyle-IDEA: A plugin for integrating CheckStyle, a static code analysis tool for Java.   Docker: Supports running and managing Docker containers within the IDE.     1.3 Vim / Neovim  Overview: Vim is a highly customizable terminal-based text editor known for its efficiency and steep learning curve. Neovim is an enhanced fork of Vim with additional features and plugin support.  Configuration:    Install Vim/Neovim: Vim comes pre-installed on most Unix systems. Neovim can be installed via package managers like brew on macOS.   Key Plugin:            vim-plug: A plugin manager for managing and installing plugins in Vim/Neovim. To install vim-plug, add the following to your ~/.vimrc or ~/.config/nvim/init.vim:         call plug#begin(&#39;~/.vim/plugged&#39;) Plug &#39;tpope/vim-sensible&#39;  &quot; Sensible default configurations Plug &#39;neoclide/coc.nvim&#39;   &quot; Autocompletion and IntelliSense call plug#end()                           Plugins:    coc.nvim: A comprehensive autocompletion plugin providing IntelliSense-like features.   NERDTree: A file system explorer for Vim to easily navigate the project structure.     2. Version Control Systems  2.1 Git  Overview: Git is a distributed version control system that enables teams to work collaboratively, maintain code history, and track changes efficiently.  Configuration:    Install Git: Download Git here.   Basic Setup:     git config --global user.name &quot;Your Name&quot; git config --global user.email &quot;your_email@example.com&quot;           Plugins:    GitLens: VS Code extension that supercharges Git capabilities with visualizations and history.   SourceTree: A GUI for managing Git repositories, providing an intuitive interface for committing, branching, and merging.     3. Project Management Tools  3.1 Trello  Overview: Trello is a visual project management tool that uses boards, lists, and cards to organize tasks. It is simple to use but highly effective for personal and team projects.  Configuration:    Set up Trello: Sign up here.   Power-Ups: Enhance Trello boards with Power-Ups (integrations), such as:            GitHub: Link GitHub repositories to Trello cards.       Slack: Get Trello notifications in Slack channels.           Plugins:    Butler: Automate actions within Trello using simple commands (e.g., moving cards based on due dates).     3.2 Jira  Overview: Jira is a comprehensive project management tool designed for software teams, often used in Agile environments to track sprints, issues, and progress.  Configuration:    Set up Jira: Jira Software provides cloud and self-hosted options.   Integrations: Integrate Jira with GitHub, Bitbucket, or GitLab to track commits and branches.   Plugins:    Tempo Timesheets: Time tracking within Jira.   Slack for Jira: Sync Jira with Slack to get notifications for tasks and issues.     4. CI/CD Tools  4.1 Jenkins  Overview: Jenkins is an open-source automation server for building, deploying, and automating software projects.  Configuration:    Install Jenkins: Follow installation instructions from the Jenkins website.   Pipeline Configuration: Create a Jenkinsfile to define a continuous integration pipeline.   Plugins:    Git Plugin: Allows Jenkins to integrate with Git repositories.   Docker Pipeline Plugin: Integrates Docker with Jenkins pipelines, allowing Docker containers to be used as build agents.     4.2 GitHub Actions  Overview: GitHub Actions is an automation tool that allows you to create custom workflows directly within GitHub repositories, enabling continuous integration and deployment.  Configuration:    Set up a GitHub Action: Create a .github/workflows/main.yml file with the workflow definition. Example:     name: CI  on: [push]  jobs:   build:     runs-on: ubuntu-latest      steps:       - uses: actions/checkout@v2       - name: Set up Node.js         uses: actions/setup-node@v2         with:           node-version: &#39;14&#39;       - run: npm install           Plugins:    actions/setup-node: A popular action for setting up Node.js in CI pipelines.   actions/cache: Cache dependencies to speed up builds.     5. Containerization &amp; Virtualization  5.1 Docker  Overview: Docker allows developers to package applications and their dependencies into containers, ensuring consistent behavior across different environments.  Configuration:    Install Docker: Download Docker for your operating system.   Basic Dockerfile:     FROM node:14 WORKDIR /app COPY . . RUN npm install CMD [&quot;npm&quot;, &quot;start&quot;]           Plugins:    Docker Compose: Tool to define and run multi-container Docker applications.   Docker Extension for VS Code: Manage containers, images, and networks directly from the editor.     6. Time Management &amp; Focus  6.1 Pomodone  Overview: Pomodone is a Pomodoro technique timer that helps developers break work into 25-minute intervals followed by short breaks.  Configuration:    Install Pomodone: Sign up here.   Integrate with Tools: Sync tasks from Trello or Asana to Pomodone to manage your workflow effectively.   Plugins:    Trello Integration: Manage tasks from Trello boards and apply the Pomodoro technique.     7. Reading &amp; Learning  7.1 Bypass-paywalls-clean  Overview: Bypass-paywalls-clean is a browser extension that allows you to access paywalled content for free.  Configuration:         Install Bypass-paywalls-clean: Download.      Conclusion  In this article, I have covered a wide range of productivity tools, from code editors and version control systems to project management and CI/CD tools. Each of these tools has its configuration methods and plugin extensions that can enhance the developer experience. By leveraging these tools and their respective plugins, developers can automate repetitive tasks, streamline their workflows, and ultimately improve productivity.    This article serves as an introduction to some of the most effective productivity tools for developers. For detailed configurations and specific use cases, each tool’s official documentation and plugin resources should be consulted.">
+
+
+  <meta name="author" content="Madden Zhang">
+  
+  <meta property="article:author" content="Madden Zhang">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Madden's Blog">
+<meta property="og:title" content="My Efficient Tools for Development as a Developer">
+<meta property="og:url" content="http://localhost:4000/blog/efficient-development-tools/">
+
+
+  <meta property="og:description" content="Abstract  In this article, I will introduce a range of tools that enhance the productivity of software developers. These tools span across multiple domains such as code editors, version control, debugging, project management, and more. I will not only highlight these tools but also explain how to configure them and introduce key plugins that optimize the development process.    1. Text Editors &amp; Integrated Development Environments (IDEs)  1.1 VS Code  Overview: Visual Studio Code (VS Code) is a popular, lightweight, and powerful code editor developed by Microsoft. It supports numerous programming languages and comes with built-in Git integration.  Configuration:    Install VS Code: Download the installer from VS Code’s official site.   Extensions:            Prettier: Auto-format code to maintain consistent style.       ESLint: Linting tool for JavaScript to catch syntax and style errors.       GitLens: Enhances Git integration, providing inline blame and history.           Plugins:    Live Server: Launch a local development server with a live reload feature for static or dynamic pages.   Debugger for Chrome: Attach the VS Code debugger to Chrome for front-end debugging.     1.2 JetBrains IntelliJ IDEA  Overview: IntelliJ IDEA is a robust and full-featured IDE, especially popular for Java development, but also supports a wide range of other languages such as Kotlin, Python, and JavaScript.  Configuration:    Install IntelliJ IDEA: Download from the JetBrains website.   Plugins:            Lombok Plugin: Supports the Lombok annotation library for Java.       Spring Boot: For Spring Boot framework development.       Database Navigator: Allows database management and direct queries from the IDE.           Plugins:    CheckStyle-IDEA: A plugin for integrating CheckStyle, a static code analysis tool for Java.   Docker: Supports running and managing Docker containers within the IDE.     1.3 Vim / Neovim  Overview: Vim is a highly customizable terminal-based text editor known for its efficiency and steep learning curve. Neovim is an enhanced fork of Vim with additional features and plugin support.  Configuration:    Install Vim/Neovim: Vim comes pre-installed on most Unix systems. Neovim can be installed via package managers like brew on macOS.   Key Plugin:            vim-plug: A plugin manager for managing and installing plugins in Vim/Neovim. To install vim-plug, add the following to your ~/.vimrc or ~/.config/nvim/init.vim:         call plug#begin(&#39;~/.vim/plugged&#39;) Plug &#39;tpope/vim-sensible&#39;  &quot; Sensible default configurations Plug &#39;neoclide/coc.nvim&#39;   &quot; Autocompletion and IntelliSense call plug#end()                           Plugins:    coc.nvim: A comprehensive autocompletion plugin providing IntelliSense-like features.   NERDTree: A file system explorer for Vim to easily navigate the project structure.     2. Version Control Systems  2.1 Git  Overview: Git is a distributed version control system that enables teams to work collaboratively, maintain code history, and track changes efficiently.  Configuration:    Install Git: Download Git here.   Basic Setup:     git config --global user.name &quot;Your Name&quot; git config --global user.email &quot;your_email@example.com&quot;           Plugins:    GitLens: VS Code extension that supercharges Git capabilities with visualizations and history.   SourceTree: A GUI for managing Git repositories, providing an intuitive interface for committing, branching, and merging.     3. Project Management Tools  3.1 Trello  Overview: Trello is a visual project management tool that uses boards, lists, and cards to organize tasks. It is simple to use but highly effective for personal and team projects.  Configuration:    Set up Trello: Sign up here.   Power-Ups: Enhance Trello boards with Power-Ups (integrations), such as:            GitHub: Link GitHub repositories to Trello cards.       Slack: Get Trello notifications in Slack channels.           Plugins:    Butler: Automate actions within Trello using simple commands (e.g., moving cards based on due dates).     3.2 Jira  Overview: Jira is a comprehensive project management tool designed for software teams, often used in Agile environments to track sprints, issues, and progress.  Configuration:    Set up Jira: Jira Software provides cloud and self-hosted options.   Integrations: Integrate Jira with GitHub, Bitbucket, or GitLab to track commits and branches.   Plugins:    Tempo Timesheets: Time tracking within Jira.   Slack for Jira: Sync Jira with Slack to get notifications for tasks and issues.     4. CI/CD Tools  4.1 Jenkins  Overview: Jenkins is an open-source automation server for building, deploying, and automating software projects.  Configuration:    Install Jenkins: Follow installation instructions from the Jenkins website.   Pipeline Configuration: Create a Jenkinsfile to define a continuous integration pipeline.   Plugins:    Git Plugin: Allows Jenkins to integrate with Git repositories.   Docker Pipeline Plugin: Integrates Docker with Jenkins pipelines, allowing Docker containers to be used as build agents.     4.2 GitHub Actions  Overview: GitHub Actions is an automation tool that allows you to create custom workflows directly within GitHub repositories, enabling continuous integration and deployment.  Configuration:    Set up a GitHub Action: Create a .github/workflows/main.yml file with the workflow definition. Example:     name: CI  on: [push]  jobs:   build:     runs-on: ubuntu-latest      steps:       - uses: actions/checkout@v2       - name: Set up Node.js         uses: actions/setup-node@v2         with:           node-version: &#39;14&#39;       - run: npm install           Plugins:    actions/setup-node: A popular action for setting up Node.js in CI pipelines.   actions/cache: Cache dependencies to speed up builds.     5. Containerization &amp; Virtualization  5.1 Docker  Overview: Docker allows developers to package applications and their dependencies into containers, ensuring consistent behavior across different environments.  Configuration:    Install Docker: Download Docker for your operating system.   Basic Dockerfile:     FROM node:14 WORKDIR /app COPY . . RUN npm install CMD [&quot;npm&quot;, &quot;start&quot;]           Plugins:    Docker Compose: Tool to define and run multi-container Docker applications.   Docker Extension for VS Code: Manage containers, images, and networks directly from the editor.     6. Time Management &amp; Focus  6.1 Pomodone  Overview: Pomodone is a Pomodoro technique timer that helps developers break work into 25-minute intervals followed by short breaks.  Configuration:    Install Pomodone: Sign up here.   Integrate with Tools: Sync tasks from Trello or Asana to Pomodone to manage your workflow effectively.   Plugins:    Trello Integration: Manage tasks from Trello boards and apply the Pomodoro technique.     7. Reading &amp; Learning  7.1 Bypass-paywalls-clean  Overview: Bypass-paywalls-clean is a browser extension that allows you to access paywalled content for free.  Configuration:         Install Bypass-paywalls-clean: Download.      Conclusion  In this article, I have covered a wide range of productivity tools, from code editors and version control systems to project management and CI/CD tools. Each of these tools has its configuration methods and plugin extensions that can enhance the developer experience. By leveraging these tools and their respective plugins, developers can automate repetitive tasks, streamline their workflows, and ultimately improve productivity.    This article serves as an introduction to some of the most effective productivity tools for developers. For detailed configurations and specific use cases, each tool’s official documentation and plugin resources should be consulted.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2025-02-14T00:00:00+08:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/blog/efficient-development-tools/">
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Madden's Blog Feed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  window.enable_copy_code_button = true;
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single" dir="ltr">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Madden's Blog
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a
+                href="/posts/"
+                
+                
+              >Posts</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/categories/"
+                
+                
+              >Categories</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/tags/"
+                
+                
+              >Tags</a>
+            </li><li class="masthead__menu-item">
+              <a
+                href="/about/"
+                
+                
+              >About</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <i class="fas fa-search"></i>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/bio-photo.jpg" alt="Madden Zhang" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">Madden Zhang</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>A slightly stubborn programmer.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://maddenmanel.github.io/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">Website</span></a></li>
+          
+        
+          
+            <li><a href="https://x.com/MaddenZhang" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/maddenmanel" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://www.instagram.com/zhang.xuegang/" rel="nofollow noopener noreferrer me" itemprop="sameAs"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i><span class="label">Instagram</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="My Efficient Tools for Development as a Developer">
+    <meta itemprop="description" content="AbstractIn this article, I will introduce a range of tools that enhance the productivity of software developers. These tools span across multiple domains such as code editors, version control, debugging, project management, and more. I will not only highlight these tools but also explain how to configure them and introduce key plugins that optimize the development process.1. Text Editors &amp; Integrated Development Environments (IDEs)1.1 VS CodeOverview:Visual Studio Code (VS Code) is a popular, lightweight, and powerful code editor developed by Microsoft. It supports numerous programming languages and comes with built-in Git integration.Configuration:  Install VS Code: Download the installer from VS Code’s official site.  Extensions:          Prettier: Auto-format code to maintain consistent style.      ESLint: Linting tool for JavaScript to catch syntax and style errors.      GitLens: Enhances Git integration, providing inline blame and history.      Plugins:  Live Server: Launch a local development server with a live reload feature for static or dynamic pages.  Debugger for Chrome: Attach the VS Code debugger to Chrome for front-end debugging.1.2 JetBrains IntelliJ IDEAOverview:IntelliJ IDEA is a robust and full-featured IDE, especially popular for Java development, but also supports a wide range of other languages such as Kotlin, Python, and JavaScript.Configuration:  Install IntelliJ IDEA: Download from the JetBrains website.  Plugins:          Lombok Plugin: Supports the Lombok annotation library for Java.      Spring Boot: For Spring Boot framework development.      Database Navigator: Allows database management and direct queries from the IDE.      Plugins:  CheckStyle-IDEA: A plugin for integrating CheckStyle, a static code analysis tool for Java.  Docker: Supports running and managing Docker containers within the IDE.1.3 Vim / NeovimOverview:Vim is a highly customizable terminal-based text editor known for its efficiency and steep learning curve. Neovim is an enhanced fork of Vim with additional features and plugin support.Configuration:  Install Vim/Neovim: Vim comes pre-installed on most Unix systems. Neovim can be installed via package managers like brew on macOS.  Key Plugin:          vim-plug: A plugin manager for managing and installing plugins in Vim/Neovim. To install vim-plug, add the following to your ~/.vimrc or ~/.config/nvim/init.vim:        call plug#begin(&#39;~/.vim/plugged&#39;)Plug &#39;tpope/vim-sensible&#39;  &quot; Sensible default configurationsPlug &#39;neoclide/coc.nvim&#39;   &quot; Autocompletion and IntelliSensecall plug#end()                    Plugins:  coc.nvim: A comprehensive autocompletion plugin providing IntelliSense-like features.  NERDTree: A file system explorer for Vim to easily navigate the project structure.2. Version Control Systems2.1 GitOverview:Git is a distributed version control system that enables teams to work collaboratively, maintain code history, and track changes efficiently.Configuration:  Install Git: Download Git here.  Basic Setup:    git config --global user.name &quot;Your Name&quot;git config --global user.email &quot;your_email@example.com&quot;      Plugins:  GitLens: VS Code extension that supercharges Git capabilities with visualizations and history.  SourceTree: A GUI for managing Git repositories, providing an intuitive interface for committing, branching, and merging.3. Project Management Tools3.1 TrelloOverview:Trello is a visual project management tool that uses boards, lists, and cards to organize tasks. It is simple to use but highly effective for personal and team projects.Configuration:  Set up Trello: Sign up here.  Power-Ups: Enhance Trello boards with Power-Ups (integrations), such as:          GitHub: Link GitHub repositories to Trello cards.      Slack: Get Trello notifications in Slack channels.      Plugins:  Butler: Automate actions within Trello using simple commands (e.g., moving cards based on due dates).3.2 JiraOverview:Jira is a comprehensive project management tool designed for software teams, often used in Agile environments to track sprints, issues, and progress.Configuration:  Set up Jira: Jira Software provides cloud and self-hosted options.  Integrations: Integrate Jira with GitHub, Bitbucket, or GitLab to track commits and branches.Plugins:  Tempo Timesheets: Time tracking within Jira.  Slack for Jira: Sync Jira with Slack to get notifications for tasks and issues.4. CI/CD Tools4.1 JenkinsOverview:Jenkins is an open-source automation server for building, deploying, and automating software projects.Configuration:  Install Jenkins: Follow installation instructions from the Jenkins website.  Pipeline Configuration: Create a Jenkinsfile to define a continuous integration pipeline.Plugins:  Git Plugin: Allows Jenkins to integrate with Git repositories.  Docker Pipeline Plugin: Integrates Docker with Jenkins pipelines, allowing Docker containers to be used as build agents.4.2 GitHub ActionsOverview:GitHub Actions is an automation tool that allows you to create custom workflows directly within GitHub repositories, enabling continuous integration and deployment.Configuration:  Set up a GitHub Action: Create a .github/workflows/main.yml file with the workflow definition.Example:    name: CIon: [push]jobs:  build:    runs-on: ubuntu-latest    steps:      - uses: actions/checkout@v2      - name: Set up Node.js        uses: actions/setup-node@v2        with:          node-version: &#39;14&#39;      - run: npm install      Plugins:  actions/setup-node: A popular action for setting up Node.js in CI pipelines.  actions/cache: Cache dependencies to speed up builds.5. Containerization &amp; Virtualization5.1 DockerOverview:Docker allows developers to package applications and their dependencies into containers, ensuring consistent behavior across different environments.Configuration:  Install Docker: Download Docker for your operating system.  Basic Dockerfile:    FROM node:14WORKDIR /appCOPY . .RUN npm installCMD [&quot;npm&quot;, &quot;start&quot;]      Plugins:  Docker Compose: Tool to define and run multi-container Docker applications.  Docker Extension for VS Code: Manage containers, images, and networks directly from the editor.6. Time Management &amp; Focus6.1 PomodoneOverview:Pomodone is a Pomodoro technique timer that helps developers break work into 25-minute intervals followed by short breaks.Configuration:  Install Pomodone: Sign up here.  Integrate with Tools: Sync tasks from Trello or Asana to Pomodone to manage your workflow effectively.Plugins:  Trello Integration: Manage tasks from Trello boards and apply the Pomodoro technique.7. Reading &amp; Learning7.1 Bypass-paywalls-cleanOverview:Bypass-paywalls-clean is a browser extension that allows you to access paywalled content for free.Configuration:      Install Bypass-paywalls-clean: Download.  ConclusionIn this article, I have covered a wide range of productivity tools, from code editors and version control systems to project management and CI/CD tools. Each of these tools has its configuration methods and plugin extensions that can enhance the developer experience. By leveraging these tools and their respective plugins, developers can automate repetitive tasks, streamline their workflows, and ultimately improve productivity.This article serves as an introduction to some of the most effective productivity tools for developers. For detailed configurations and specific use cases, each tool’s official documentation and plugin resources should be consulted.">
+    <meta itemprop="datePublished" content="2025-02-14T00:00:00+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">
+            <a href="http://localhost:4000/blog/efficient-development-tools/" itemprop="url">My Efficient Tools for Development as a Developer
+</a>
+          </h1>
+          
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#abstract">Abstract</a></li><li><a href="#1-text-editors--integrated-development-environments-ides">1. Text Editors &amp; Integrated Development Environments (IDEs)</a><ul><li><a href="#11-vs-code">1.1 VS Code</a></li><li><a href="#12-jetbrains-intellij-idea">1.2 JetBrains IntelliJ IDEA</a></li><li><a href="#13-vim--neovim">1.3 Vim / Neovim</a></li></ul></li><li><a href="#2-version-control-systems">2. Version Control Systems</a><ul><li><a href="#21-git">2.1 Git</a></li></ul></li><li><a href="#3-project-management-tools">3. Project Management Tools</a><ul><li><a href="#31-trello">3.1 Trello</a></li><li><a href="#32-jira">3.2 Jira</a></li></ul></li><li><a href="#4-cicd-tools">4. CI/CD Tools</a><ul><li><a href="#41-jenkins">4.1 Jenkins</a></li><li><a href="#42-github-actions">4.2 GitHub Actions</a></li></ul></li><li><a href="#5-containerization--virtualization">5. Containerization &amp; Virtualization</a><ul><li><a href="#51-docker">5.1 Docker</a></li></ul></li><li><a href="#6-time-management--focus">6. Time Management &amp; Focus</a><ul><li><a href="#61-pomodone">6.1 Pomodone</a></li></ul></li><li><a href="#7-reading--learning">7. Reading &amp; Learning</a><ul><li><a href="#71-bypass-paywalls-clean">7.1 Bypass-paywalls-clean</a></li></ul></li><li><a href="#install-bypass-paywalls-clean-download">Install Bypass-paywalls-clean: Download.</a></li><li><a href="#conclusion">Conclusion</a></li></ul>
+            </nav>
+          </aside>
+        
+        <h2 id="abstract">Abstract</h2>
+
+<p>In this article, I will introduce a range of tools that enhance the productivity of software developers. These tools span across multiple domains such as code editors, version control, debugging, project management, and more. I will not only highlight these tools but also explain how to configure them and introduce key plugins that optimize the development process.</p>
+
+<hr />
+
+<h2 id="1-text-editors--integrated-development-environments-ides">1. <strong>Text Editors &amp; Integrated Development Environments (IDEs)</strong></h2>
+
+<h3 id="11-vs-code">1.1 <strong>VS Code</strong></h3>
+
+<p><strong>Overview:</strong><br />
+Visual Studio Code (VS Code) is a popular, lightweight, and powerful code editor developed by Microsoft. It supports numerous programming languages and comes with built-in Git integration.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li><strong>Install VS Code</strong>: Download the installer from <a href="https://code.visualstudio.com/">VS Code’s official site</a>.</li>
+  <li><strong>Extensions</strong>:
+    <ul>
+      <li><strong>Prettier</strong>: Auto-format code to maintain consistent style.</li>
+      <li><strong>ESLint</strong>: Linting tool for JavaScript to catch syntax and style errors.</li>
+      <li><strong>GitLens</strong>: Enhances Git integration, providing inline blame and history.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Plugins:</strong></p>
+<ol>
+  <li><strong>Live Server</strong>: Launch a local development server with a live reload feature for static or dynamic pages.</li>
+  <li><strong>Debugger for Chrome</strong>: Attach the VS Code debugger to Chrome for front-end debugging.</li>
+</ol>
+
+<hr />
+
+<h3 id="12-jetbrains-intellij-idea">1.2 <strong>JetBrains IntelliJ IDEA</strong></h3>
+
+<p><strong>Overview:</strong><br />
+IntelliJ IDEA is a robust and full-featured IDE, especially popular for Java development, but also supports a wide range of other languages such as Kotlin, Python, and JavaScript.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li><strong>Install IntelliJ IDEA</strong>: Download from the <a href="https://www.jetbrains.com/idea/">JetBrains website</a>.</li>
+  <li><strong>Plugins</strong>:
+    <ul>
+      <li><strong>Lombok Plugin</strong>: Supports the Lombok annotation library for Java.</li>
+      <li><strong>Spring Boot</strong>: For Spring Boot framework development.</li>
+      <li><strong>Database Navigator</strong>: Allows database management and direct queries from the IDE.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Plugins:</strong></p>
+<ol>
+  <li><strong>CheckStyle-IDEA</strong>: A plugin for integrating CheckStyle, a static code analysis tool for Java.</li>
+  <li><strong>Docker</strong>: Supports running and managing Docker containers within the IDE.</li>
+</ol>
+
+<hr />
+
+<h3 id="13-vim--neovim">1.3 <strong>Vim / Neovim</strong></h3>
+
+<p><strong>Overview:</strong><br />
+Vim is a highly customizable terminal-based text editor known for its efficiency and steep learning curve. Neovim is an enhanced fork of Vim with additional features and plugin support.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li><strong>Install Vim/Neovim</strong>: Vim comes pre-installed on most Unix systems. Neovim can be installed via package managers like <code class="language-plaintext highlighter-rouge">brew</code> on macOS.</li>
+  <li><strong>Key Plugin</strong>:
+    <ul>
+      <li><strong>vim-plug</strong>: A plugin manager for managing and installing plugins in Vim/Neovim. To install vim-plug, add the following to your <code class="language-plaintext highlighter-rouge">~/.vimrc</code> or <code class="language-plaintext highlighter-rouge">~/.config/nvim/init.vim</code>:
+        <div class="language-vim highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">call</span> plug#begin<span class="p">(</span><span class="s1">'~/.vim/plugged'</span><span class="p">)</span>
+Plug <span class="s1">'tpope/vim-sensible'</span>  " Sensible default configurations
+Plug <span class="s1">'neoclide/coc.nvim'</span>   " Autocompletion <span class="nb">and</span> IntelliSense
+<span class="k">call</span> plug#end<span class="p">()</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Plugins:</strong></p>
+<ol>
+  <li><strong>coc.nvim</strong>: A comprehensive autocompletion plugin providing IntelliSense-like features.</li>
+  <li><strong>NERDTree</strong>: A file system explorer for Vim to easily navigate the project structure.</li>
+</ol>
+
+<hr />
+
+<h2 id="2-version-control-systems">2. <strong>Version Control Systems</strong></h2>
+
+<h3 id="21-git">2.1 <strong>Git</strong></h3>
+
+<p><strong>Overview:</strong><br />
+Git is a distributed version control system that enables teams to work collaboratively, maintain code history, and track changes efficiently.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li><strong>Install Git</strong>: <a href="https://git-scm.com/">Download Git here</a>.</li>
+  <li><strong>Basic Setup</strong>:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git config <span class="nt">--global</span> user.name <span class="s2">"Your Name"</span>
+git config <span class="nt">--global</span> user.email <span class="s2">"your_email@example.com"</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><strong>Plugins:</strong></p>
+<ol>
+  <li><strong>GitLens</strong>: VS Code extension that supercharges Git capabilities with visualizations and history.</li>
+  <li><strong>SourceTree</strong>: A GUI for managing Git repositories, providing an intuitive interface for committing, branching, and merging.</li>
+</ol>
+
+<hr />
+
+<h2 id="3-project-management-tools">3. <strong>Project Management Tools</strong></h2>
+
+<h3 id="31-trello">3.1 <strong>Trello</strong></h3>
+
+<p><strong>Overview:</strong><br />
+Trello is a visual project management tool that uses boards, lists, and cards to organize tasks. It is simple to use but highly effective for personal and team projects.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li><strong>Set up Trello</strong>: <a href="https://trello.com/">Sign up here</a>.</li>
+  <li><strong>Power-Ups</strong>: Enhance Trello boards with Power-Ups (integrations), such as:
+    <ul>
+      <li><strong>GitHub</strong>: Link GitHub repositories to Trello cards.</li>
+      <li><strong>Slack</strong>: Get Trello notifications in Slack channels.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Plugins:</strong></p>
+<ul>
+  <li><strong>Butler</strong>: Automate actions within Trello using simple commands (e.g., moving cards based on due dates).</li>
+</ul>
+
+<hr />
+
+<h3 id="32-jira">3.2 <strong>Jira</strong></h3>
+
+<p><strong>Overview:</strong><br />
+Jira is a comprehensive project management tool designed for software teams, often used in Agile environments to track sprints, issues, and progress.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li><strong>Set up Jira</strong>: <a href="https://www.atlassian.com/software/jira">Jira Software</a> provides cloud and self-hosted options.</li>
+  <li><strong>Integrations</strong>: Integrate Jira with GitHub, Bitbucket, or GitLab to track commits and branches.</li>
+</ul>
+
+<p><strong>Plugins:</strong></p>
+<ol>
+  <li><strong>Tempo Timesheets</strong>: Time tracking within Jira.</li>
+  <li><strong>Slack for Jira</strong>: Sync Jira with Slack to get notifications for tasks and issues.</li>
+</ol>
+
+<hr />
+
+<h2 id="4-cicd-tools">4. <strong>CI/CD Tools</strong></h2>
+
+<h3 id="41-jenkins">4.1 <strong>Jenkins</strong></h3>
+
+<p><strong>Overview:</strong><br />
+Jenkins is an open-source automation server for building, deploying, and automating software projects.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li><strong>Install Jenkins</strong>: Follow installation instructions from the <a href="https://www.jenkins.io/doc/book/installing/">Jenkins website</a>.</li>
+  <li><strong>Pipeline Configuration</strong>: Create a <code class="language-plaintext highlighter-rouge">Jenkinsfile</code> to define a continuous integration pipeline.</li>
+</ul>
+
+<p><strong>Plugins:</strong></p>
+<ol>
+  <li><strong>Git Plugin</strong>: Allows Jenkins to integrate with Git repositories.</li>
+  <li><strong>Docker Pipeline Plugin</strong>: Integrates Docker with Jenkins pipelines, allowing Docker containers to be used as build agents.</li>
+</ol>
+
+<hr />
+
+<h3 id="42-github-actions">4.2 <strong>GitHub Actions</strong></h3>
+
+<p><strong>Overview:</strong><br />
+GitHub Actions is an automation tool that allows you to create custom workflows directly within GitHub repositories, enabling continuous integration and deployment.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li><strong>Set up a GitHub Action</strong>: Create a <code class="language-plaintext highlighter-rouge">.github/workflows/main.yml</code> file with the workflow definition.<br />
+Example:
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">CI</span>
+
+<span class="na">on</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">push</span><span class="pi">]</span>
+
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">build</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v2</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Set up Node.js</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/setup-node@v2</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">node-version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">14'</span>
+      <span class="pi">-</span> <span class="na">run</span><span class="pi">:</span> <span class="s">npm install</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><strong>Plugins:</strong></p>
+<ol>
+  <li><strong>actions/setup-node</strong>: A popular action for setting up Node.js in CI pipelines.</li>
+  <li><strong>actions/cache</strong>: Cache dependencies to speed up builds.</li>
+</ol>
+
+<hr />
+
+<h2 id="5-containerization--virtualization">5. <strong>Containerization &amp; Virtualization</strong></h2>
+
+<h3 id="51-docker">5.1 <strong>Docker</strong></h3>
+
+<p><strong>Overview:</strong><br />
+Docker allows developers to package applications and their dependencies into containers, ensuring consistent behavior across different environments.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li><strong>Install Docker</strong>: <a href="https://www.docker.com/products/docker-desktop">Download Docker</a> for your operating system.</li>
+  <li><strong>Basic Dockerfile</strong>:
+    <div class="language-Dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> node:14</span>
+<span class="k">WORKDIR</span><span class="s"> /app</span>
+<span class="k">COPY</span><span class="s"> . .</span>
+<span class="k">RUN </span>npm <span class="nb">install</span>
+<span class="k">CMD</span><span class="s"> ["npm", "start"]</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><strong>Plugins:</strong></p>
+<ol>
+  <li><strong>Docker Compose</strong>: Tool to define and run multi-container Docker applications.</li>
+  <li><strong>Docker Extension for VS Code</strong>: Manage containers, images, and networks directly from the editor.</li>
+</ol>
+
+<hr />
+
+<h2 id="6-time-management--focus">6. <strong>Time Management &amp; Focus</strong></h2>
+
+<h3 id="61-pomodone">6.1 <strong>Pomodone</strong></h3>
+
+<p><strong>Overview:</strong><br />
+Pomodone is a Pomodoro technique timer that helps developers break work into 25-minute intervals followed by short breaks.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li><strong>Install Pomodone</strong>: <a href="https://pomodoneapp.com/">Sign up here</a>.</li>
+  <li><strong>Integrate with Tools</strong>: Sync tasks from Trello or Asana to Pomodone to manage your workflow effectively.</li>
+</ul>
+
+<p><strong>Plugins:</strong></p>
+<ol>
+  <li><strong>Trello Integration</strong>: Manage tasks from Trello boards and apply the Pomodoro technique.</li>
+</ol>
+
+<hr />
+
+<h2 id="7-reading--learning">7. <strong>Reading &amp; Learning</strong></h2>
+
+<h3 id="71-bypass-paywalls-clean">7.1 <strong>Bypass-paywalls-clean</strong></h3>
+
+<p><strong>Overview:</strong><br />
+Bypass-paywalls-clean is a browser extension that allows you to access paywalled content for free.</p>
+
+<p><strong>Configuration:</strong></p>
+<ul>
+  <li>
+    <h2 id="install-bypass-paywalls-clean-download"><strong>Install Bypass-paywalls-clean</strong>: <a href="https://gitflic.ru/project/magnolia1234/bpc_uploads">Download</a>.</h2>
+  </li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In this article, I have covered a wide range of productivity tools, from code editors and version control systems to project management and CI/CD tools. Each of these tools has its configuration methods and plugin extensions that can enhance the developer experience. By leveraging these tools and their respective plugins, developers can automate repetitive tasks, streamline their workflows, and ultimately improve productivity.</p>
+
+<hr />
+
+<p>This article serves as an introduction to some of the most effective productivity tools for developers. For detailed configurations and specific use cases, each tool’s official documentation and plugin resources should be consulted.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#efficiency" class="page__taxonomy-item p-category" rel="tag">Efficiency</a><span class="sep">, </span>
+    
+      <a href="/tags/#software" class="page__taxonomy-item p-category" rel="tag">Software</a><span class="sep">, </span>
+    
+      <a href="/tags/#tools" class="page__taxonomy-item p-category" rel="tag">Tools</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#blog" class="page__taxonomy-item p-category" rel="tag">Blog</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2025-02-14T00:00:00+08:00">February 14, 2025</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  <h4 class="page__share-title">Share on</h4>
+
+  <a href="https://twitter.com/intent/tweet?text=My+Efficient+Tools+for+Development+as+a+Developer%20http%3A%2F%2Flocalhost%3A4000%2Fblog%2Fefficient-development-tools%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fblog%2Fefficient-development-tools%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/blog/efficient-development-tools/" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/devops-cicd-jenkins/" class="pagination--pager" title="Devops CI/CD Jenkins">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    
+<div class="page__related">
+  
+  <h2 class="page__related-title">You May Also Enjoy</h2>
+  <div class="grid__wrapper">
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/devops-cicd-jenkins/" rel="permalink">Devops CI/CD Jenkins
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Introduction
+
+Jenkins is a popular open-source automation server that facilitates continuous integration and continuous delivery (CI/CD). It helps automate t...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/devops-cicd-gitlab/" rel="permalink">DevOps CI/CD GitLab
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Introduction
+
+GitLab is a powerful DevOps platform that provides a complete CI/CD pipeline for automating the build, test, and deployment of applications. In...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/migration-ilog-solutions/" rel="permalink">Migration ILOG Solutions
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Detailed Plans and Comparison of Three Rule Migration Approaches
+
+This document outlines the detailed plans for three approaches to rule migration: using AI-...</p>
+  </article>
+</div>
+
+    
+      
+      
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/stability-monitor-promtail/" rel="permalink">Stability Monitor Promtail
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Introduction
+
+Promtail is an agent that collects logs from various sources and sends them to Loki for storage and querying. In this section, we will walk thr...</p>
+  </article>
+</div>
+
+    
+  </div>
+</div>
+
+  
+  
+</div>
+
+      
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';" role="search">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+          <li><a href="https://instagram.com/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-instagram" aria-hidden="true"></i> Instagram</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2025 <a href="http://localhost:4000">Madden's Blog</a>. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+  </body>
+</html>

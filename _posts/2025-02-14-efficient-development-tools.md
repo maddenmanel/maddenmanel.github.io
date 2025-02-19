@@ -229,7 +229,7 @@ Pomodone is a Pomodoro technique timer that helps developers break work into 25-
 Bypass-paywalls-clean is a browser extension that allows you to access paywalled content for free.
 
 **Configuration:**  
-- **Install Bypass-paywalls-clean**: [Sign up here](https://gitflic.ru/project/magnolia1234/bpc_uploads).
+- **Install Bypass-paywalls-clean**: [Download](https://gitflic.ru/project/magnolia1234/bpc_uploads).
 ---
 
 ## Conclusion
