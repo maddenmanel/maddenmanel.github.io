@@ -118,6 +118,29 @@ graph TD
     class A2,A3,A4,A5,A6,A7,B1,B2,BN,C1,C2,CN,D1,E1 query_step;
 </div>
 
+### Global Aggregation
+
+<div class="mermaid">
+graph TD
+    A[数据输入] --> B[分布式数据分配到各计算节点]
+    B --> C[每个节点根据键进行哈希分组]
+    C --> D{每个节点的哈希表存储组}
+    D --> E[每个节点执行 SUM 聚合]
+    E --> F[每个节点保存本地聚合结果]
+    F --> G[合并本地聚合结果]
+    G --> H[全局聚合结果]
+    H --> I[返回最终结果]
+
+    style A fill:#f9f,stroke:#333,stroke-width:4px
+    style B fill:#ff9,stroke:#333,stroke-width:4px
+    style C fill:#9ff,stroke:#333,stroke-width:4px
+    style D fill:#9f9,stroke:#333,stroke-width:4px
+    style E fill:#ff9,stroke:#333,stroke-width:4px
+    style F fill:#ff9,stroke:#333,stroke-width:4px
+    style G fill:#ff9,stroke:#333,stroke-width:4px
+    style H fill:#9f9,stroke:#333,stroke-width:4px
+</div>
+
 ### data structure and advantages or disadvantages
 
 | **Data Type**     | **Description**                                                                         | **Advantages**                                                                                           | **Disadvantages**                                                                                             | **Use Cases**                                                                 | **Query Difficulty**              | **Insert Difficulty**             | **Aggregate Analysis Difficulty**       |
