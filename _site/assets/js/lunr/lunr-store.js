@@ -76,4 +76,10 @@ var store = [{
         "tags": ["Tools","Software","Efficiency"],
         "url": "/blog/efficient-development-tools/",
         "teaser": null
+      },{
+        "title": "Distribute Design Clickhouse",
+        "excerpt":"Introduction ClickHouse, an open-source columnar database management system (DBMS), is designed for online analytical processing (OLAP). It provides real-time data analysis with extremely fast query performance, even on massive datasets. Originally developed by Yandex, ClickHouse has become a popular solution for analytics-heavy use cases in large-scale environments, supporting high throughput...","categories": ["Blog"],
+        "tags": ["distribute","clickhouse"],
+        "url": "/blog/distribute-design-clickhouse/",
+        "teaser": null
       }]

@@ -1,4 +1,411 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-02-17T10:16:25+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Madden’s Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>Madden Zhang</name></author><entry><title type="html">My Efficient Tools for Development as a Developer</title><link href="http://localhost:4000/blog/efficient-development-tools/" rel="alternate" type="text/html" title="My Efficient Tools for Development as a Developer" /><published>2025-02-14T00:00:00+08:00</published><updated>2025-02-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/efficient-development-tools</id><content type="html" xml:base="http://localhost:4000/blog/efficient-development-tools/"><![CDATA[<h2 id="abstract">Abstract</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-02-20T18:18:36+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Madden’s Blog</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name>Madden Zhang</name></author><entry><title type="html">Distribute Design Clickhouse</title><link href="http://localhost:4000/blog/distribute-design-clickhouse/" rel="alternate" type="text/html" title="Distribute Design Clickhouse" /><published>2025-02-20T00:00:00+08:00</published><updated>2025-02-20T00:00:00+08:00</updated><id>http://localhost:4000/blog/distribute-design-clickhouse</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-clickhouse/"><![CDATA[<h2 id="introduction">Introduction</h2>
+
+<p>ClickHouse, an open-source columnar database management system (DBMS), is designed for online analytical processing (OLAP). It provides real-time data analysis with extremely fast query performance, even on massive datasets. Originally developed by Yandex, ClickHouse has become a popular solution for analytics-heavy use cases in large-scale environments, supporting high throughput and low-latency queries.</p>
+
+<p>ClickHouse’s architecture is engineered for distributed processing, offering both horizontal scalability and fault tolerance. This article delves into ClickHouse’s architecture and its core features, including data distribution, replication, and fault tolerance mechanisms.</p>
+
+<h2 id="key-terminologies">Key Terminologies</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Shard</strong></td>
+      <td>A physical subset of data that is stored on a specific set of nodes.</td>
+    </tr>
+    <tr>
+      <td><strong>Replica</strong></td>
+      <td>A copy of a shard’s data for fault tolerance and high availability.</td>
+    </tr>
+    <tr>
+      <td><strong>Table</strong></td>
+      <td>A collection of data organized into columns.</td>
+    </tr>
+    <tr>
+      <td><strong>MergeTree</strong></td>
+      <td>A special type of table that supports fast querying and efficient storage.</td>
+    </tr>
+    <tr>
+      <td><strong>Partition</strong></td>
+      <td>A logical division of data within a table, often mapped to a specific time period.</td>
+    </tr>
+    <tr>
+      <td><strong>Distributed Table</strong></td>
+      <td>A table that abstracts data stored on different nodes in a cluster.</td>
+    </tr>
+    <tr>
+      <td><strong>Replica Synchronization</strong></td>
+      <td>The process by which replicas stay in sync with their leader shard.</td>
+    </tr>
+    <tr>
+      <td><strong>Materialized View</strong></td>
+      <td>A precomputed view that stores the result of a query to optimize query performance.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="clickhouses-storage-mechanism">ClickHouse’s Storage Mechanism</h2>
+
+<h3 id="columnar-storage">Columnar Storage</h3>
+
+<p>ClickHouse’s storage engine is optimized for OLAP workloads. It stores data in columnar format, which is ideal for analytical queries that often only access a few columns at a time. This section explores the data distribution, partitioning, and table storage mechanisms in ClickHouse.</p>
+
+<p>What is the the difference between row format and columnar format?</p>
+
+<div class="mermaid">
+graph TD
+    subgraph Row_Store[Row Storage]
+        direction LR
+        A1[User ID: 1] --&gt; B1[Name: Zhang San] --&gt; C1[Age: 25] --&gt; D1[Address: Beijing]
+        A2[User ID: 2] --&gt; B2[Name: Li Si] --&gt; C2[Age: 30] --&gt; D2[Address: Shanghai]
+        A3[User ID: 3] --&gt; B3[Name: Wang Wu] --&gt; C3[Age: 28] --&gt; D3[Address: Guangzhou]
+    end
+
+    subgraph Column_Store[Column Storage]
+        direction TB
+        A4[User ID] --&gt; A5[1] --&gt; A6[2] --&gt; A7[3]
+        B4[Name] --&gt; B5[Zhang San] --&gt; B6[Li Si] --&gt; B7[Wang Wu]
+        C4[Age] --&gt; C5[25] --&gt; C6[30] --&gt; C7[28]
+        D4[Address] --&gt; D5[Beijing] --&gt; D6[Shanghai] --&gt; D7[Guangzhou]
+    end
+
+    class Row_Store row_style;
+    class Column_Store column_style;
+
+    classDef row_style, stroke-width:2px;
+    classDef column_style, stroke-width:2px;
+</div>
+
+<h3 id="join-operation">Join Operation</h3>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> 
+    <span class="n">p</span><span class="p">.</span><span class="n">product_name</span><span class="p">,</span>
+    <span class="k">SUM</span><span class="p">(</span><span class="n">o</span><span class="p">.</span><span class="n">amount</span><span class="p">)</span> <span class="k">AS</span> <span class="n">total_sales</span>
+<span class="k">FROM</span> 
+    <span class="n">orders</span> <span class="n">o</span>
+<span class="k">JOIN</span> 
+    <span class="n">products</span> <span class="n">p</span>
+<span class="k">ON</span> 
+    <span class="n">o</span><span class="p">.</span><span class="n">product_id</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">product_id</span>
+<span class="k">GROUP</span> <span class="k">BY</span> 
+    <span class="n">p</span><span class="p">.</span><span class="n">product_name</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>This query will be executed in the following steps:</p>
+
+<div class="mermaid">
+graph TD
+    subgraph Node1[Node 1]
+        direction TB
+        P1[Read Partition 1 Data] --&gt; A2[Read Data from orders table]
+        P2[Read Partition 1 Data] --&gt; A3[Read Data from products table]
+        A2 --&gt; B1[Local JOIN]
+        A3 --&gt; B1[Local JOIN]
+        B1 --&gt; C1[Local Aggregation]
+    end
+
+    subgraph Node2[Node 2]
+        direction TB
+        P3[Read Partition 2 Data] --&gt; A4[Read Data from orders table]
+        P4[Read Partition 2 Data] --&gt; A5[Read Data from products table]
+        A4 --&gt; B2[Local JOIN]
+        A5 --&gt; B2[Local JOIN]
+        B2 --&gt; C2[Local Aggregation]
+    end
+
+    subgraph NodeN[Node N]
+        direction TB
+        Pn[Read Partition N Data] --&gt; A6[Read Data from orders table]
+        Pn2[Read Partition N Data] --&gt; A7[Read Data from products table]
+        A6 --&gt; BN[Local JOIN]
+        A7 --&gt; BN[Local JOIN]
+        BN --&gt; CN[Local Aggregation]
+    end
+
+    C1 --&gt; D1[Global Aggregation]
+    C2 --&gt; D1[Global Aggregation]
+    CN --&gt; D1[Global Aggregation]
+
+    D1 --&gt; E1[Return Final Result]
+
+    classDef query_step fill:#f9f,stroke:#333,stroke-width:2px;
+    class A2,A3,A4,A5,A6,A7,B1,B2,BN,C1,C2,CN,D1,E1 query_step;
+</div>
+
+<h3 id="data-structure-and-advantages-or-disadvantages">data structure and advantages or disadvantages</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Data Type</strong></th>
+      <th><strong>Description</strong></th>
+      <th><strong>Advantages</strong></th>
+      <th><strong>Disadvantages</strong></th>
+      <th><strong>Use Cases</strong></th>
+      <th><strong>Query Difficulty</strong></th>
+      <th><strong>Insert Difficulty</strong></th>
+      <th><strong>Aggregate Analysis Difficulty</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Array</strong></td>
+      <td>Stores multiple elements of the same data type, such as integers, strings, etc.</td>
+      <td>- Flexible, supports various data types. <br /> - Efficient for querying and manipulating array elements.</td>
+      <td>- Does not support heterogeneous data (only stores elements of the same type). <br /> - Performance may degrade with a large number of elements.</td>
+      <td>- Storing related values like multiple tags, products, etc. <br /> - Storing bulk data.</td>
+      <td>Simple, supports direct indexing and element access.</td>
+      <td>Easy, insert multiple values directly.</td>
+      <td>Aggregation can be resource-intensive with large data.</td>
+    </tr>
+    <tr>
+      <td><strong>Tuple</strong></td>
+      <td>Stores a fixed number of elements with different types.</td>
+      <td>- Supports heterogeneous data, number of elements is fixed. <br /> - Suitable for storing composite data fields.</td>
+      <td>- Fixed number of elements, not suitable for dynamic changes. <br /> - Does not support dynamically altering data structure.</td>
+      <td>- Storing user information, composite fields, tags, etc. <br /> - Suitable for storing structured data.</td>
+      <td>Simple, can access elements by position.</td>
+      <td>Simple, directly insert a tuple.</td>
+      <td>Aggregation can handle individual element aggregation directly.</td>
+    </tr>
+    <tr>
+      <td><strong>LowCardinality</strong></td>
+      <td>Used for columns with a low cardinality (few unique values), compressing and mapping values to integers to save memory.</td>
+      <td>- Significantly reduces memory and storage usage, especially for repeated data. <br /> - Increases query speed.</td>
+      <td>- Only suitable for low-cardinality data. <br /> - May affect query sorting and comparison operations.</td>
+      <td>- Suitable for data with a small number of unique values, like cities, gender, categories.</td>
+      <td>Good query performance, especially for filtering operations.</td>
+      <td>Easy to insert, suitable for bulk insertion of low-cardinality data.</td>
+      <td>High efficiency in aggregation.</td>
+    </tr>
+    <tr>
+      <td><strong>UUID</strong></td>
+      <td>Universal Unique Identifier (128-bit identifier), typically used for globally unique identifiers.</td>
+      <td>- Ensures globally unique identification, avoids ID collisions. <br /> - Common in distributed systems.</td>
+      <td>- Large storage space, query performance may be slower, especially in sorting and indexing operations.</td>
+      <td>- ID in distributed systems. <br /> - Unique identifier scenarios, such as order IDs, session IDs.</td>
+      <td>Slower for queries, especially involving sorting.</td>
+      <td>Easy to insert, suitable for globally unique identifiers.</td>
+      <td>Aggregation is not difficult, but performance may be slower with large data.</td>
+    </tr>
+    <tr>
+      <td><strong>DateTime</strong></td>
+      <td>Stores date and time with second precision.</td>
+      <td>- Suitable for timestamp, time-series data. <br /> - Provides rich time handling functions.</td>
+      <td>- Relatively larger storage space. <br /> - Only precise to the second, no higher precision.</td>
+      <td>- Log analysis, event tracking, time range queries, etc. <br /> - Data partitioning by time.</td>
+      <td>High performance for range queries based on time.</td>
+      <td>Easy to insert, especially with consistent date format.</td>
+      <td>High performance for aggregation by time.</td>
+    </tr>
+    <tr>
+      <td><strong>Date</strong></td>
+      <td>Stores only the date (precision to day).</td>
+      <td>- Smaller storage space, efficient for date-only data. <br /> - Efficient for date queries and aggregation.</td>
+      <td>- Cannot handle time details (like hours, minutes, seconds).</td>
+      <td>- Storing date data, such as birth dates, event dates, log dates, etc.</td>
+      <td>Extremely efficient for date range queries.</td>
+      <td>Simple to insert, just provide date data.</td>
+      <td>High performance for day/month aggregation.</td>
+    </tr>
+    <tr>
+      <td><strong>String</strong></td>
+      <td>Stores variable-length strings.</td>
+      <td>- Highly flexible, supports various text data. <br /> - Suitable for textual fields.</td>
+      <td>- Storage and query performance may be slower, especially for large text data. <br /> - Not suitable for structured or complex data.</td>
+      <td>- Storing user names, product descriptions, addresses, etc. <br /> - Suitable for unstructured textual data.</td>
+      <td>Slower for queries involving large datasets.</td>
+      <td>Easy to insert, suitable for general text data.</td>
+      <td>Performance may be affected with large text data in aggregation.</td>
+    </tr>
+    <tr>
+      <td><strong>Map</strong></td>
+      <td>Stores a collection of key-value pairs, where keys and values can be of different types.</td>
+      <td>- Extremely flexible, suitable for storing dynamic and changing data structures. <br /> - Supports fast lookups by key.</td>
+      <td>- Higher complexity, querying may be slower, especially when there are many different key-value pairs.</td>
+      <td>- Storing dynamic key-value pairs like user attributes, configurations, log information, etc.</td>
+      <td>Querying is more complex, involves key-value lookups.</td>
+      <td>Relatively easy to insert dynamic key-value pairs.</td>
+      <td>Aggregation may affect performance when handling a large number of key-value pairs.</td>
+    </tr>
+    <tr>
+      <td><strong>Nested</strong></td>
+      <td>Stores hierarchical data, typically used to represent many-to-many or one-to-many relationships, similar to JSON arrays.</td>
+      <td>- Very suitable for storing complex, hierarchical data. <br /> - Can handle complex relationships like users and orders.</td>
+      <td>- Querying and manipulating nested data may be complex, especially with large datasets; <code class="language-plaintext highlighter-rouge">ARRAY JOIN</code> may affect performance.</td>
+      <td>- Storing users with multiple orders, multi-dimensional data, etc. <br /> - Suitable for many-to-many and hierarchical data.</td>
+      <td>Querying requires <code class="language-plaintext highlighter-rouge">ARRAY JOIN</code> to flatten data, relatively complex.</td>
+      <td>Slightly complex, data must match the nested format.</td>
+      <td>Aggregation can be done by level but requires <code class="language-plaintext highlighter-rouge">ARRAY JOIN</code>, which complicates queries.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="shard-and-partition-distribution-in-tables">Shard and Partition Distribution in Tables</h3>
+
+<p>In ClickHouse, data is distributed across multiple nodes or shards in a cluster. Each shard is a physical unit of storage that may contain multiple partitions, which help organize the data logically.</p>
+
+<p>For example, consider a table <code class="language-plaintext highlighter-rouge">sales_data</code> that is distributed across three shards. Each shard might contain data for different time periods or geographic regions, allowing queries to target only relevant data for performance optimization.</p>
+
+<h3 id="mergetree-tables-and-data-storage">MergeTree Tables and Data Storage</h3>
+
+<p>The <strong>MergeTree</strong> family of tables is ClickHouse’s primary storage engine. Data in MergeTree tables is organized in parts, where each part corresponds to a subset of data stored in files on disk. Each part contains multiple rows of data and is stored in the columnar format.</p>
+
+<p>And this is the data structure of MergeTree tables:</p>
+
+<div class="mermaid">
+graph TD
+    A[MergeTree Table] --&gt; B[Parts]
+    B --&gt; C[Data Stored in Parts Columnar Format]
+    C --&gt; D[Sorted by Primary Key]
+    D --&gt; E[Primary Key Index]
+    B --&gt; F[Background Merging]
+    F --&gt; G[Merges Smaller Parts to Larger Parts]
+    A --&gt; H[Partitions]
+    H --&gt; I[Data Partitioned by Key （e.g., Date,region]
+    A --&gt; J[Marking and Removing Old Data]
+    J --&gt; K[TTL or Manual Deletion]
+    A --&gt; L[Aggregation and Indexing]
+    L --&gt; M[Efficient Querying with Aggregated Data]
+    classDef mergeTree fill:#ccf,stroke:#333,stroke-width:2px;
+    class A,B,C,D,E,F,G,H,I,J,K,L,M mergeTree;
+</div>
+
+<p><strong>MergeTree tables</strong> in ClickHouse are designed to handle large volumes of data while optimizing storage and query performance. Below are key features that contribute to these optimizations:</p>
+
+<ol>
+  <li>
+    <p><strong>Primary Key</strong>:<br />
+The data within each part of a <strong>MergeTree</strong> table is organized and sorted by a <strong>primary key</strong>. The primary key index helps with the efficient retrieval of rows and improves query performance, especially for range queries. It also enables the storage of data in an ordered fashion, which is critical for performing quick searches and aggregations.</p>
+  </li>
+  <li><strong>Parts Merging</strong>:<br />
+Over time, as new data is inserted, smaller parts are created. These parts are periodically merged in the background into <strong>larger parts</strong>. This merging process helps to:
+    <ul>
+      <li><strong>Reduce disk fragmentation</strong> by consolidating smaller data parts.</li>
+      <li><strong>Improve read and write performance</strong> by optimizing how data is accessed.</li>
+      <li><strong>Maintain optimal storage utilization</strong>, ensuring that large datasets are organized efficiently, leading to faster query execution.</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Columnar Storage</strong>:<br />
+Data is stored in a <strong>columnar format</strong> within each part, making it ideal for <strong>analytical queries</strong>. This format allows ClickHouse to read only the relevant columns for a query, which speeds up the query execution and reduces resource usage.</p>
+  </li>
+  <li><strong>Partitioning</strong>:<br />
+The table is divided into <strong>partitions</strong>, which are logical subdivisions of the data, often based on a key (e.g., date or region). Partitioning helps in:
+    <ul>
+      <li>Organizing data efficiently for faster querying.</li>
+      <li>Enabling better management and querying of data over time, such as time-series data.</li>
+      <li>Reducing the number of rows to scan, as only the relevant partitions are queried.</li>
+    </ul>
+  </li>
+  <li><strong>TTL (Time-to-Live) and Manual Data Deletion</strong>:<br />
+<strong>TTL (Time-to-Live)</strong> is a feature that allows data to be automatically deleted after a certain period. This is particularly useful for log or time-series data that becomes irrelevant over time.
+    <ul>
+      <li><strong>Manual deletion</strong> can also be performed on old data or specific partitions that are no longer needed, freeing up disk space and improving query performance.</li>
+    </ul>
+  </li>
+  <li><strong>Aggregation and Indexing</strong>:<br />
+<strong>Pre-aggregated data</strong> and <strong>secondary indexes</strong> can be created to speed up queries that involve heavy aggregations or filtering. This helps in:
+    <ul>
+      <li><strong>Efficient querying with aggregated data</strong>, as results can be retrieved directly from pre-aggregated values rather than recalculating them every time a query is run.</li>
+      <li><strong>Improving query performance</strong> by reducing the need to perform complex calculations during query execution.</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="partitioning-strategy">Partitioning Strategy</h3>
+
+<p>ClickHouse uses partitioning to divide large datasets into smaller, more manageable chunks. Typically, partitions are created by time, which makes it easier to prune data when querying recent data or performing time-based aggregations.</p>
+
+<p>For example, in a large <code class="language-plaintext highlighter-rouge">clickstream_data</code> table, partitions could be created by day or week, improving query performance when analyzing recent activity.</p>
+
+<h2 id="clickhouses-internal-architecture">ClickHouse’s Internal Architecture</h2>
+
+<p>ClickHouse operates on a distributed architecture, where data is spread across multiple nodes in a cluster. This distributed design ensures high availability, fault tolerance, and scalability.</p>
+
+<h3 id="key-components">Key Components</h3>
+
+<ul>
+  <li><strong>Shard</strong>: A unit of storage, representing a physical machine or node in the cluster.</li>
+  <li><strong>Replica</strong>: A copy of a shard’s data for redundancy. ClickHouse ensures that replicas are in sync to provide fault tolerance.</li>
+  <li><strong>Distributed Table</strong>: A virtual table that abstracts access to data stored across multiple shards and replicas.</li>
+  <li><strong>ZooKeeper</strong>: Used for managing metadata, leader election, and coordinating replica synchronization.</li>
+</ul>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Distributed Table]
+  B --&gt; C[Shard]
+  C --&gt; D[Replica]
+  D --&gt; E[Consumer]
+  E --&gt; F[ZooKeeper]
+</div>
+
+<h2 id="ensuring-high-reliability">Ensuring High Reliability</h2>
+
+<p>ClickHouse’s high availability and fault tolerance are guaranteed through its replication and synchronization strategies. These mechanisms ensure that even in the case of node failures, data is not lost and the system remains operational.</p>
+
+<h3 id="data-replication">Data Replication</h3>
+
+<p>Each shard in ClickHouse can have one or more replicas. Replicas store identical data and are synchronized with the leader shard. If a node or replica fails, the system can continue operating by redirecting queries to another replica.</p>
+
+<div class="mermaid">
+graph TD
+  A[Producer] --&gt; B[Leader Shard]
+  B --&gt; C[Replica 1]
+  B --&gt; D[Replica 2]
+  C --&gt; E[Write Sync]
+  D --&gt; E[Write Sync]
+</div>
+
+<h3 id="replica-synchronization">Replica Synchronization</h3>
+
+<p>Replicas synchronize their data using a process where changes made to the leader shard are propagated to the replicas. This ensures that all replicas are consistent and up-to-date with the leader shard.</p>
+
+<h3 id="partition-replication-and-fault-tolerance">Partition Replication and Fault Tolerance</h3>
+
+<p>ClickHouse provides fault tolerance through the replication of entire partitions. If a partition becomes unavailable on one replica due to a failure, another replica with the same data can serve the request without any downtime.</p>
+
+<h3 id="leader-election-and-failover">Leader Election and Failover</h3>
+
+<p>ZooKeeper is used for leader election in ClickHouse. When a replica fails, ZooKeeper helps determine which replica should take over as the leader. This ensures that the system can continue serving requests without interruption.</p>
+
+<div class="mermaid">
+graph TD
+  A[ZooKeeper] --&gt; B[Leader Election]
+  B --&gt; C[Replica 1]
+  B --&gt; D[Replica 2]
+  C --&gt; E[Leader Role]
+  D --&gt; F[Follower Role]
+</div>
+
+<h2 id="clickhouses-distributed-query-execution">ClickHouse’s Distributed Query Execution</h2>
+
+<p>ClickHouse can execute queries in parallel across multiple shards and replicas, ensuring that even complex queries over large datasets are processed efficiently.</p>
+
+<h3 id="distributed-query-execution-plan">Distributed Query Execution Plan</h3>
+
+<p>When a query is executed, the <strong>Distributed Table</strong> abstraction allows ClickHouse to create a query plan that targets the relevant shards and replicas. The query is broken down and sent to each shard in the cluster, which processes the query locally. Results from all shards are then aggregated and returned to the user.</p>
+
+<h3 id="materialized-views-for-optimization">Materialized Views for Optimization</h3>
+
+<p>ClickHouse supports <strong>materialized views</strong>, which are precomputed results of a query that are stored in the database. Materialized views are used to speed up query execution, especially for complex aggregations or frequent queries. Once a materialized view is created, ClickHouse updates it automatically when the underlying data changes.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>ClickHouse’s distributed architecture and OLAP capabilities make it an ideal choice for real-time data analytics. With features like partitioning, replication, and parallel query execution, it is well-suited for high-performance workloads. ClickHouse ensures high availability and fault tolerance, while also offering powerful mechanisms to scale out horizontally and optimize queries.</p>
+
+<p>The system’s robust design ensures that users can efficiently manage and analyze vast amounts of data in real time, making ClickHouse a critical tool for modern data-driven applications.</p>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="distribute" /><category term="clickhouse" /><summary type="html"><![CDATA[Introduction ClickHouse, an open-source columnar database management system (DBMS), is designed for online analytical processing (OLAP). It provides real-time data analysis with extremely fast query performance, even on massive datasets. Originally developed by Yandex, ClickHouse has become a popular solution for analytics-heavy use cases in large-scale environments, supporting high throughput and low-latency queries. ClickHouse’s architecture is engineered for distributed processing, offering both horizontal scalability and fault tolerance. This article delves into ClickHouse’s architecture and its core features, including data distribution, replication, and fault tolerance mechanisms. Key Terminologies Term Explanation Shard A physical subset of data that is stored on a specific set of nodes. Replica A copy of a shard’s data for fault tolerance and high availability. Table A collection of data organized into columns. MergeTree A special type of table that supports fast querying and efficient storage. Partition A logical division of data within a table, often mapped to a specific time period. Distributed Table A table that abstracts data stored on different nodes in a cluster. Replica Synchronization The process by which replicas stay in sync with their leader shard. Materialized View A precomputed view that stores the result of a query to optimize query performance. ClickHouse’s Storage Mechanism Columnar Storage ClickHouse’s storage engine is optimized for OLAP workloads. It stores data in columnar format, which is ideal for analytical queries that often only access a few columns at a time. This section explores the data distribution, partitioning, and table storage mechanisms in ClickHouse. What is the the difference between row format and columnar format? graph TD subgraph Row_Store[Row Storage] direction LR A1[User ID: 1] --&gt; B1[Name: Zhang San] --&gt; C1[Age: 25] --&gt; D1[Address: Beijing] A2[User ID: 2] --&gt; B2[Name: Li Si] --&gt; C2[Age: 30] --&gt; D2[Address: Shanghai] A3[User ID: 3] --&gt; B3[Name: Wang Wu] --&gt; C3[Age: 28] --&gt; D3[Address: Guangzhou] end subgraph Column_Store[Column Storage] direction TB A4[User ID] --&gt; A5[1] --&gt; A6[2] --&gt; A7[3] B4[Name] --&gt; B5[Zhang San] --&gt; B6[Li Si] --&gt; B7[Wang Wu] C4[Age] --&gt; C5[25] --&gt; C6[30] --&gt; C7[28] D4[Address] --&gt; D5[Beijing] --&gt; D6[Shanghai] --&gt; D7[Guangzhou] end class Row_Store row_style; class Column_Store column_style; classDef row_style, stroke-width:2px; classDef column_style, stroke-width:2px; Join Operation SELECT p.product_name, SUM(o.amount) AS total_sales FROM orders o JOIN products p ON o.product_id = p.product_id GROUP BY p.product_name; This query will be executed in the following steps: graph TD subgraph Node1[Node 1] direction TB P1[Read Partition 1 Data] --&gt; A2[Read Data from orders table] P2[Read Partition 1 Data] --&gt; A3[Read Data from products table] A2 --&gt; B1[Local JOIN] A3 --&gt; B1[Local JOIN] B1 --&gt; C1[Local Aggregation] end subgraph Node2[Node 2] direction TB P3[Read Partition 2 Data] --&gt; A4[Read Data from orders table] P4[Read Partition 2 Data] --&gt; A5[Read Data from products table] A4 --&gt; B2[Local JOIN] A5 --&gt; B2[Local JOIN] B2 --&gt; C2[Local Aggregation] end subgraph NodeN[Node N] direction TB Pn[Read Partition N Data] --&gt; A6[Read Data from orders table] Pn2[Read Partition N Data] --&gt; A7[Read Data from products table] A6 --&gt; BN[Local JOIN] A7 --&gt; BN[Local JOIN] BN --&gt; CN[Local Aggregation] end C1 --&gt; D1[Global Aggregation] C2 --&gt; D1[Global Aggregation] CN --&gt; D1[Global Aggregation] D1 --&gt; E1[Return Final Result] classDef query_step fill:#f9f,stroke:#333,stroke-width:2px; class A2,A3,A4,A5,A6,A7,B1,B2,BN,C1,C2,CN,D1,E1 query_step; data structure and advantages or disadvantages Data Type Description Advantages Disadvantages Use Cases Query Difficulty Insert Difficulty Aggregate Analysis Difficulty Array Stores multiple elements of the same data type, such as integers, strings, etc. - Flexible, supports various data types. - Efficient for querying and manipulating array elements. - Does not support heterogeneous data (only stores elements of the same type). - Performance may degrade with a large number of elements. - Storing related values like multiple tags, products, etc. - Storing bulk data. Simple, supports direct indexing and element access. Easy, insert multiple values directly. Aggregation can be resource-intensive with large data. Tuple Stores a fixed number of elements with different types. - Supports heterogeneous data, number of elements is fixed. - Suitable for storing composite data fields. - Fixed number of elements, not suitable for dynamic changes. - Does not support dynamically altering data structure. - Storing user information, composite fields, tags, etc. - Suitable for storing structured data. Simple, can access elements by position. Simple, directly insert a tuple. Aggregation can handle individual element aggregation directly. LowCardinality Used for columns with a low cardinality (few unique values), compressing and mapping values to integers to save memory. - Significantly reduces memory and storage usage, especially for repeated data. - Increases query speed. - Only suitable for low-cardinality data. - May affect query sorting and comparison operations. - Suitable for data with a small number of unique values, like cities, gender, categories. Good query performance, especially for filtering operations. Easy to insert, suitable for bulk insertion of low-cardinality data. High efficiency in aggregation. UUID Universal Unique Identifier (128-bit identifier), typically used for globally unique identifiers. - Ensures globally unique identification, avoids ID collisions. - Common in distributed systems. - Large storage space, query performance may be slower, especially in sorting and indexing operations. - ID in distributed systems. - Unique identifier scenarios, such as order IDs, session IDs. Slower for queries, especially involving sorting. Easy to insert, suitable for globally unique identifiers. Aggregation is not difficult, but performance may be slower with large data. DateTime Stores date and time with second precision. - Suitable for timestamp, time-series data. - Provides rich time handling functions. - Relatively larger storage space. - Only precise to the second, no higher precision. - Log analysis, event tracking, time range queries, etc. - Data partitioning by time. High performance for range queries based on time. Easy to insert, especially with consistent date format. High performance for aggregation by time. Date Stores only the date (precision to day). - Smaller storage space, efficient for date-only data. - Efficient for date queries and aggregation. - Cannot handle time details (like hours, minutes, seconds). - Storing date data, such as birth dates, event dates, log dates, etc. Extremely efficient for date range queries. Simple to insert, just provide date data. High performance for day/month aggregation. String Stores variable-length strings. - Highly flexible, supports various text data. - Suitable for textual fields. - Storage and query performance may be slower, especially for large text data. - Not suitable for structured or complex data. - Storing user names, product descriptions, addresses, etc. - Suitable for unstructured textual data. Slower for queries involving large datasets. Easy to insert, suitable for general text data. Performance may be affected with large text data in aggregation. Map Stores a collection of key-value pairs, where keys and values can be of different types. - Extremely flexible, suitable for storing dynamic and changing data structures. - Supports fast lookups by key. - Higher complexity, querying may be slower, especially when there are many different key-value pairs. - Storing dynamic key-value pairs like user attributes, configurations, log information, etc. Querying is more complex, involves key-value lookups. Relatively easy to insert dynamic key-value pairs. Aggregation may affect performance when handling a large number of key-value pairs. Nested Stores hierarchical data, typically used to represent many-to-many or one-to-many relationships, similar to JSON arrays. - Very suitable for storing complex, hierarchical data. - Can handle complex relationships like users and orders. - Querying and manipulating nested data may be complex, especially with large datasets; ARRAY JOIN may affect performance. - Storing users with multiple orders, multi-dimensional data, etc. - Suitable for many-to-many and hierarchical data. Querying requires ARRAY JOIN to flatten data, relatively complex. Slightly complex, data must match the nested format. Aggregation can be done by level but requires ARRAY JOIN, which complicates queries. Shard and Partition Distribution in Tables In ClickHouse, data is distributed across multiple nodes or shards in a cluster. Each shard is a physical unit of storage that may contain multiple partitions, which help organize the data logically. For example, consider a table sales_data that is distributed across three shards. Each shard might contain data for different time periods or geographic regions, allowing queries to target only relevant data for performance optimization. MergeTree Tables and Data Storage The MergeTree family of tables is ClickHouse’s primary storage engine. Data in MergeTree tables is organized in parts, where each part corresponds to a subset of data stored in files on disk. Each part contains multiple rows of data and is stored in the columnar format. And this is the data structure of MergeTree tables: graph TD A[MergeTree Table] --&gt; B[Parts] B --&gt; C[Data Stored in Parts Columnar Format] C --&gt; D[Sorted by Primary Key] D --&gt; E[Primary Key Index] B --&gt; F[Background Merging] F --&gt; G[Merges Smaller Parts to Larger Parts] A --&gt; H[Partitions] H --&gt; I[Data Partitioned by Key （e.g., Date,region] A --&gt; J[Marking and Removing Old Data] J --&gt; K[TTL or Manual Deletion] A --&gt; L[Aggregation and Indexing] L --&gt; M[Efficient Querying with Aggregated Data] classDef mergeTree fill:#ccf,stroke:#333,stroke-width:2px; class A,B,C,D,E,F,G,H,I,J,K,L,M mergeTree; MergeTree tables in ClickHouse are designed to handle large volumes of data while optimizing storage and query performance. Below are key features that contribute to these optimizations: Primary Key: The data within each part of a MergeTree table is organized and sorted by a primary key. The primary key index helps with the efficient retrieval of rows and improves query performance, especially for range queries. It also enables the storage of data in an ordered fashion, which is critical for performing quick searches and aggregations. Parts Merging: Over time, as new data is inserted, smaller parts are created. These parts are periodically merged in the background into larger parts. This merging process helps to: Reduce disk fragmentation by consolidating smaller data parts. Improve read and write performance by optimizing how data is accessed. Maintain optimal storage utilization, ensuring that large datasets are organized efficiently, leading to faster query execution. Columnar Storage: Data is stored in a columnar format within each part, making it ideal for analytical queries. This format allows ClickHouse to read only the relevant columns for a query, which speeds up the query execution and reduces resource usage. Partitioning: The table is divided into partitions, which are logical subdivisions of the data, often based on a key (e.g., date or region). Partitioning helps in: Organizing data efficiently for faster querying. Enabling better management and querying of data over time, such as time-series data. Reducing the number of rows to scan, as only the relevant partitions are queried. TTL (Time-to-Live) and Manual Data Deletion: TTL (Time-to-Live) is a feature that allows data to be automatically deleted after a certain period. This is particularly useful for log or time-series data that becomes irrelevant over time. Manual deletion can also be performed on old data or specific partitions that are no longer needed, freeing up disk space and improving query performance. Aggregation and Indexing: Pre-aggregated data and secondary indexes can be created to speed up queries that involve heavy aggregations or filtering. This helps in: Efficient querying with aggregated data, as results can be retrieved directly from pre-aggregated values rather than recalculating them every time a query is run. Improving query performance by reducing the need to perform complex calculations during query execution. Partitioning Strategy ClickHouse uses partitioning to divide large datasets into smaller, more manageable chunks. Typically, partitions are created by time, which makes it easier to prune data when querying recent data or performing time-based aggregations. For example, in a large clickstream_data table, partitions could be created by day or week, improving query performance when analyzing recent activity. ClickHouse’s Internal Architecture ClickHouse operates on a distributed architecture, where data is spread across multiple nodes in a cluster. This distributed design ensures high availability, fault tolerance, and scalability. Key Components Shard: A unit of storage, representing a physical machine or node in the cluster. Replica: A copy of a shard’s data for redundancy. ClickHouse ensures that replicas are in sync to provide fault tolerance. Distributed Table: A virtual table that abstracts access to data stored across multiple shards and replicas. ZooKeeper: Used for managing metadata, leader election, and coordinating replica synchronization. graph TD A[Producer] --&gt; B[Distributed Table] B --&gt; C[Shard] C --&gt; D[Replica] D --&gt; E[Consumer] E --&gt; F[ZooKeeper] Ensuring High Reliability ClickHouse’s high availability and fault tolerance are guaranteed through its replication and synchronization strategies. These mechanisms ensure that even in the case of node failures, data is not lost and the system remains operational. Data Replication Each shard in ClickHouse can have one or more replicas. Replicas store identical data and are synchronized with the leader shard. If a node or replica fails, the system can continue operating by redirecting queries to another replica. graph TD A[Producer] --&gt; B[Leader Shard] B --&gt; C[Replica 1] B --&gt; D[Replica 2] C --&gt; E[Write Sync] D --&gt; E[Write Sync] Replica Synchronization Replicas synchronize their data using a process where changes made to the leader shard are propagated to the replicas. This ensures that all replicas are consistent and up-to-date with the leader shard. Partition Replication and Fault Tolerance ClickHouse provides fault tolerance through the replication of entire partitions. If a partition becomes unavailable on one replica due to a failure, another replica with the same data can serve the request without any downtime. Leader Election and Failover ZooKeeper is used for leader election in ClickHouse. When a replica fails, ZooKeeper helps determine which replica should take over as the leader. This ensures that the system can continue serving requests without interruption. graph TD A[ZooKeeper] --&gt; B[Leader Election] B --&gt; C[Replica 1] B --&gt; D[Replica 2] C --&gt; E[Leader Role] D --&gt; F[Follower Role] ClickHouse’s Distributed Query Execution ClickHouse can execute queries in parallel across multiple shards and replicas, ensuring that even complex queries over large datasets are processed efficiently. Distributed Query Execution Plan When a query is executed, the Distributed Table abstraction allows ClickHouse to create a query plan that targets the relevant shards and replicas. The query is broken down and sent to each shard in the cluster, which processes the query locally. Results from all shards are then aggregated and returned to the user. Materialized Views for Optimization ClickHouse supports materialized views, which are precomputed results of a query that are stored in the database. Materialized views are used to speed up query execution, especially for complex aggregations or frequent queries. Once a materialized view is created, ClickHouse updates it automatically when the underlying data changes. Conclusion ClickHouse’s distributed architecture and OLAP capabilities make it an ideal choice for real-time data analytics. With features like partitioning, replication, and parallel query execution, it is well-suited for high-performance workloads. ClickHouse ensures high availability and fault tolerance, while also offering powerful mechanisms to scale out horizontally and optimize queries. The system’s robust design ensures that users can efficiently manage and analyze vast amounts of data in real time, making ClickHouse a critical tool for modern data-driven applications.]]></summary></entry><entry><title type="html">My Efficient Tools for Development as a Developer</title><link href="http://localhost:4000/blog/efficient-development-tools/" rel="alternate" type="text/html" title="My Efficient Tools for Development as a Developer" /><published>2025-02-14T00:00:00+08:00</published><updated>2025-02-14T00:00:00+08:00</updated><id>http://localhost:4000/blog/efficient-development-tools</id><content type="html" xml:base="http://localhost:4000/blog/efficient-development-tools/"><![CDATA[<h2 id="abstract">Abstract</h2>
 
 <p>In this article, I will introduce a range of tools that enhance the productivity of software developers. These tools span across multiple domains such as code editors, version control, debugging, project management, and more. I will not only highlight these tools but also explain how to configure them and introduce key plugins that optimize the development process.</p>
 
@@ -1696,185 +2103,4 @@ systemctl status jaeger
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="tracing" /><summary type="html"><![CDATA[Install Jaeger To install Jaeger version 1.42.0 on a Linux system, follow the steps below. Jaeger is an open-source distributed tracing system, and you can install it using pre-built binaries, Docker, or through package managers. This guide will cover the installation process using pre-built binaries. Step 1: Download the Jaeger Binary Go to the Jaeger GitHub releases page and find version 1.42.0. Or use wget to directly download the binary: wget https://github.com/jaegertracing/jaeger/releases/download/v1.42.0/jaeger-linux-amd64.tar.gz Once downloaded, extract the .tar.gz file: tar -xvzf jaeger-linux-amd64.tar.gz This will create a folder containing the Jaeger binaries (jaeger-agent, jaeger-collector, jaeger-query, etc.). Step 2: Move Jaeger to a System Directory Move the extracted binaries to a directory in your PATH (e.g., /usr/local/bin): mv jaeger-linux-amd64 /usr/local/bin/jaeger Ensure the binaries are executable: chmod +x /usr/local/bin/jaeger Step 3: Create a Configuration File (Optional) Create a directory for Jaeger configuration and add the jaeger-config.yaml file: mkdir -p /etc/jaeger vim /etc/jaeger/jaeger-config.yaml The content for jaeger-config.yaml: collector: http-port: 5775 grpc-port: 14250 agent: http-port: 5778 query: http-port: 16686 storage: type: cassandra cassandra: contact-points: - "localhost:9042" keyspace: jaeger timeout: 30s Step 4: Configure Data Directories Define storage directories for Jaeger: mkdir -p /var/jaeger/cassandra /var/jaeger/storage chown -R jaeger:jaeger /var/jaeger Create the Jaeger systemd service file: vim /etc/systemd/system/jaeger.service Add the following content: [Unit] Description=Jaeger Documentation=https://www.jaegertracing.io/docs/latest/ After=network.target [Service] ExecStart=/usr/local/bin/jaeger --config.file=/etc/jaeger/jaeger-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Jaeger Service Reload systemd, enable and start the Jaeger service: systemctl daemon-reload systemctl enable jaeger systemctl start jaeger systemctl status jaeger To monitor logs: journalctl -u jaeger -f Verify the Jaeger version: jaeger --version Conclusion By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.]]></summary></entry><entry><title type="html">Distribute Design Kafka</title><link href="http://localhost:4000/blog/distribute-design-kafka/" rel="alternate" type="text/html" title="Distribute Design Kafka" /><published>2018-07-11T00:00:00+08:00</published><updated>2018-07-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/distribute-design-kafka</id><content type="html" xml:base="http://localhost:4000/blog/distribute-design-kafka/"><![CDATA[<h2 id="introduction">Introduction</h2>
-
-<p>Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark.</p>
-
-<p>As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles.</p>
-
-<h2 id="key-terminologies">Key Terminologies</h2>
-
-<table>
-  <thead>
-    <tr>
-      <th>Term</th>
-      <th>Explanation</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Broker</td>
-      <td>A Kafka node that handles message processing. Multiple brokers form a Kafka cluster.</td>
-    </tr>
-    <tr>
-      <td>Topic</td>
-      <td>Kafka uses topics to categorize messages. Every message published to Kafka needs a topic.</td>
-    </tr>
-    <tr>
-      <td>Producer</td>
-      <td>The client that sends messages to Kafka brokers.</td>
-    </tr>
-    <tr>
-      <td>Consumer</td>
-      <td>The client that reads messages from Kafka brokers.</td>
-    </tr>
-    <tr>
-      <td>Consumer Group</td>
-      <td>A group of consumers, where each message can only be consumed by one consumer within the group.</td>
-    </tr>
-    <tr>
-      <td>Partition</td>
-      <td>The physical division of a topic. A topic can have multiple partitions.</td>
-    </tr>
-    <tr>
-      <td>Segment</td>
-      <td>A partition is divided into multiple segments.</td>
-    </tr>
-    <tr>
-      <td>Offset</td>
-      <td>A unique identifier for messages within a partition. Each message has a sequential offset number.</td>
-    </tr>
-  </tbody>
-</table>
-
-<h2 id="kafkas-storage-mechanism">Kafka’s Storage Mechanism</h2>
-
-<p>Kafka’s storage mechanism can be understood from four aspects:</p>
-
-<h3 id="partition-distribution-in-topics">Partition Distribution in Topics</h3>
-
-<p>In a Kafka cluster, each partition of a topic is stored across multiple brokers.<br />
-For instance, consider a setup where a topic like report_push has four partitions.<br />
-Kafka partitions are stored as directories with the naming convention: <code class="language-plaintext highlighter-rouge">topic-name-partition-index</code>.</p>
-
-<h3 id="partition-file-storage">Partition File Storage</h3>
-
-<p>Each partition is stored as a series of segments, which are essentially large files.<br />
-Each segment file consists of two parts: an index file (.index) and a data file (.log).</p>
-
-<div class="mermaid">
-graph TD
-  A[Producer] --&gt;|Pushes data| B[Kafka Broker]
-  B --&gt;|Distributes messages| C[Partition]
-  C --&gt; D[Segment]
-  D --&gt; E[Message]
-</div>
-
-<h3 id="segment-storage-structure">Segment Storage Structure</h3>
-
-<p>A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages.<br />
-Segment files are named based on the last message’s offset, helping Kafka efficiently locate data.</p>
-
-<div class="mermaid">
-graph TD
-  A[Segment] --&gt; B[Index File]
-  A --&gt; C[Data File]
-  B --&gt; D[Message Metadata]
-  C --&gt; E[Message Data]
-</div>
-
-<h3 id="locating-messages-using-offsets">Locating Messages Using Offsets</h3>
-
-<p>Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it.</p>
-
-<div class="mermaid">
-graph TD
-  A[Partition] --&gt; B[Message with Offset]
-  B --&gt; C[Index File Lookup]
-  C --&gt; D[Data File Access]
-</div>
-
-<h2 id="kafkas-internal-architecture">Kafka’s Internal Architecture</h2>
-
-<p>The internal architecture of Kafka includes the following core components:</p>
-
-<ul>
-  <li><strong>Producer:</strong> Sends messages to the Kafka cluster.</li>
-  <li><strong>Broker:</strong> Handles messages and stores partitions.</li>
-  <li><strong>Consumer:</strong> Pulls messages from the Kafka cluster.</li>
-  <li><strong>Zookeeper:</strong> Manages Kafka’s cluster state and coordinates leader election and partition management.</li>
-</ul>
-
-<div class="mermaid">
-graph TD
-  A[Producer] --&gt; B[Broker]
-  B --&gt; C[Partition]
-  C --&gt; D[Consumer]
-  D --&gt; E[Zookeeper]
-</div>
-
-<h2 id="ensuring-high-reliability">Ensuring High Reliability</h2>
-
-<p>Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures.</p>
-
-<h3 id="data-synchronization">Data Synchronization</h3>
-
-<p>Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers.</p>
-
-<div class="mermaid">
-graph TD
-  A[Producer] --&gt; B[Leader Partition]
-  B --&gt; C[Follower 1]
-  B --&gt; D[Follower 2]
-  C --&gt; E[Write Sync]
-  D --&gt; E[Write Sync]
-</div>
-
-<h3 id="replica-placement-strategy">Replica Placement Strategy</h3>
-
-<p>Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas.</p>
-
-<div class="mermaid">
-graph TD
-  A[Broker 1] --&gt; B[Partition 1 Replica 1]
-  A[Broker 2] --&gt; C[Partition 1 Replica 2]
-  A[Broker 3] --&gt; D[Partition 1 Replica 3]
-</div>
-
-<h3 id="synchronization-strategy">Synchronization Strategy</h3>
-
-<p>Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader.</p>
-
-<div class="mermaid">
-graph TD
-  A[Producer] --&gt; B[Leader]
-  B --&gt; C[Follower 1]
-  B --&gt; D[Follower 2]
-  C --&gt; E[ACK]
-  D --&gt; E[ACK]
-  E --&gt; F[Leader Commit]
-</div>
-
-<h3 id="leader-election">Leader Election</h3>
-
-<p>Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition.</p>
-
-<div class="mermaid">
-graph TD
-  A[Zookeeper] --&gt; B[Partition 1 Leader Election]
-  B --&gt; C[Follower 1]
-  B --&gt; D[Follower 2]
-  C --&gt; E[Leader Role]
-  D --&gt; F[Follower Role]
-</div>
-
-<h2 id="conclusion">Conclusion</h2>
-
-<p>Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems.</p>
-
-<p>The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.</p>
-
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true });
-</script>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="distribute" /><category term="kafka" /><summary type="html"><![CDATA[Introduction Apache Kafka, initially developed by LinkedIn, is a distributed messaging system that has become a core component of Apache’s ecosystem. Written in Scala, Kafka is renowned for its scalability and high throughput. It is widely used in big data platforms and integrates seamlessly with distributed processing systems like Cloudera, Apache Storm, and Apache Spark. As a commercially viable middleware, Kafka’s message reliability is of utmost importance. How can we ensure the precise transmission, accurate storage, and correct consumption of messages? This article dives into Kafka’s architecture and reliability mechanisms, including its storage structure, replication, and synchronization principles. Key Terminologies Term Explanation Broker A Kafka node that handles message processing. Multiple brokers form a Kafka cluster. Topic Kafka uses topics to categorize messages. Every message published to Kafka needs a topic. Producer The client that sends messages to Kafka brokers. Consumer The client that reads messages from Kafka brokers. Consumer Group A group of consumers, where each message can only be consumed by one consumer within the group. Partition The physical division of a topic. A topic can have multiple partitions. Segment A partition is divided into multiple segments. Offset A unique identifier for messages within a partition. Each message has a sequential offset number. Kafka’s Storage Mechanism Kafka’s storage mechanism can be understood from four aspects: Partition Distribution in Topics In a Kafka cluster, each partition of a topic is stored across multiple brokers. For instance, consider a setup where a topic like report_push has four partitions. Kafka partitions are stored as directories with the naming convention: topic-name-partition-index. Partition File Storage Each partition is stored as a series of segments, which are essentially large files. Each segment file consists of two parts: an index file (.index) and a data file (.log). graph TD A[Producer] --&gt;|Pushes data| B[Kafka Broker] B --&gt;|Distributes messages| C[Partition] C --&gt; D[Segment] D --&gt; E[Message] Segment Storage Structure A segment file includes index and data files. The index file stores metadata, while the data file stores actual messages. Segment files are named based on the last message’s offset, helping Kafka efficiently locate data. graph TD A[Segment] --&gt; B[Index File] A --&gt; C[Data File] B --&gt; D[Message Metadata] C --&gt; E[Message Data] Locating Messages Using Offsets Kafka uses the offset to locate messages within the partition. Each message has an offset number, which is used to efficiently find and retrieve it. graph TD A[Partition] --&gt; B[Message with Offset] B --&gt; C[Index File Lookup] C --&gt; D[Data File Access] Kafka’s Internal Architecture The internal architecture of Kafka includes the following core components: Producer: Sends messages to the Kafka cluster. Broker: Handles messages and stores partitions. Consumer: Pulls messages from the Kafka cluster. Zookeeper: Manages Kafka’s cluster state and coordinates leader election and partition management. graph TD A[Producer] --&gt; B[Broker] B --&gt; C[Partition] C --&gt; D[Consumer] D --&gt; E[Zookeeper] Ensuring High Reliability Kafka’s high reliability stems from its robust replication mechanism, which ensures message availability even in the event of broker failures. Data Synchronization Kafka introduced replication in version 0.8 to mitigate data loss during broker failures. Each partition has multiple replicas, with one replica acting as the leader and others as followers. graph TD A[Producer] --&gt; B[Leader Partition] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[Write Sync] D --&gt; E[Write Sync] Replica Placement Strategy Kafka distributes replicas across multiple brokers to balance load. It employs a modular arithmetic approach to determine where to place replicas. graph TD A[Broker 1] --&gt; B[Partition 1 Replica 1] A[Broker 2] --&gt; C[Partition 1 Replica 2] A[Broker 3] --&gt; D[Partition 1 Replica 3] Synchronization Strategy Producers only send messages to the leader of a partition. After the leader writes the message, followers synchronize with the leader. graph TD A[Producer] --&gt; B[Leader] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[ACK] D --&gt; E[ACK] E --&gt; F[Leader Commit] Leader Election Kafka’s leader election is managed by Zookeeper, which uses a distributed lock mechanism to ensure that only one replica becomes the leader of a partition. graph TD A[Zookeeper] --&gt; B[Partition 1 Leader Election] B --&gt; C[Follower 1] B --&gt; D[Follower 2] C --&gt; E[Leader Role] D --&gt; F[Follower Role] Conclusion Kafka’s architecture ensures high reliability, scalability, and performance, making it a vital tool in modern data processing. With its sophisticated replication mechanism, partitioning strategies, and efficient storage system, Kafka delivers message guarantees and fault tolerance that are crucial in large-scale distributed systems. The above content outlines Kafka’s design and operational principles, integrating your provided article with added explanations and visualization using Mermaid diagrams. This should give a clear and comprehensive understanding of Kafka’s message storage, architecture, and reliability features.]]></summary></entry></feed>
+<p>By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.</p>]]></content><author><name>Madden Zhang</name></author><category term="Blog" /><category term="monitor" /><category term="tracing" /><summary type="html"><![CDATA[Install Jaeger To install Jaeger version 1.42.0 on a Linux system, follow the steps below. Jaeger is an open-source distributed tracing system, and you can install it using pre-built binaries, Docker, or through package managers. This guide will cover the installation process using pre-built binaries. Step 1: Download the Jaeger Binary Go to the Jaeger GitHub releases page and find version 1.42.0. Or use wget to directly download the binary: wget https://github.com/jaegertracing/jaeger/releases/download/v1.42.0/jaeger-linux-amd64.tar.gz Once downloaded, extract the .tar.gz file: tar -xvzf jaeger-linux-amd64.tar.gz This will create a folder containing the Jaeger binaries (jaeger-agent, jaeger-collector, jaeger-query, etc.). Step 2: Move Jaeger to a System Directory Move the extracted binaries to a directory in your PATH (e.g., /usr/local/bin): mv jaeger-linux-amd64 /usr/local/bin/jaeger Ensure the binaries are executable: chmod +x /usr/local/bin/jaeger Step 3: Create a Configuration File (Optional) Create a directory for Jaeger configuration and add the jaeger-config.yaml file: mkdir -p /etc/jaeger vim /etc/jaeger/jaeger-config.yaml The content for jaeger-config.yaml: collector: http-port: 5775 grpc-port: 14250 agent: http-port: 5778 query: http-port: 16686 storage: type: cassandra cassandra: contact-points: - "localhost:9042" keyspace: jaeger timeout: 30s Step 4: Configure Data Directories Define storage directories for Jaeger: mkdir -p /var/jaeger/cassandra /var/jaeger/storage chown -R jaeger:jaeger /var/jaeger Create the Jaeger systemd service file: vim /etc/systemd/system/jaeger.service Add the following content: [Unit] Description=Jaeger Documentation=https://www.jaegertracing.io/docs/latest/ After=network.target [Service] ExecStart=/usr/local/bin/jaeger --config.file=/etc/jaeger/jaeger-config.yaml Restart=on-failure User=delian Group=delian [Install] WantedBy=multi-user.target Step 5: Start Jaeger Service Reload systemd, enable and start the Jaeger service: systemctl daemon-reload systemctl enable jaeger systemctl start jaeger systemctl status jaeger To monitor logs: journalctl -u jaeger -f Verify the Jaeger version: jaeger --version Conclusion By following the above steps, you should have Jaeger installed and running with the necessary configurations for distributed tracing. You can now proceed to integrate Jaeger with other components like Prometheus, Grafana, etc., for a complete monitoring and tracing solution.]]></summary></entry></feed>
