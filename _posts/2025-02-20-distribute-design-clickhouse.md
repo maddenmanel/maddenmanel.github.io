@@ -120,6 +120,12 @@ graph TD
 
 ### Global Aggregation
 
+**Global aggregation** is a process that aggregates data from multiple nodes in a distributed system. It involves distributing the data across multiple nodes, each performing local aggregation, and then merging the results to produce a global aggregate.
+
+**(Distribute Data to Compute Nodes)**: This step ensures the data is divided across multiple computing nodes.
+**(Hash Grouping at Each Node)**: The hashing and grouping based on keys happen locally at each node.
+**(Merge Local Aggregation Results)**: The aggregation results from different nodes are merged to obtain the global sum.
+
 <div class="mermaid">
 graph TD
     A[数据输入] --> B[分布式数据分配到各计算节点]
