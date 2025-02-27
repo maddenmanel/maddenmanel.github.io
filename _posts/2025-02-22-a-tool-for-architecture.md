@@ -29,6 +29,10 @@ The tool will generate the package structure and the best practice for the archi
 
 Clean Architecture provides a robust blueprint for maintainable systems by isolating business logic from external concerns. When combined with DDD, it excels in modeling complex domains, while adapting MVC keeps UI-focused apps structured. By organizing packages according to architectural boundaries, teams can achieve clarity, scalability, and testability. Whether building a microservice with DDD or a web app with MVC, Clean Architecture’s principles ensure your codebase remains resilient to change.
 
+
+
+
+
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
