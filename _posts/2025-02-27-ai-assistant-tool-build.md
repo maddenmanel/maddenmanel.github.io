@@ -18,6 +18,17 @@ tags:
 
 You can build a tool for chat with the tool. i build the chat use this github repo.[https://chrome.google.com/webstore/devconsole](https://chrome.google.com/webstore/devconsole/f3f7d424-5a01-4910-acd6-80c0a55f9991)
 
+## Tools For chrome
+
+You can build a chrome extension to improve you work efficiency.
+
+
+## WeChat Official Account
+
+
+## WeChat Mini Program
+
+
 ## Conclusion
 
 Clean Architecture provides a robust blueprint for maintainable systems by isolating business logic from external concerns. When combined with DDD, it excels in modeling complex domains, while adapting MVC keeps UI-focused apps structured. By organizing packages according to architectural boundaries, teams can achieve clarity, scalability, and testability. Whether building a microservice with DDD or a web app with MVC, Clean Architecture’s principles ensure your codebase remains resilient to change.
