@@ -12,6 +12,9 @@ tags:
 
 ## Introduction
 
+The last you will see that, the developer role will shift a lot from typing and code monkey-ing, to very high-level direction and monitoring.
+
+
 **Clean Architecture** the last artcicle i talked about the architecture. How we implement it in our project. And how we can use it to build a microservice. How we can maintain the architecture and everyone can understand it and follow it.
 
 This article is a tool for architecture. I will introduce a tool that can help us to implement the architecture. When we create the project, we can use this tool to generate the project structure. And the best practice can include in the tool. It includes **Domain-Driven Design (DDD)**, and how it contrasts with or enhances traditional **MVC (Model-View-Controller)**. We’ll also dissect how to organize packages for these architectures.
