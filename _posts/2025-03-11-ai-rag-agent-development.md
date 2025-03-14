@@ -1,5 +1,5 @@
 ---
-title: "A"
+title: "AI Rag Agent Development"
 mathjax: true
 toc: true
 excerpt_separator: "<!--more-->"
@@ -89,7 +89,6 @@ To distribute the installer as an `.exe` file, use **PyInstaller**:
 ```sh
 pyinstaller --onefile --noconsole --uac-admin install_plugin.py
 ```
-
 ### Explanation of Arguments:
 - `--onefile` → Creates a single `.exe` file.
 - `--noconsole` → Hides the console window.
@@ -105,10 +104,6 @@ Once built, the final executable file will be available in the `dist/` directory
 4. Chrome is **restarted automatically**.
 5. The extension is **installed and enabled**.
 
-**No manual installation required!**  
-**No need to drag and drop the CRX file!**  
-**Ideal for enterprise or internal plugin deployment!**  
-
 ## Conclusion
 
 This tool offers an efficient way to install Chrome extensions **without user intervention**. By integrating **Python scripting, Windows Registry modifications, and PyInstaller**, we achieve a seamless experience for users and IT administrators.
@@ -121,4 +116,3 @@ This solution is particularly useful for **internal tools, enterprise deployment
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
 </script>
-
