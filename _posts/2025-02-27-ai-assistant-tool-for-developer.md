@@ -1,5 +1,5 @@
 ---
-title: "AI Assistant Tool Myself"
+title: "AI Assistant Tool For Developer"
 mathjax: true
 toc: true
 excerpt_separator: "<!--more-->"

@@ -12,107 +12,32 @@ tags:
 
 ## Introduction
 
-如何快速的构建一个AI代理，
+## How to Quickly Build an AI Agent
 
-Manually installing a Chrome extension outside the Chrome Web Store can be cumbersome due to Chrome's restrictions on `.crx` installations. This article introduces a tool that automates the installation process by leveraging **Python and Windows Registry modifications**. With this approach, users can install a Chrome extension with a single click.
+The fastest way to build an AI agent is through low-code platforms like Coze or Dify. These platforms allow you to quickly import knowledge bases and rapidly construct an AI agent.
 
-## What is the tool?
+A second approach is to use frameworks like LangChain or LangChain4j. This method requires writing your own code but enables more complex functionalities. Compared to Coze, Dify is more suitable for small teams to quickly build AI agents based on Dify to create an MVP version for validation.
 
-This tool streamlines the extension installation process by automating the following steps:
-1. **Extracting CRX extension files** to a local directory.
-2. **Modifying Windows Registry** to register the extension.
-3. **Restarting Chrome** to enable the extension automatically.
-4. **Packaging the script into an EXE** for easy distribution and installation.
+构建AI代理最快的方法是通过低代码平台如Coze或Dify。这些平台允许你快速导入知识库并迅速构建AI代理。
 
-By using this tool, you eliminate the need for manual CRX file handling and simplify the deployment of internal Chrome extensions.
+第二种方法是使用像LangChain或LangChain4j这样的框架。这种方法需要编写自己的代码，但能实现更复杂的功能。相比Coze，Dify更适合小团队基于Dify快速构建AI代理，创建MVP版本进行验证。
 
-## Implementation
+## What the technical stack for buiding a AI Agent
 
-The following Python script automates the installation process:
+In the Java ecosystem, we typically use Java + LangChain4j + Spring AI to quickly build RAG logic. For vector databases, we generally use Milvus or Weaviate. For hybrid search, we employ Elasticsearch or OpenSearch. The API layer is usually built with Spring Boot or Quarkus. Large language models commonly used are OpenAI or local LLMs (such as Llama.cpp). For storage, we often choose PostgreSQL or MongoDB, and for deployment, we typically use Docker or Kubernetes.
 
-```python
-import os
-import zipfile
-import shutil
-import winreg
-import subprocess
+Compared to Python, Java has fewer libraries and tools in the AI domain. Support for new AI technologies and models is usually delayed in Java, and the documentation and community support for LangChain4j and Spring AI are relatively weak.
 
-EXTENSION_ID = "abcdefghijklmnoabcdefghijklmno"
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CRX_PATH = os.path.join(BASE_DIR, "my_extension.crx")
-EXTENSION_PATH = os.path.join(BASE_DIR, "chrome_extension")
 
-def extract_crx():
-    if not os.path.exists(EXTENSION_PATH):
-        os.makedirs(EXTENSION_PATH)
-    with zipfile.ZipFile(CRX_PATH, 'r') as zip_ref:
-        zip_ref.extractall(EXTENSION_PATH)
-    print(f"Extension extracted to: {EXTENSION_PATH}")
+在Java生态中，我们一般使用Java + LangChain4j + Spring AI 来快速构建RAG逻辑，向量数据库一般采用Milvus / Weaviate，混合搜索层面使用Elasticsearch / OpenSearch，API层使用Spring Boot / Quarkus，大模型一般使用OpenAI / 本地LLM (如Llama.cpp)。存储一般采用PostgreSQL / MongoDB，部署一般采用Docker / K8s。
 
-def add_extension_to_registry():
-    key_path = fr"Software\\Google\\Chrome\\Extensions\\{EXTENSION_ID}"
-    try:
-        key = winreg.CreateKey(winreg.HKEY_LOCAL_MACHINE, key_path)
-        winreg.SetValueEx(key, "path", 0, winreg.REG_SZ, EXTENSION_PATH)
-        winreg.SetValueEx(key, "version", 0, winreg.REG_SZ, "1.0")
-        winreg.CloseKey(key)
-        print(f"Registry updated: {key_path}")
-    except Exception as e:
-        print(f"Failed to modify registry: {e}")
+相比Python，Java在AI领域的库和工具较少，新的AI技术和模型在Java中的支持通常滞后，并且LangChain4j / Spring AI的文档和社区支持相对较弱。
 
-def restart_chrome():
-    try:
-        print("Closing Chrome...")
-        subprocess.call("taskkill /IM chrome.exe /F", shell=True)
-        print("Chrome closed.")
-    except Exception as e:
-        print(f"Failed to close Chrome: {e}")
+## What is the most important part of buiding a AI Agent
 
-def start_chrome():
-    chrome_path = r"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-    if os.path.exists(chrome_path):
-        subprocess.Popen([chrome_path], shell=True)
-        print("Chrome restarted.")
-    else:
-        print("Chrome not found. Please open it manually.")
-
-if __name__ == "__main__":
-    extract_crx()
-    add_extension_to_registry()
-    restart_chrome()
-    start_chrome()
-    print("Extension installed successfully!")
-```
-
-## Packaging the Tool
-
-To distribute the installer as an `.exe` file, use **PyInstaller**:
-
-```sh
-pyinstaller --onefile --noconsole --uac-admin install_plugin.py
-```
-### Explanation of Arguments:
-- `--onefile` → Creates a single `.exe` file.
-- `--noconsole` → Hides the console window.
-- `--uac-admin` → Requests **administrator privileges** (required for modifying the Windows Registry).
-
-Once built, the final executable file will be available in the `dist/` directory as `install_plugin.exe`.
-
-## How It Works
-
-1. The user **runs the executable**.
-2. The script **extracts** the CRX to a local directory.
-3. The **Windows Registry** is updated to register the extension.
-4. Chrome is **restarted automatically**.
-5. The extension is **installed and enabled**.
+在构建AI代理时，最重要的是解决大模型核心的幻觉问题和知识更新问题。另外，如果企业有条件，可以基于通用模型构建自己的垂直领域模型。通过模型微调进一步解决幻觉问题。下面是我在做RAG实践过程中遇到的一些问题以及我的思考和解决方案，在这里作为一个总结和记录。不管是用coze还是dify以及自建的agent，以下都是要考虑的问题。
 
 ## Conclusion
-
-This tool offers an efficient way to install Chrome extensions **without user intervention**. By integrating **Python scripting, Windows Registry modifications, and PyInstaller**, we achieve a seamless experience for users and IT administrators.
-
-This solution is particularly useful for **internal tools, enterprise deployments, and custom Chrome extensions** that are not available in the Chrome Web Store.
-
-**Now, users can install your extension effortlessly!** 
 
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
