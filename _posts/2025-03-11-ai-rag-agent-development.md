@@ -12,6 +12,8 @@ tags:
 
 ## Introduction
 
+如何快速的构建一个AI代理，
+
 Manually installing a Chrome extension outside the Chrome Web Store can be cumbersome due to Chrome's restrictions on `.crx` installations. This article introduces a tool that automates the installation process by leveraging **Python and Windows Registry modifications**. With this approach, users can install a Chrome extension with a single click.
 
 ## What is the tool?

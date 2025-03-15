@@ -1,5 +1,5 @@
 ---
-title: "AI Assistant Tool Build"
+title: "AI Assistant Tool Myself"
 mathjax: true
 toc: true
 excerpt_separator: "<!--more-->"
@@ -12,26 +12,32 @@ tags:
 
 ## Introduction
 
-**Clean Architecture** Sometimes we need to build a tool to help us to build a tool that can help use improve the efficiency. This article is the tools i build for myself that can help me improve the efficiency. Some tools you can download from the article and use it.If this tool is useful for you, i will be very happy if you can give me some feedback.
+As artificial intelligence continues to evolve and become more accessible, I've found myself increasingly drawn to creating AI-powered tools that enhance productivity and streamline workflows. In this blog post, I'll share my experiences developing various AI assistant tools across different platforms - from chat applications to browser extensions, and even WeChat integrations.
+These tools aren't just theoretical exercises; they're practical solutions I've built and use daily. I'll walk through the development process, challenges faced, and lessons learned while creating AI assistants for different use cases. Whether you're a developer looking to build similar tools or simply curious about AI applications, this post will provide valuable insights into the world of practical AI tool development.
 
-## Tools For Chat
-
-You can build a tool for chat with the tool. i build the chat use this github repo.[https://chrome.google.com/webstore/devconsole](https://chrome.google.com/webstore/devconsole/f3f7d424-5a01-4910-acd6-80c0a55f9991)
 
 ## Tools For chrome
 
-You can build a chrome extension to improve you work efficiency.
+I've developed several Chrome extensions to enhance my daily workflow and productivity. Here's an overview of my key Chrome extension projects, You can build an AI-powered chat interface directly in Chrome, allowing quick access to AI assistance while browsing.
+You can build a chrome extension to improve you work efficiency. i build the chat use this github repo.[https://chrome.google.com/webstore/devconsole](https://chrome.google.com/webstore/devconsole/f3f7d424-5a01-4910-acd6-80c0a55f9991)
 
 
 ## WeChat Official Account
 
+WeChat Official Accounts provide a powerful platform for sharing technical content and engaging with followers. I've developed my own tech-focused official account where I regularly publish articles about:
+And this is my own wechat official account address.
+[https://mp.weixin.qq.com/cgi-bin/home?t=home/index&lang=zh_CN&token=690353045](https://mp.weixin.qq.com/cgi-bin/home?t=home/index&lang=zh_CN&token=690353045)
+
 
 ## WeChat Mini Program
 
+Wechat Mini Program is a platform that allows users to create and publish their own applications. I've developed my own tech-focused mini program where I regularly publish articles about:
+And this is my own wechat mini program address.
+[https://mp.weixin.qq.com/wxamp/index/index?token=19353642&lang=zh_CN](https://mp.weixin.qq.com/wxamp/index/index?token=19353642&lang=zh_CN)
 
 ## Conclusion
 
-Clean Architecture provides a robust blueprint for maintainable systems by isolating business logic from external concerns. When combined with DDD, it excels in modeling complex domains, while adapting MVC keeps UI-focused apps structured. By organizing packages according to architectural boundaries, teams can achieve clarity, scalability, and testability. Whether building a microservice with DDD or a web app with MVC, Clean Architecture’s principles ensure your codebase remains resilient to change.
+In conclusion, developing AI assistant tools for various platforms has been an exciting and rewarding journey. From Chrome extensions to WeChat integrations, each project has presented unique challenges and opportunities for innovation. These tools have not only enhanced my personal productivity but also demonstrated the practical applications of AI in everyday tasks.
 
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';

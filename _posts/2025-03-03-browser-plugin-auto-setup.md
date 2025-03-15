@@ -114,11 +114,9 @@ Once built, the final executable file will be available in the `dist/` directory
 This tool offers an efficient way to install Chrome extensions **without user intervention**. By integrating **Python scripting, Windows Registry modifications, and PyInstaller**, we achieve a seamless experience for users and IT administrators.
 
 This solution is particularly useful for **internal tools, enterprise deployments, and custom Chrome extensions** that are not available in the Chrome Web Store.
-
 **Now, users can install your extension effortlessly!** 
 
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({ startOnLoad: true });
 </script>
-
