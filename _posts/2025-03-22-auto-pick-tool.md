@@ -36,7 +36,7 @@ Now there are some similar tools on the market, like the Amazon Associates, CJ A
 
 And there also some tools like the Impact、Awin, but they are just let the use visit the different affiliate networks, and they don't provide the product selection and intelligent recommendations.
 
-![alt text](/assets/images/2025-03-22-auto-pick-tool/1.png)
+![auto pick tool competitive analysis](/assets/images/2025-03-22-auto-pick-tool/1.png)
 
 
 
