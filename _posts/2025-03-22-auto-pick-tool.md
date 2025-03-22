@@ -38,7 +38,11 @@ And there also some tools like the Impact、Awin, but they are just let the use 
 
 ![auto pick tool competitive analysis](/assets/images/2025-03-22-auto-pick-tool/1.png)
 
+## Project Implementation
+Prompt cursor use the claude 3.7 sonnet to generate the project code.Let's begin writing code for this project. We'll use Spring Boot as our framework, with Elasticsearch for data storage. For the initial phase, we'll integrate with Amazon Associates, ShareASale, and ClickBank to fetch product data. After standardization, this data will be stored in Elasticsearch. For the design pattern, we'll employ either a strategy factory or a rule engine approach to facilitate the integration of additional affiliate networks in the future.
 
+
+## Conclusion
 
 
 
