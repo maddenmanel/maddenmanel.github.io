@@ -14,6 +14,7 @@ tags:
 
 In the world of Affiliate Marketing, content creators often face the challenge of selecting optimal products from platforms like Amazon and eBay. This selection process is both time-consuming and resource-intensive. Our Auto Pick Tool aims to streamline this workflow, enabling content creators to efficiently identify and promote the most valuable products from various affiliate networks.
 
+We know the Affiliate is a platform that allows users to earn money by promoting products from other websites. And like amazon affiliate a lot of blogs and social media use the affiliate link to promote the products and earn money from the affiliate link. [amazon-affiliate-marketing](https://www.shopify.com/zh/blog/amazon-affiliate-marketing) 
 
 ## The project plan
 
@@ -41,8 +42,21 @@ And there also some tools like the Impact、Awin, but they are just let the use 
 ## Project Implementation
 Prompt cursor use the claude 3.7 sonnet to generate the project code.Let's begin writing code for this project. We'll use Spring Boot as our framework, with Elasticsearch for data storage. For the initial phase, we'll integrate with Amazon Associates, ShareASale, and ClickBank to fetch product data. After standardization, this data will be stored in Elasticsearch. For the design pattern, we'll employ either a strategy factory or a rule engine approach to facilitate the integration of additional affiliate networks in the future.
 
+## Design detail
 
-## Conclusion
+I will accord the question one by one and answer it. And finally I will get the tool which i want to do.
+
+How to design the product goods in one db, and how to design the product categorization and filtering?
+
+How to generate the marketing tools use the goods information from the affiliate networks?
+
+How to Recommend the goods information from the affiliate networks?
+
+
+
+
+
+## front interface design
 
 
 
