@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🌻 张云起的小花园 🐛</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #87ceeb; font-family: -apple-system, "PingFang SC", "Comic Sans MS", sans-serif; }
+  #game { display: block; touch-action: none; }
+  #hud {
+    position: fixed; top: 0; left: 0; right: 0; height: 70px;
+    background: linear-gradient(to bottom, #ffd54f, #ffb300);
+    display: flex; align-items: center; justify-content: space-around;
+    z-index: 10; box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    border-bottom: 4px solid #ff6f00;
+  }
+  .score-box {
+    background: #fff; border-radius: 20px; padding: 6px 18px;
+    font-size: 22px; font-weight: bold; color: #e65100;
+    border: 3px solid #ff6f00; display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .score-box .label { font-size: 14px; color: #bf360c; }
+  #hint {
+    position: fixed; top: 75px; left: 50%; transform: translateX(-50%);
+    background: rgba(255,255,255,0.9); padding: 8px 18px; border-radius: 20px;
+    font-size: 16px; color: #e65100; font-weight: bold; z-index: 10;
+    border: 2px solid #ffd54f;
+    animation: wiggle 2s infinite;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: translateX(-50%) rotate(-2deg); }
+    50% { transform: translateX(-50%) rotate(2deg); }
+  }
+  #hint.hide { display: none; }
+  #again {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none;
+    align-items: center; justify-content: center; z-index: 100;
+  }
+  #again .panel {
+    background: linear-gradient(135deg, #ffecb3, #ffcc80);
+    border: 6px solid #ff6f00; border-radius: 24px;
+    padding: 30px 40px; text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  #again h1 { font-size: 42px; color: #e65100; margin-bottom: 16px; }
+  #again p { font-size: 20px; color: #bf360c; margin-bottom: 24px; }
+  #again button {
+    padding: 16px 40px; font-size: 24px; font-weight: bold;
+    background: linear-gradient(135deg, #66bb6a, #388e3c);
+    color: #fff; border: 4px solid #1b5e20; border-radius: 30px;
+    cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  #cheer {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 60px; font-weight: bold; color: #fff;
+    text-shadow: 0 0 10px #ff6f00, 0 4px 0 #e65100, 0 0 20px #fff;
+    pointer-events: none; z-index: 50; opacity: 0;
+  }
+  #cheer.show { animation: cheer 1s ease-out; }
+  @keyframes cheer {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+    30% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+    70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+  }
+  #musicBtn {
+    position: fixed; top: 12px; right: 10px; z-index: 20;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #fff; border: 3px solid #ff6f00;
+    font-size: 22px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  /* ========= 超大名字 Splash ========= */
+  #splash {
+    position: fixed; inset: 0; z-index: 200;
+    background: linear-gradient(135deg, #64b5f6, #81d4fa, #aed581, #ffd54f);
+    background-size: 400% 400%;
+    animation: rainbow 8s ease infinite;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; text-align: center;
+  }
+  @keyframes rainbow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  #splash .deco-top, #splash .deco-bot {
+    font-size: 36px; letter-spacing: 8px; margin: 10px 0;
+  }
+  #splash .name-big {
+    display: flex; gap: 4px; margin: 10px 0;
+  }
+  #splash .name-big span {
+    font-size: 80px; font-weight: 900;
+    color: #fff;
+    text-shadow:
+      0 0 8px #ff6f00,
+      0 4px 0 #e65100,
+      0 8px 0 #bf360c,
+      0 12px 20px rgba(0,0,0,0.3);
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-text-stroke: 2px #bf360c;
+    animation: nameBounce 1.4s ease-in-out infinite;
+  }
+  #splash .name-big span:nth-child(1) { animation-delay: 0s; color: #ffeb3b; }
+  #splash .name-big span:nth-child(2) { animation-delay: 0.15s; color: #ff8a65; }
+  #splash .name-big span:nth-child(3) { animation-delay: 0.3s; color: #4fc3f7; }
+  @keyframes nameBounce {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-14px) rotate(3deg); }
+  }
+  #splash .subtitle {
+    font-size: 32px; font-weight: bold; color: #fff;
+    text-shadow: 0 3px 0 #e65100, 0 6px 10px rgba(0,0,0,0.2);
+    margin: 14px 0 24px;
+  }
+  #splash .start-btn {
+    padding: 20px 60px; font-size: 32px; font-weight: 900;
+    background: linear-gradient(135deg, #66bb6a, #388e3c);
+    color: #fff; border: 5px solid #1b5e20; border-radius: 40px;
+    cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    animation: startPulse 1s ease-in-out infinite;
+    font-family: inherit;
+  }
+  @keyframes startPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  #splash.hide { display: none; }
+
+  /* ========= 游戏内名字横幅 ========= */
+  #nameBanner {
+    position: fixed; top: 72px; left: 50%; transform: translateX(-50%);
+    z-index: 9; display: flex; gap: 2px; align-items: center;
+    background: rgba(255,255,255,0.85); padding: 4px 14px;
+    border-radius: 0 0 20px 20px; border: 2px solid #ff6f00; border-top: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  #nameBanner .n {
+    font-size: 20px; font-weight: 900;
+    -webkit-text-stroke: 1px #bf360c;
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  #nameBanner .n1 { color: #ffb300; }
+  #nameBanner .n2 { color: #ff7043; }
+  #nameBanner .n3 { color: #29b6f6; }
+  #nameBanner .of { font-size: 16px; color: #8d6e63; font-weight: bold; margin-left: 4px; }
+</style>
+</head>
+<body>
+<!-- 开场大名字 Splash -->
+<div id="splash">
+  <div class="deco-top">🌻 ⭐ 🌻 ⭐ 🌻</div>
+  <div class="name-big">
+    <span>张</span><span>云</span><span>起</span>
+  </div>
+  <div class="subtitle">的小花园 🌻</div>
+  <button class="start-btn" onclick="startGame()">开始玩 🎮</button>
+  <div class="deco-bot">🐛 ✨ 🐌 ✨ 🐢</div>
+</div>
+
+<!-- 顶部名字条（游戏中常驻） -->
+<div id="nameBanner">
+  <span class="n n1">张</span><span class="n n2">云</span><span class="n n3">起</span>
+  <span class="of">的花园</span>
+</div>
+
+<div id="hud">
+  <div class="score-box"><span>🐛</span><span class="label">打败</span><span id="score">0</span></div>
+  <div class="score-box"><span>🌻</span><span class="label">花园</span><span id="level">1</span></div>
+</div>
+<button id="musicBtn" onclick="toggleMusic()">🔊</button>
+<div id="hint">云起👆 点空地种花 · 点小虫打它！</div>
+<canvas id="game"></canvas>
+<div id="cheer"></div>
+<div id="again">
+  <div class="panel">
+    <h1 id="againTitle">🎉 云起好厉害！</h1>
+    <p id="againDesc">云起打败了 0 个小虫！</p>
+    <button onclick="location.reload()">云起再玩一次 🌻</button>
+  </div>
+</div>
+
+<script>
+// ============ 音频系统（Web Audio） ============
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let musicGain = null;
+let sfxGain = null;
+let musicOn = true;
+let musicTimer = null;
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new AudioCtx();
+  musicGain = audioCtx.createGain();
+  musicGain.gain.value = 0.12;
+  musicGain.connect(audioCtx.destination);
+  sfxGain = audioCtx.createGain();
+  sfxGain.gain.value = 0.25;
+  sfxGain.connect(audioCtx.destination);
+}
+
+const N = {
+  C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+  C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00, B5: 987.77,
+  C6: 1046.5,
+};
+
+function tone(freq, start, dur, type = 'triangle', vol = 0.3, dest) {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const env = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  env.gain.setValueAtTime(0, start);
+  env.gain.linearRampToValueAtTime(vol, start + 0.015);
+  env.gain.exponentialRampToValueAtTime(0.001, start + dur);
+  osc.connect(env);
+  env.connect(dest || sfxGain);
+  osc.start(start);
+  osc.stop(start + dur + 0.05);
+}
+
+const MELODY = [
+  ['C5', 0.5], ['E5', 0.5], ['G5', 0.5], ['E5', 0.5],
+  ['C5', 0.5], ['E5', 0.5], ['G5', 1.0],
+  ['A5', 0.5], ['G5', 0.5], ['E5', 0.5], ['C5', 0.5],
+  ['D5', 0.5], ['E5', 0.5], ['C5', 1.0],
+  ['G5', 0.5], ['A5', 0.5], ['G5', 0.5], ['E5', 0.5],
+  ['F5', 0.5], ['E5', 0.5], ['D5', 1.0],
+  ['C5', 0.5], ['D5', 0.5], ['E5', 0.5], ['F5', 0.5],
+  ['G5', 0.5], ['E5', 0.5], ['C5', 1.0],
+];
+const BASS = [
+  ['C4', 1], ['G4', 1], ['C4', 1], ['G4', 1],
+  ['F4', 1], ['C4', 1], ['G4', 1], ['C4', 1],
+  ['C4', 1], ['G4', 1], ['F4', 1], ['G4', 1],
+  ['C4', 1], ['F4', 1], ['G4', 1], ['C4', 1],
+];
+
+function scheduleMusic() {
+  if (!audioCtx || !musicOn) return;
+  const bpm = 110;
+  const beat = 60 / bpm;
+  let t = audioCtx.currentTime + 0.05;
+  for (const [n, d] of MELODY) {
+    tone(N[n], t, d * beat * 0.9, 'triangle', 0.22, musicGain);
+    t += d * beat;
+  }
+  let tb = audioCtx.currentTime + 0.05;
+  for (const [n, d] of BASS) {
+    tone(N[n], tb, d * beat * 0.85, 'sine', 0.18, musicGain);
+    tb += d * beat;
+  }
+  const totalBeats = MELODY.reduce((s, [, d]) => s + d, 0);
+  const totalMs = totalBeats * beat * 1000;
+  musicTimer = setTimeout(scheduleMusic, totalMs);
+}
+
+function startMusic() {
+  initAudio();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  musicOn = true;
+  if (musicTimer) clearTimeout(musicTimer);
+  scheduleMusic();
+  document.getElementById('musicBtn').textContent = '🔊';
+}
+
+function stopMusic() {
+  musicOn = false;
+  if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
+  if (musicGain) musicGain.gain.value = 0;
+  document.getElementById('musicBtn').textContent = '🔇';
+}
+
+function toggleMusic() {
+  if (musicOn) stopMusic();
+  else {
+    if (musicGain) musicGain.gain.value = 0.12;
+    startMusic();
+  }
+}
+
+function sfxPlant() {
+  initAudio(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  tone(N.C5, t, 0.12, 'triangle', 0.3);
+  tone(N.E5, t + 0.08, 0.12, 'triangle', 0.3);
+  tone(N.G5, t + 0.16, 0.18, 'triangle', 0.3);
+}
+function sfxShoot() {
+  initAudio(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  tone(N.G5, t, 0.06, 'square', 0.12);
+  tone(N.C6, t + 0.04, 0.06, 'square', 0.1);
+}
+function sfxHit() {
+  initAudio(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  tone(N.A4, t, 0.08, 'sawtooth', 0.15);
+}
+function sfxDefeat() {
+  initAudio(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  tone(N.C5, t, 0.08, 'triangle', 0.3);
+  tone(N.E5, t + 0.06, 0.08, 'triangle', 0.3);
+  tone(N.G5, t + 0.12, 0.08, 'triangle', 0.3);
+  tone(N.C6, t + 0.18, 0.2, 'triangle', 0.35);
+}
+function sfxCheer() {
+  initAudio(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  tone(N.G5, t, 0.1, 'triangle', 0.3);
+  tone(N.C6, t + 0.1, 0.2, 'triangle', 0.35);
+}
+function sfxLevelUp() {
+  initAudio(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const notes = [N.C5, N.E5, N.G5, N.C6, N.E5, N.G5, N.C6];
+  notes.forEach((f, i) => tone(f, t + i * 0.08, 0.15, 'triangle', 0.3));
+}
+function sfxLoseHeart() {
+  initAudio(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  tone(N.E4, t, 0.2, 'sine', 0.25);
+  tone(N.C4, t + 0.15, 0.3, 'sine', 0.25);
+}
+
+function firstInteract() {
+  initAudio();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  document.removeEventListener('touchstart', firstInteract);
+  document.removeEventListener('click', firstInteract);
+}
+document.addEventListener('touchstart', firstInteract, { passive: true });
+document.addEventListener('click', firstInteract);
+
+// ============ 游戏核心 ============
+const COLS = 6, ROWS = 3;
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+let CELL_W, CELL_H, BOARD_W, BOARD_H;
+let DPR = 1;
+
+function resize() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const availH = vh - 70 - 36;
+  const availW = vw;
+  let w = availW, h = availW * ROWS / COLS;
+  if (h > availH) { h = availH; w = h * COLS / ROWS; }
+  DPR = window.devicePixelRatio || 1;
+  canvas.width = Math.floor(w * DPR);
+  canvas.height = Math.floor(h * DPR);
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  canvas.style.position = 'fixed';
+  canvas.style.left = ((vw - w) / 2) + 'px';
+  canvas.style.top = (70 + 36 + (availH - h) / 2) + 'px';
+  BOARD_W = w; BOARD_H = h;
+  CELL_W = w / COLS; CELL_H = h / ROWS;
+}
+window.addEventListener('resize', resize);
+resize();
+
+const state = {
+  started: false,
+  plants: [],
+  zombies: [],
+  bullets: [],
+  hearts: [],
+  score: 0,
+  level: 1,
+  lives: 3,
+  zombieSpawnTimer: 3,
+  hintShown: true,
+  gameOver: false,
+};
+
+const hintEl = document.getElementById('hint');
+const scoreEl = document.getElementById('score');
+const levelEl = document.getElementById('level');
+const cheerEl = document.getElementById('cheer');
+const CHEERS = ['云起好棒！', '云起真聪明！', '云起加油！', '云起真厉害！', '云起继续！', '哇哦！', 'YEAH！', '云起真勇敢！'];
+
+function cheer(msg) {
+  cheerEl.textContent = msg || CHEERS[Math.floor(Math.random() * CHEERS.length)];
+  cheerEl.classList.remove('show');
+  void cheerEl.offsetWidth;
+  cheerEl.classList.add('show');
+}
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  if (e.touches && e.touches[0]) {
+    return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+  }
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+}
+
+function onTap(e) {
+  e.preventDefault();
+  if (state.gameOver) return;
+  const { x, y } = getPos(e);
+  for (const z of state.zombies) {
+    const cy = z.row * CELL_H + CELL_H/2;
+    const dx = x - z.x, dy = y - cy;
+    if (dx*dx + dy*dy < (CELL_H*0.45)*(CELL_H*0.45)) {
+      z.hp -= 25;
+      z.hit = 0.2;
+      sfxHit();
+      state.hearts.push({ x: z.x, y: cy, vy: -2, life: 30, text: '💥', size: 28 });
+      if (hintEl && state.hintShown) { hintEl.classList.add('hide'); state.hintShown = false; }
+      return;
+    }
+  }
+  const col = Math.floor(x / CELL_W);
+  const row = Math.floor(y / CELL_H);
+  if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return;
+  if (state.plants.some(p => p.row === row && p.col === col)) {
+    const p = state.plants.find(p => p.row === row && p.col === col);
+    p.bounce = performance.now();
+    state.hearts.push({ x: p.x, y: p.y, vy: -2, life: 30, text: '💕', size: 24 });
+    return;
+  }
+  const px = col * CELL_W + CELL_W/2;
+  const py = row * CELL_H + CELL_H/2;
+  state.plants.push({ row, col, x: px, y: py, cd: 0, planted: performance.now(), hp: 200 });
+  sfxPlant();
+  for (let i = 0; i < 8; i++) {
+    const ang = (i / 8) * Math.PI * 2;
+    state.hearts.push({ x: px, y: py, vx: Math.cos(ang)*3, vy: Math.sin(ang)*3 - 1, life: 25, text: '✨', size: 20 });
+  }
+  if (hintEl && state.hintShown) { hintEl.classList.add('hide'); state.hintShown = false; }
+}
+canvas.addEventListener('click', onTap);
+canvas.addEventListener('touchstart', onTap, { passive: false });
+
+function spawnZombie() {
+  const row = Math.floor(Math.random() * ROWS);
+  const lv = state.level;
+  let kind = 'normal', hp = 50;
+  if (lv >= 3 && Math.random() < 0.3) { kind = 'cone'; hp = 100; }
+  if (lv >= 5 && Math.random() < 0.2) { kind = 'bucket'; hp = 180; }
+  state.zombies.push({ row, x: BOARD_W + 30, hp, maxHp: hp, kind, speed: 0.08 + lv * 0.01, eating: null, hit: 0 });
+}
+
+let lastTime = performance.now();
+
+function loop(now) {
+  const dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
+  if (state.started && !state.gameOver) update(dt);
+  render();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+function update(dt) {
+  state.zombieSpawnTimer -= dt;
+  if (state.zombieSpawnTimer <= 0) {
+    const interval = Math.max(3, 6 - state.level * 0.3);
+    state.zombieSpawnTimer = interval + Math.random() * 2;
+    spawnZombie();
+  }
+  for (const p of state.plants) {
+    p.cd -= dt;
+    if (p.cd <= 0) {
+      const hasZ = state.zombies.some(z => z.row === p.row && z.x > p.x && z.x < BOARD_W + 30);
+      if (hasZ) {
+        state.bullets.push({ row: p.row, x: p.x + CELL_W*0.2, y: p.y - 8 });
+        sfxShoot();
+        p.cd = 1.5;
+      }
+    }
+  }
+  for (let i = state.bullets.length - 1; i >= 0; i--) {
+    const b = state.bullets[i];
+    b.x += 300 * dt;
+    if (b.x > BOARD_W + 30) { state.bullets.splice(i, 1); continue; }
+    for (const z of state.zombies) {
+      if (z.row !== b.row) continue;
+      if (Math.abs(z.x - b.x) < CELL_W * 0.35 && z.hp > 0) {
+        z.hp -= 25; z.hit = 0.15;
+        state.bullets.splice(i, 1); break;
+      }
+    }
+  }
+  for (let i = state.zombies.length - 1; i >= 0; i--) {
+    const z = state.zombies[i];
+    if (z.hit > 0) z.hit -= dt;
+    if (z.hp <= 0) {
+      state.score++;
+      scoreEl.textContent = state.score;
+      sfxDefeat();
+      const cy = z.row * CELL_H + CELL_H/2;
+      for (let k = 0; k < 12; k++) {
+        const ang = (k / 12) * Math.PI * 2;
+        state.hearts.push({ x: z.x, y: cy, vx: Math.cos(ang)*4, vy: Math.sin(ang)*4 - 2, life: 30, text: ['🌟','⭐','✨','💫'][k%4], size: 22 });
+      }
+      if (state.score % 3 === 0) { cheer(); sfxCheer(); }
+      if (state.score > 0 && state.score % 8 === 0) {
+        state.level++;
+        levelEl.textContent = state.level;
+        cheer(`🌻 云起花园 ${state.level}！`);
+        sfxLevelUp();
+      }
+      state.zombies.splice(i, 1);
+      continue;
+    }
+    const zc = z.x / CELL_W;
+    const targetCol = Math.floor(zc - 0.3);
+    const blocker = state.plants.find(p => p.row === z.row && p.col === targetCol);
+    if (blocker) {
+      blocker.hp -= 20 * dt;
+      blocker.angry = 0.3;
+      if (blocker.hp <= 0) state.plants = state.plants.filter(p => p !== blocker);
+    } else {
+      z.x -= z.speed * 60 * dt;
+      if (z.x < -10) {
+        state.zombies.splice(i, 1);
+        state.lives--;
+        sfxLoseHeart();
+        cheer('哎呀！');
+        if (state.lives <= 0) gameOver();
+      }
+    }
+  }
+  for (const p of state.plants) { if (p.angry > 0) p.angry -= dt; }
+  for (let i = state.hearts.length - 1; i >= 0; i--) {
+    const h = state.hearts[i];
+    h.x += h.vx || 0;
+    h.y += h.vy || 0;
+    h.vy = (h.vy || 0) + 0.2;
+    h.life--;
+    if (h.life <= 0) state.hearts.splice(i, 1);
+  }
+}
+
+function gameOver() {
+  state.gameOver = true;
+  document.getElementById('againTitle').textContent = state.score >= 10 ? '🏆 张云起太棒啦！' : '🌻 张云起再来一次？';
+  document.getElementById('againDesc').textContent = `张云起打败了 ${state.score} 个小虫！`;
+  document.getElementById('again').style.display = 'flex';
+}
+
+function render() {
+  for (let r = 0; r < ROWS; r++) {
+    const colors = r % 2 === 0 ? ['#aed581', '#9ccc65'] : ['#9ccc65', '#8bc34a'];
+    ctx.fillStyle = colors[0];
+    ctx.fillRect(0, r * CELL_H, BOARD_W, CELL_H);
+    ctx.fillStyle = colors[1];
+    for (let i = 0; i < 15; i++) {
+      const gx = (i * 97 + r * 53) % BOARD_W;
+      const gy = r * CELL_H + ((i * 31) % CELL_H);
+      ctx.beginPath(); ctx.arc(gx, gy, 3, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  drawHouse();
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1;
+  for (let c = 1; c < COLS; c++) {
+    ctx.beginPath(); ctx.moveTo(c * CELL_W, 0); ctx.lineTo(c * CELL_W, BOARD_H); ctx.stroke();
+  }
+  for (let r = 1; r < ROWS; r++) {
+    ctx.beginPath(); ctx.moveTo(0, r * CELL_H); ctx.lineTo(BOARD_W, r * CELL_H); ctx.stroke();
+  }
+  for (const p of state.plants) drawPlant(p);
+  for (const b of state.bullets) {
+    ctx.font = `${CELL_W * 0.25}px sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('🫧', b.x, b.y);
+  }
+  for (const z of state.zombies) drawZombie(z);
+  for (const h of state.hearts) {
+    ctx.globalAlpha = Math.min(1, h.life / 25);
+    ctx.font = `${h.size}px sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(h.text, h.x, h.y);
+    ctx.globalAlpha = 1;
+  }
+  drawLives();
+}
+
+function drawHouse() {
+  const hw = CELL_W * 0.6, hh = BOARD_H;
+  const x = -hw * 0.1;
+  ctx.fillStyle = '#e57373';
+  ctx.beginPath();
+  ctx.moveTo(x, hh * 0.3); ctx.lineTo(x + hw/2, hh * 0.05); ctx.lineTo(x + hw, hh * 0.3);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#fff176';
+  ctx.fillRect(x, hh * 0.3, hw, hh * 0.7);
+  ctx.fillStyle = '#8d6e63';
+  ctx.fillRect(x + hw*0.3, hh * 0.6, hw*0.4, hh*0.4);
+}
+
+function drawPlant(p) {
+  const cx = p.x, cy = p.y;
+  const size = Math.min(CELL_W, CELL_H) * 0.75;
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + size*0.35, size*0.35, size*0.08, 0, 0, Math.PI*2);
+  ctx.fill();
+  let bounceY = 0;
+  const t1 = (performance.now() - p.planted) / 400;
+  if (t1 < 1) bounceY = Math.sin(t1 * Math.PI) * 10;
+  if (p.bounce) {
+    const t2 = (performance.now() - p.bounce) / 300;
+    if (t2 < 1) bounceY += Math.sin(t2 * Math.PI) * 6;
+    else p.bounce = 0;
+  }
+  let sway = 0;
+  if (p.angry > 0) sway = Math.sin(performance.now() / 50) * 3;
+  ctx.font = `${size}px sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('🌻', cx + sway, cy - bounceY);
+  if (p.hp < 200) {
+    const w = size * 0.7;
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(cx - w/2, cy + size*0.38, w, 5);
+    ctx.fillStyle = '#66bb6a';
+    ctx.fillRect(cx - w/2, cy + size*0.38, w * p.hp / 200, 5);
+  }
+}
+
+function drawZombie(z) {
+  const cy = z.row * CELL_H + CELL_H/2;
+  const size = Math.min(CELL_W, CELL_H) * 0.75;
+  const sway = Math.sin(performance.now() / 200 + z.x * 0.05) * 4;
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.beginPath();
+  ctx.ellipse(z.x, cy + size*0.4, size*0.3, size*0.06, 0, 0, Math.PI*2);
+  ctx.fill();
+  let icon = '🐛';
+  if (z.kind === 'cone') icon = '🐌';
+  if (z.kind === 'bucket') icon = '🐢';
+  ctx.font = `${size}px sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  if (z.hit > 0) {
+    ctx.save();
+    ctx.translate(z.x, cy + sway); ctx.scale(1.2, 1.2); ctx.globalAlpha = 0.8;
+    ctx.fillStyle = '#ff5252'; ctx.fillText(icon, 0, 0);
+    ctx.globalAlpha = 1; ctx.restore();
+  } else {
+    ctx.fillText(icon, z.x, cy + sway);
+  }
+  if (z.hp < z.maxHp) {
+    const w = size * 0.75;
+    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+    ctx.fillRect(z.x - w/2, cy - size*0.5, w, 5);
+    ctx.fillStyle = '#ef5350';
+    ctx.fillRect(z.x - w/2, cy - size*0.5, w * z.hp / z.maxHp, 5);
+  }
+}
+
+function drawLives() {
+  ctx.font = '28px sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  for (let i = 0; i < 3; i++) {
+    ctx.globalAlpha = i < state.lives ? 1 : 0.25;
+    ctx.fillText('❤️', 8 + i * 34, 8);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function startGame() {
+  document.getElementById('splash').classList.add('hide');
+  state.started = true;
+  lastTime = performance.now();
+  initAudio();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (musicOn) startMusic();
+  cheer('张云起 加油！🌻');
+  sfxLevelUp();
+}
+
+setTimeout(() => {
+  if (state.plants.length === 0 && hintEl) {
+    hintEl.textContent = '云起👆 点一下草地试试！';
+  }
+}, 2500);
+</script>
+</body>
+</html>
